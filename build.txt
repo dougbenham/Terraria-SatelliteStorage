@@ -1,0 +1,4 @@
+displayName = Satellite Storage
+author = Pudgergun
+version = 1.0.0
+buildIgnore = .git/*, .vs/*, bin/*, obj/*, .gitattributes, .gitignore, Build.txt, *.csproj, *.sln, *.userprefs

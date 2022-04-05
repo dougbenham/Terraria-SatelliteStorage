@@ -1,0 +1,61 @@
+Mods: {
+    SatelliteStorage: {
+        Common: {
+            GeneratorDropsTitle: Generated items:
+            CantUseWithoutSputnik: No available Satellite
+        }
+        
+        ItemName: {
+            QuartzShard: Quartz Shard
+            QuartzPickaxe: Quartz Pickaxe
+            QuartzSword: Quartz Sword
+            QuartzAxe: Quartz Axe
+            SputnikItem: Satellite
+            QuartzModule: Network Module
+            DriveChestItem: Network Terminal
+            DriveChestRemoteItem: Network Controller
+            PowerBar: Power Bar
+            SoulBar: Soul Bar
+            BaseItemsGeneratorItem: Item Generator
+            ChlorophyteGeneratorItem: Chlorophyte Generator
+            HallowedGeneratorItem: Hallowed Generator
+            HellstoneGeneratorItem: Hellstone Generator
+            LuminiteGeneratorItem: Luminite Generator
+            MeteoriteGeneratorItem: Meteorite Generator
+            PowerGeneratorItem: Powerful Generator
+            SoulGeneratorItem: Soul Generator
+            ShroomiteGeneratorItem: Shroomite Generator
+            SpectreGeneratorItem: Spectre Generator
+        }
+
+        ItemTooltip: {
+            DriveChestItem:
+                '''
+                Gives access to the infinite storage from the Satellite!
+                '''
+            DriveChestRemoteItem:
+                '''
+                Gives access to the infinite storage from the Satellite from anywhere!
+                '''
+            SputnikItem:
+                '''
+                Can be placed only in the Space
+                '''
+        }
+
+        ChanceNames: {
+            _0: Very high chance
+            _1: High chance
+            _2: Medium chance
+            _3: Low chance
+            _4: Very low chance
+        }
+
+        UITitles: {
+            DriveChest: Network Terminal
+            DriveChestSearch: Search
+            DriveChestRecipes: Recipes
+            DriveChestCraft: Crafting
+        }
+    }
+}

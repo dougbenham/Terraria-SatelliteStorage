@@ -1,0 +1,28 @@
+This mod will add an infinite storage to the game and some other small quality of life features.
+To use the infinite storage craft Satellite and place it in the space, access it using a Network Terminal or Network Controller that also need to be crafted.
+The storage has a fancy interface with the item filters, searchbar, recipes and crafting.
+This mod also adds item generators that will be producing random useful items right into your Network Terminal. 
+
+-=-=-=-=-=-Content List-=-=-=-=-=-
+20 new items
+10 types of generators
+2 new recipes
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+Mod Author: Pudgergun (Pudgergun#9555) 
+Sprites Author: Nicenikc (nicenikc#6293)
+
+===================================
+
+Мод добавит в игру безлимитное хранилище предметов.
+Вам понадобится создать Спутник и установить его в космосе, а для доступа использовать Терминал или Пульт.
+Также вы сможете создать генераторы предметов, которые будут с течением времени генерировать случайные предметы из списка в хранилище.
+
+-=-=-=-=-=- Весь контент-=-=-=-=-=-
+20 предметов
+10 генераторов
+2 рецепта
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+Автор мода: Pudgergun (Pudgergun#9555)
+Автор спрайтов: Nicenikc (nicenikc#6293)

@@ -1,0 +1,61 @@
+Mods: {
+	SatelliteStorage: {
+		Common: {
+			GeneratorDropsTitle: Генерируемые предметы:
+			CantUseWithoutSputnik: Отсутствует точка для подключения
+		}
+		
+		ItemName: {
+			QuartzShard: Осколок кварца
+			QuartzPickaxe: Кварцевая кирка
+			QuartzSword: Кварцевый меч
+			QuartzAxe: Кварцевый топор
+			SputnikItem: Спутник
+			QuartzModule: Сетевой модуль
+			DriveChestItem: Терминал
+			DriveChestRemoteItem: Пульт
+			PowerBar: Слиток силы
+			SoulBar: Слиток душ
+			BaseItemsGeneratorItem: Генератор предметов
+			ChlorophyteGeneratorItem: Хлорофитовый генератор
+			HallowedGeneratorItem: Святой генератор
+			HellstoneGeneratorItem: Генератор из адского камня
+			LuminiteGeneratorItem: Люминитовый генератор
+			MeteoriteGeneratorItem: Метеоритовый генератор
+			PowerGeneratorItem: Генератор из слитка силы
+			SoulGeneratorItem: Генератор из слитка душ
+			ShroomiteGeneratorItem: Грибной генератор
+			SpectreGeneratorItem: Спектральный генератор
+		}
+
+		ItemTooltip: {
+			DriveChestItem:
+				'''
+				Позволяет получить доступ к бесконечному складу на спутнике!
+				'''
+			DriveChestRemoteItem:
+				'''
+				Позволяет получить доступ к бесконечному складу на спутнике!
+				'''
+			SputnikItem:
+				'''
+				Можно установить только в космосе
+				'''
+		}
+
+		ChanceNames: {
+			_0: Очень высокий шанс
+			_1: Высокий шанс
+			_2: Средний шанс
+			_3: Низкий шанс
+			_4: Очень низкий шанс
+		}
+
+		UITitles: {
+			DriveChest: Терминал
+			DriveChestSearch: Поиск
+			DriveChestRecipes: Рецепты
+			DriveChestCraft: Создание
+		}
+	}
+}
