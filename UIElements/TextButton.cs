@@ -1,15 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using ReLogic.Graphics;
-using System;
-using ReLogic.Content;
-using Terraria;
-using Terraria.GameContent;
+using Terraria.Audio;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
-using Terraria.Audio;
-using Terraria.ID;
 
 namespace SatelliteStorage.UIElements
 {

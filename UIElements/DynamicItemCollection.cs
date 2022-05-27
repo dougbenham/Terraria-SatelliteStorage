@@ -9,8 +9,6 @@ using Terraria.ID;
 using Terraria.UI;
 using Terraria.UI.Gamepad;
 using SatelliteStorage.DriveSystem;
-using Terraria.Audio;
-using Terraria.ModLoader;
 
 namespace SatelliteStorage.UIElements
 {

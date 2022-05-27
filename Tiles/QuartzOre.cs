@@ -5,7 +5,6 @@ using Terraria.ID;
 using Terraria.IO;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
-using System;
 
 namespace SatelliteStorage.Tiles
 {

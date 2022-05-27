@@ -1,9 +1,4 @@
-﻿using Terraria;
-using Terraria.Audio;
-using Terraria.ID;
-using Terraria.GameContent.Creative;
-using Terraria.ModLoader;
-namespace SatelliteStorage.Items
+﻿namespace SatelliteStorage.Items
 {
 	/*
     class TestConsumable : ModItem

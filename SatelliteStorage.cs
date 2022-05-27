@@ -5,9 +5,7 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.IO;
 using Terraria.ID;
-using Terraria.ModLoader.IO;
 using SatelliteStorage.DriveSystem;
-using System;
 using Terraria.Audio;
 
 namespace SatelliteStorage

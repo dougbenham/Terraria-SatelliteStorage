@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,7 +7,6 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
 using Terraria.GameContent.UI.States;
-using Terraria.Graphics.Renderers;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.UI;
@@ -468,6 +466,7 @@ namespace SatelliteStorage.UIElements
 				IgnoresMouseInteraction = true
 			});
 			uIPanel.OnClick += Click_SearchArea;
+			uIPanel.OnRightClick += RightClick_SearchArea;
 			uISearchBar.OnContentsChanged += OnSearchContentsChanged;
 			uIPanel.Append(uISearchBar);
 			uISearchBar.OnStartTakingInput += OnStartTakingInput;
@@ -515,6 +514,12 @@ namespace SatelliteStorage.UIElements
 				_searchBar.ToggleTakingText();
 				_didClickSearchBar = true;
 			}
+		}
+
+		private void RightClick_SearchArea(UIMouseEvent evt, UIElement listeningelement)
+		{
+			_searchBar.SetContents(null, forced: true);
+			Click_SearchArea(evt, listeningelement);
 		}
 
 		public override void Click(UIMouseEvent evt)

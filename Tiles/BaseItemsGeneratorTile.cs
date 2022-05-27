@@ -1,13 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
-using Terraria.GameContent.Creative;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.Localization;
-using Terraria.Audio;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace SatelliteStorage.Tiles

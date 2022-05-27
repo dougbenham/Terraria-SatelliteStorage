@@ -3,13 +3,9 @@ using Terraria;
 using Terraria.UI;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using System.IO;
 using Terraria.ModLoader.IO;
 using Terraria.ID;
-using log4net;
 using SatelliteStorage.DriveSystem;
-using Terraria.GameContent.Achievements;
-using static IL.Terraria.Recipe;
 using System;
 
 namespace SatelliteStorage

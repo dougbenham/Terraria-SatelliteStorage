@@ -1,8 +1,5 @@
 ﻿using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
-using SatelliteStorage.DriveSystem;
-using System.Collections.Generic;
 
 namespace SatelliteStorage.Global
 {

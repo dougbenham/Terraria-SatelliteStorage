@@ -1,10 +1,6 @@
-﻿using Terraria;
+﻿using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Net;
-using Terraria.GameContent.NetModules;
-using Terraria.GameContent.Creative;
-using Terraria.Localization;
 
 namespace SatelliteStorage.Items
 {
@@ -12,10 +8,7 @@ namespace SatelliteStorage.Items
     {
 		public override void SetStaticDefaults()
 		{
-
-			//Tooltip.SetDefault("Quartz Shard"); // The (English) text shown below your item's name
 			DisplayName.SetDefault("Sputnik");
-
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1; // How many items are needed in order to research duplication of this item in Journey mode. See https://terraria.gamepedia.com/Journey_Mode/Research_list for a list of commonly used research amounts depending on item type.
 		}
@@ -43,14 +36,14 @@ namespace SatelliteStorage.Items
 			CreateRecipe(1)
 			.AddIngredient(ModContent.ItemType<Items.QuartzModule>(), 2)
 			.AddIngredient(ItemID.IronBar, 35)
-			.AddIngredient(ItemID.FallenStar, 50)
+			.AddIngredient(ItemID.FallenStar, 10)
 			.AddTile(TileID.Anvils)
 			.Register();
 
 			CreateRecipe(1)
 			.AddIngredient(ModContent.ItemType<Items.QuartzModule>(), 2)
 			.AddIngredient(ItemID.LeadBar, 35)
-			.AddIngredient(ItemID.FallenStar, 50)
+			.AddIngredient(ItemID.FallenStar, 10)
 			.AddTile(TileID.Anvils)
 			.Register();
 

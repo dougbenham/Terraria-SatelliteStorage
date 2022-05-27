@@ -1,19 +1,4 @@
-﻿using System.Linq;
-using Terraria;
-using Terraria.UI;
-using Terraria.ModLoader;
-using Terraria.ModLoader.UI;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria.ID;
-using Terraria.GameContent.Creative;
-using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using Terraria.IO;
-using Terraria.WorldBuilding;
-using System;
-using ReLogic.Content;
-using Terraria.GameContent.UI.Elements;
-using Terraria.Localization;
+﻿using Terraria;
 
 namespace SatelliteStorage.DriveSystem
 {

@@ -1,21 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
-using Terraria.Audio;
+using SatelliteStorage.DriveSystem;
+using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
-using Terraria.GameContent.UI.States;
-using Terraria.Graphics.Renderers;
-using Terraria.ID;
-using Terraria.Localization;
-using Terraria.UI;
-using SatelliteStorage.DriveSystem;
 using Terraria.GameContent.UI.Elements;
-using Terraria;
-using Terraria.ModLoader;
+using Terraria.UI;
+
 namespace SatelliteStorage.UIElements
 {
     class UICraftRecipe : UIElement

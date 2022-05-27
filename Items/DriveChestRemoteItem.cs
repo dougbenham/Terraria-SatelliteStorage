@@ -37,14 +37,14 @@ namespace SatelliteStorage.Items
 		{
 			CreateRecipe()
 				.AddIngredient(ModContent.ItemType<Items.DriveChestItem>(), 1)
-				.AddIngredient(ItemID.FallenStar, 50)
+				.AddIngredient(ItemID.FallenStar, 10)
 				.AddIngredient(ItemID.MagicMirror, 1)
 				.AddTile(TileID.Anvils)
 				.Register();
 
 			CreateRecipe()
 				.AddIngredient(ModContent.ItemType<Items.DriveChestItem>(), 1)
-				.AddIngredient(ItemID.FallenStar, 50)
+				.AddIngredient(ItemID.FallenStar, 10)
 				.AddIngredient(ItemID.IceMirror, 1)
 				.AddTile(TileID.Anvils)
 				.Register();
