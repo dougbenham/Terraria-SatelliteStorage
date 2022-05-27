@@ -6,7 +6,7 @@ namespace SatelliteStorage
 {
     class SatelliteStoragePlayer : ModPlayer
     {
-        private static List<bool> oldAdjList;
+        private static List<bool> _oldAdjList;
         
         public static bool CheckAdjChanged()
         {
@@ -22,17 +22,17 @@ namespace SatelliteStorage
                 adjList.Add(b);
             }
 
-            if (oldAdjList == null || oldAdjList.Count != adjList.Count)
+            if (_oldAdjList == null || _oldAdjList.Count != adjList.Count)
             {
-                oldAdjList = adjList;
+                _oldAdjList = adjList;
                 return true;
             }
 
             for (var i = 0; i < adjList.Count; i++)
             {
-                if (adjList[i] != oldAdjList[i])
+                if (adjList[i] != _oldAdjList[i])
                 {
-                    oldAdjList = adjList;
+                    _oldAdjList = adjList;
                     return true;
                 }
             }

@@ -13,23 +13,23 @@ namespace SatelliteStorage.UIElements
 {
 	class TextBox : UIPanel
 	{
-		internal bool focused;
+		internal bool Focused;
 		private int _maxLength = 60;
-		public string hintText = "";
-		public string currentString = "";
-		private int textBlinkerCount;
-		private int textBlinkerState;
+		public string HintText = "";
+		public string CurrentString = "";
+		private int _textBlinkerCount;
+		private int _textBlinkerState;
 		public event Action OnFocus;
 		public event Action OnUnfocus;
 		public event Action OnTextChanged;
 		public event Action OnTabPressed;
 		public event Action OnEnterPressed;
-		internal bool unfocusOnEnter = true;
-		internal bool unfocusOnTab = true;
-		public Color textColor = Color.Black;
-		public float textScale = 1;
-		public Vector2 textPosition = new(4, 2);
-		public int visibleTextCount = 10;
+		internal bool UnfocusOnEnter = true;
+		internal bool UnfocusOnTab = true;
+		public Color TextColor = Color.Black;
+		public float TextScale = 1;
+		public Vector2 TextPosition = new(4, 2);
+		public int VisibleTextCount = 10;
 		
 		public TextBox()
 		{
@@ -52,9 +52,9 @@ namespace SatelliteStorage.UIElements
 		
 		public void Unfocus()
 		{
-			if (focused)
+			if (Focused)
 			{
-				focused = false;
+				Focused = false;
 				Main.blockInput = false;
 
 				OnUnfocus?.Invoke();
@@ -63,10 +63,10 @@ namespace SatelliteStorage.UIElements
 
 		public void Focus()
 		{
-			if (!focused)
+			if (!Focused)
 			{
 				Main.clrInput();
-				focused = true;
+				Focused = true;
 				Main.blockInput = true;
 
 				OnFocus?.Invoke();
@@ -89,9 +89,9 @@ namespace SatelliteStorage.UIElements
 			{
 				text = text.Substring(0, _maxLength);
 			}
-			if (currentString != text)
+			if (CurrentString != text)
 			{
-				currentString = text;
+				CurrentString = text;
 				OnTextChanged?.Invoke();
 			}
 		}
@@ -107,50 +107,50 @@ namespace SatelliteStorage.UIElements
 			
 			base.DrawSelf(spriteBatch);
 
-			if (focused)
+			if (Focused)
 			{
 				PlayerInput.WritingText = true;
 				Main.instance.HandleIME();
-				var newString = Main.GetInputText(currentString);
-				if (!newString.Equals(currentString))
+				var newString = Main.GetInputText(CurrentString);
+				if (!newString.Equals(CurrentString))
 				{
-					currentString = newString;
+					CurrentString = newString;
 					OnTextChanged?.Invoke();
 				}
 				else
 				{
-					currentString = newString;
+					CurrentString = newString;
 				}
 
 				if (JustPressed(Keys.Tab))
 				{
-					if (unfocusOnTab) Unfocus();
+					if (UnfocusOnTab) Unfocus();
 					OnTabPressed?.Invoke();
 				}
 				if (JustPressed(Keys.Enter))
 				{
 					Main.drawingPlayerChat = false;
-					if (unfocusOnEnter) Unfocus();
+					if (UnfocusOnEnter) Unfocus();
 					OnEnterPressed?.Invoke();
 				}
-				if (++textBlinkerCount >= 20)
+				if (++_textBlinkerCount >= 20)
 				{
-					textBlinkerState = (textBlinkerState + 1) % 2;
-					textBlinkerCount = 0;
+					_textBlinkerState = (_textBlinkerState + 1) % 2;
+					_textBlinkerCount = 0;
 				}
 				Main.instance.DrawWindowsIMEPanel(new(98f, Main.screenHeight - 36));
 			}
-			var displayString = currentString;
+			var displayString = CurrentString;
 			var space = GetDimensions();
-			var color = textColor;
-			if (currentString.Length == 0)
+			var color = TextColor;
+			if (CurrentString.Length == 0)
 			{
 			}
-			var drawPos = space.Position() + textPosition;
-			if (currentString.Length == 0 && !focused)
+			var drawPos = space.Position() + TextPosition;
+			if (CurrentString.Length == 0 && !Focused)
 			{
 				color *= 0.5f;
-				spriteBatch.DrawString(FontAssets.MouseText.Value, hintText, drawPos, color, 0, new(0, 0), textScale, SpriteEffects.None, 0);
+				spriteBatch.DrawString(FontAssets.MouseText.Value, HintText, drawPos, color, 0, new(0, 0), TextScale, SpriteEffects.None, 0);
 
 			}
 			else
@@ -158,22 +158,22 @@ namespace SatelliteStorage.UIElements
 				var displayValue = displayString;
 
 				
-				if (displayValue.Length > visibleTextCount+1)
+				if (displayValue.Length > VisibleTextCount+1)
                 {
-					var substFrom = displayString.Length - visibleTextCount - 1;
+					var substFrom = displayString.Length - VisibleTextCount - 1;
 					if (substFrom <= 0) substFrom = 0;
-					var substCount = visibleTextCount;
+					var substCount = VisibleTextCount;
 					if (substCount <= 0) substCount = 0;
 
 					displayValue = displayValue.Substring(substFrom, substCount);
 				}
 
-				if (textBlinkerState == 1 && focused)
+				if (_textBlinkerState == 1 && Focused)
 				{
 					displayValue = displayValue + "|";
 				}
 				
-				spriteBatch.DrawString(FontAssets.MouseText.Value, displayValue, drawPos, color, 0, new(0,0), textScale, SpriteEffects.None, 0);
+				spriteBatch.DrawString(FontAssets.MouseText.Value, displayValue, drawPos, color, 0, new(0,0), TextScale, SpriteEffects.None, 0);
 			}
 		}
 	}

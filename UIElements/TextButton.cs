@@ -8,16 +8,16 @@ namespace SatelliteStorage.UIElements
 {
     class TextButton : UIPanel
     {
-        public string text;
-        public float textScale;
-        private float scaleOffset;
-        private UIText textElement;
-        private bool mouseOver;
+        public string Text;
+        public float TextScale;
+        private float _scaleOffset;
+        private UIText _textElement;
+        private bool _mouseOver;
 
         public TextButton(string text)
         {
-            this.text = text;
-            textScale = 1;
+            this.Text = text;
+            TextScale = 1;
 
             Width.Set(MathF.Round(100 * text.Length/10), 0);
             Height.Set(MathF.Round(30 * text.Length / 10), 0);
@@ -27,15 +27,15 @@ namespace SatelliteStorage.UIElements
 
             OnMouseOver += (_, _) =>
             {
-                if (mouseOver) return;
+                if (_mouseOver) return;
                 SoundEngine.PlaySound(SoundID.MenuTick);
-                mouseOver = true;
+                _mouseOver = true;
             };
 
             OnMouseOut += (_, _) =>
             {
-                if (!mouseOver) return;
-                mouseOver = false;
+                if (!_mouseOver) return;
+                _mouseOver = false;
             };
         }
 
@@ -43,32 +43,32 @@ namespace SatelliteStorage.UIElements
         {
             base.Update(gameTime);
             var color = Color.White;
-            if (mouseOver)
+            if (_mouseOver)
             {
-                if (scaleOffset < (float)textScale * 0.2f) scaleOffset += (textScale * 0.05f);
+                if (_scaleOffset < (float)TextScale * 0.2f) _scaleOffset += (TextScale * 0.05f);
                 color = new(255, 231, 69, 255);
             }
             else
             {
-                if (scaleOffset > 0) scaleOffset -= (textScale * 0.05f);
+                if (_scaleOffset > 0) _scaleOffset -= (TextScale * 0.05f);
             }
 
-            if (textElement != null)
+            if (_textElement != null)
             {
-                textElement.Deactivate(); 
-                RemoveChild(textElement);
+                _textElement.Deactivate(); 
+                RemoveChild(_textElement);
             }
             
-            textElement = new(text, textScale + scaleOffset);
+            _textElement = new(Text, TextScale + _scaleOffset);
             //textElement.DynamicallyScaleDownToWidth = true;
-            textElement.VAlign = 0.5f;
+            _textElement.VAlign = 0.5f;
             //textElement.HAlign = 0.5f;
-            textElement.Left.Set(0, 0);
-            textElement.TextColor = color;
-            textElement.TextOriginX = 0;
+            _textElement.Left.Set(0, 0);
+            _textElement.TextColor = color;
+            _textElement.TextOriginX = 0;
 
 
-            Append(textElement);
+            Append(_textElement);
         }
     }
 }

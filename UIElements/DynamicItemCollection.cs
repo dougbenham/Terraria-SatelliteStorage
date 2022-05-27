@@ -19,13 +19,13 @@ namespace SatelliteStorage.UIElements
 
 		private readonly List<int> _itemIdsToLoadTexturesFor = new();
 
-		public Dictionary<int, DriveItem> _driveItems = new();
+		public Dictionary<int, DriveItem> DriveItems = new();
 		
 		private int _itemsPerLine;
 		
 		private readonly List<SnapPoint> _dummySnapPoints = new();
 
-		public int hoverItemIndex = -1;
+		public int HoverItemIndex = -1;
 
 		public DynamicItemCollection()
 		{
@@ -36,18 +36,18 @@ namespace SatelliteStorage.UIElements
 
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
-			hoverItemIndex = -1;
+			HoverItemIndex = -1;
 			Main.inventoryScale = 0.846153855f;
 			GetGridParameters(out var startX, out var startY, out var startItemIndex, out var endItemIndex);
 			var num = _itemsPerLine;
 			for (var i = startItemIndex; i < endItemIndex; i++)
 			{
 				var num2 = _itemIdsAvailableToShow[i];
-				var driveItem = _driveItems.ContainsKey(i) ? _driveItems[i] : new();
+				var driveItem = DriveItems.ContainsKey(i) ? DriveItems[i] : new();
 				var itemSlotHitbox = GetItemSlotHitbox(startX, startY, startItemIndex, i);
 				var inv = ContentSamples.ItemsByType[num2];
-				inv.prefix = driveItem.prefix;
-				var context = driveItem.context > 0 ? driveItem.context : 29;
+				inv.prefix = driveItem.Prefix;
+				var context = driveItem.Context > 0 ? driveItem.Context : 29;
 				if ((int)TextureAssets.Item[num2].State == 0)
 				{
 					num--;
@@ -57,7 +57,7 @@ namespace SatelliteStorage.UIElements
 				if (IsMouseHovering && itemSlotHitbox.Contains(Main.MouseScreen.ToPoint()) && !PlayerInput.IgnoreMouseInterface)
 				{
 					Main.LocalPlayer.mouseInterface = true;
-					hoverItemIndex = i;
+					HoverItemIndex = i;
 					ItemSlot.OverrideHover(ref inv, context);
 					ItemSlot.MouseHover(ref inv, context);
 					
@@ -127,7 +127,7 @@ namespace SatelliteStorage.UIElements
 
 		private class DriveItemData
 		{
-			public readonly List<DriveItem> items = new();
+			public readonly List<DriveItem> Items = new();
 		}
 
 		public void SetContentsToShow(List<int> itemIdsToShow, List<DriveItem> driveItems)
@@ -136,15 +136,15 @@ namespace SatelliteStorage.UIElements
 			_itemIdsToLoadTexturesFor.Clear();
 			_itemIdsAvailableToShow.AddRange(itemIdsToShow);
 			_itemIdsToLoadTexturesFor.AddRange(itemIdsToShow);
-			_driveItems.Clear();
+			DriveItems.Clear();
 
 			var dictOfDriveItems = new Dictionary<int, DriveItemData>();
 
 			for (var i = 0; i < driveItems.Count; i++)
             {
 				var item = driveItems[i];
-				if (!dictOfDriveItems.ContainsKey(item.type)) dictOfDriveItems.Add(item.type, new());
-				dictOfDriveItems[item.type].items.Add(item);
+				if (!dictOfDriveItems.ContainsKey(item.Type)) dictOfDriveItems.Add(item.Type, new());
+				dictOfDriveItems[item.Type].Items.Add(item);
 			}
 
 			for(var i = 0; i < _itemIdsAvailableToShow.Count; i++)
@@ -154,8 +154,8 @@ namespace SatelliteStorage.UIElements
 				
 				if (data != null)
                 {
-					_driveItems.Add(i, data.items[0]);
-					data.items.RemoveAt(0);
+					DriveItems.Add(i, data.Items[0]);
+					data.Items.RemoveAt(0);
                 }
 			}
 

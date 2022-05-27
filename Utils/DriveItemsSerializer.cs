@@ -11,19 +11,19 @@ namespace SatelliteStorage.Utils
         public static TagCompound SaveDriveItem(DriveItem item)
         {
             var tag = new TagCompound();
-            tag["type"] = item.type;
+            tag["type"] = item.Type;
             tag["stack"] = item.Stack;
-            tag["prefix"] = item.prefix;
+            tag["prefix"] = item.Prefix;
             return tag;
         }
 
         public static DriveItem LoadDriveItem(TagCompound tag)
         {
             var item = new DriveItem();
-            item.type = tag.GetInt("type");
+            item.Type = tag.GetInt("type");
             item.Stack = tag.GetInt("stack");
             var prefix = tag.GetInt("prefix");
-            if (prefix != 0) item.prefix = prefix;
+            if (prefix != 0) item.Prefix = prefix;
             return item;
         }
 
@@ -34,9 +34,9 @@ namespace SatelliteStorage.Utils
             for (var i = 0; i < items.Count; i++)
             {
                 var item = items[i];
-                packet.Write7BitEncodedInt(item.type);
+                packet.Write7BitEncodedInt(item.Type);
                 packet.Write7BitEncodedInt(item.Stack);
-                packet.Write7BitEncodedInt(item.prefix);
+                packet.Write7BitEncodedInt(item.Prefix);
             }
 
             return packet;
@@ -51,9 +51,9 @@ namespace SatelliteStorage.Utils
             for (var i = 0; i < count; i++)
             {
                 var item = new DriveItem();
-                item.type = reader.Read7BitEncodedInt();
+                item.Type = reader.Read7BitEncodedInt();
                 item.Stack = reader.Read7BitEncodedInt();
-                item.prefix = reader.Read7BitEncodedInt();
+                item.Prefix = reader.Read7BitEncodedInt();
                 items.Add(item);
             }
 

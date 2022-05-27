@@ -65,7 +65,7 @@ namespace SatelliteStorage.Items
 					Main.NewText(Language.GetTextValue("Mods.SatelliteStorage.Common.CantUseWithoutSputnik"), new Color(173, 57, 71));
 					return true;
 				}
-				if (!SatelliteStorage.GetUIState((int)UITypes.DriveChest)) return DriveChestSystem.RequestOpenDriveChest();
+				if (!SatelliteStorage.GetUiState((int)UiTypes.DriveChest)) return DriveChestSystem.RequestOpenDriveChest();
 			}
 			return true;
 		}

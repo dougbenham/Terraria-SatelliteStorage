@@ -12,7 +12,7 @@ namespace SatelliteStorage.Items
 {
     class BaseItemsGeneratorItem : ModItem
     {
-		public byte generatorType;
+		public byte GeneratorType;
 
 		public override void SetStaticDefaults()
 		{
@@ -43,9 +43,9 @@ namespace SatelliteStorage.Items
 			};
 			tooltips.Add(line);
 
-			var gen = SatelliteStorage.Instance.generators[generatorType];
+			var gen = SatelliteStorage.Instance.Generators[GeneratorType];
 
-			foreach (var data in gen.drops)
+			foreach (var data in gen.Drops)
 			{
 				var itm = new Item();
 				itm.SetDefaults(data[0]);
@@ -68,7 +68,7 @@ namespace SatelliteStorage.Items
 			Item.maxStack = 1;
 			Item.value = 500;
 			Item.createTile = ModContent.TileType<BaseItemsGeneratorTile>();
-			generatorType = (byte)SatelliteStorage.GeneratorTypes.BaseGenerator;
+			GeneratorType = (byte)SatelliteStorage.GeneratorTypes.BaseGenerator;
 		}
 
 		public virtual void AddGeneratorRecipes()

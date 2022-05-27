@@ -3,7 +3,7 @@ using Terraria.GameContent.UI.Elements;
 
 namespace SatelliteStorage.UIElements
 {
-    class UICraftResultBG : UIPanel
+    class UiCraftResultBg : UIPanel
     {
         public static bool Hidden = true;
 

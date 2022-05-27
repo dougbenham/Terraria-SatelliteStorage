@@ -18,9 +18,9 @@ using Terraria.UI.Gamepad;
 
 namespace SatelliteStorage.UI
 {
-	public class DriveChestUI : BaseUIState
+	public class DriveChestUi : BaseUiState
 	{
-		public static DriveChestUI Instance;
+		public static DriveChestUi Instance;
 
 		private readonly float[] _buttonScale = new float[2];
 		private readonly bool[] _buttonHovered = new bool[2];
@@ -28,22 +28,22 @@ namespace SatelliteStorage.UI
 		private bool _isDrawing;
 		private int _currentRecipe = -1;
 		private bool _isMouseDownOnCraftItem;
-		private UserInterface driveChestInterface;
+		private UserInterface _driveChestInterface;
 		private GameTime _lastUpdateUiGameTime;
-		private double lastCraftsResearchTime;
-		private UIItemsDisplay display;
-		private UICraftDisplay craftDisplay;
-		private UICraftRecipe craftRecipe;
-		private UIPanel craftResultPanel;
-		private float windowWidth;
-		private float windowHeight;
-		private Vector2 buttonsPos;
-		private Vector2 craftResultSlotPos;
-		private Item craftResultItem = new(5, 5);
-		private int craftOnMouseRecipe = -1;
-		private double mouseDownOnCraftItemTime;
-		private bool mouseDownOnCraftItemToggle;
-		private double mouseDownItemCraftCooldown;
+		private double _lastCraftsResearchTime;
+		private UiItemsDisplay _display;
+		private UiCraftDisplay _craftDisplay;
+		private UiCraftRecipe _craftRecipe;
+		private UIPanel _craftResultPanel;
+		private float _windowWidth;
+		private float _windowHeight;
+		private Vector2 _buttonsPos;
+		private Vector2 _craftResultSlotPos;
+		private Item _craftResultItem = new(5, 5);
+		private int _craftOnMouseRecipe = -1;
+		private double _mouseDownOnCraftItemTime;
+		private bool _mouseDownOnCraftItemToggle;
+		private double _mouseDownItemCraftCooldown;
 
 		public void UpdateHover(int id, bool hovering)
 		{
@@ -79,7 +79,7 @@ namespace SatelliteStorage.UI
 			if (!Instance.GetState())
 				return;
 
-			Instance.display.RebuildPage();
+			Instance._display.RebuildPage();
 		}
 
 		public override void OnInitialize()
@@ -88,7 +88,7 @@ namespace SatelliteStorage.UI
 
 			CalculateSize();
 
-			driveChestInterface = new();
+			_driveChestInterface = new();
 			
 			/*
 			mainPanel = new UIPanel();
@@ -226,32 +226,32 @@ namespace SatelliteStorage.UI
 			Append(quickStackButton);
 			
 			*/
-			display = new(this);
+			_display = new(this);
 
-			Append(display);
+			Append(_display);
 
-			craftDisplay = new(this);
+			_craftDisplay = new(this);
 
-			Append(craftDisplay);
+			Append(_craftDisplay);
 
-			craftRecipe = new(this);
-			Append(craftRecipe);
+			_craftRecipe = new(this);
+			Append(_craftRecipe);
 
-			craftResultPanel = new UICraftResultBG();
-			Append(craftResultPanel);
+			_craftResultPanel = new UiCraftResultBg();
+			Append(_craftResultPanel);
 
 			CalculateSize();
 
-			craftDisplay.OnRecipeChoosen = recipe =>
+			_craftDisplay.OnRecipeChoosen = recipe =>
 			{
 				_currentRecipe = recipe;
-				craftRecipe.SetRecipe(recipe);
+				_craftRecipe.SetRecipe(recipe);
 				SoundEngine.PlaySound(SoundID.MenuTick);
 			};
 
 			OnMouseDown += (_, _) =>
 			{
-				if (craftOnMouseRecipe > -1)
+				if (_craftOnMouseRecipe > -1)
 				{
 					if (Main.keyState.IsKeyDown(Keys.LeftControl) || Main.keyState.IsKeyDown(Keys.RightControl))
 					{
@@ -260,7 +260,7 @@ namespace SatelliteStorage.UI
 						return;
 					}
 
-					mouseDownOnCraftItemToggle = false;
+					_mouseDownOnCraftItemToggle = false;
 					_isMouseDownOnCraftItem = true;
 					TryCraftItem();
 				}
@@ -271,10 +271,10 @@ namespace SatelliteStorage.UI
 
 		private bool TryCraftItem()
 		{
-			if (craftOnMouseRecipe <= -1)
+			if (_craftOnMouseRecipe <= -1)
 				return false;
 
-			var recipe = Main.recipe[craftOnMouseRecipe];
+			var recipe = Main.recipe[_craftOnMouseRecipe];
 			var player = Main.LocalPlayer;
 			var mouseItem = player.inventory[58];
 
@@ -297,19 +297,19 @@ namespace SatelliteStorage.UI
 				uses.ForEach(u =>
 				{
 					var item = new Item();
-					item.type = u.type;
+					item.type = u.Type;
 					item.SetDefaults(item.type);
 					item.stack = 1;
 
-					if (u.from == 0)
+					if (u.From == 0)
 					{
-						player.inventory[u.slot].stack -= u.stack;
-						if (player.inventory[u.slot].stack <= 0)
-							player.inventory[u.slot].TurnToAir();
+						player.inventory[u.Slot].stack -= u.Stack;
+						if (player.inventory[u.Slot].stack <= 0)
+							player.inventory[u.Slot].TurnToAir();
 					}
 					else
 					{
-						DriveChestSystem.SubItem(u.type, u.stack);
+						DriveChestSystem.SubItem(u.Type, u.Stack);
 					}
 				});
 
@@ -335,7 +335,7 @@ namespace SatelliteStorage.UI
 				var packet = SatelliteStorage.Instance.GetPacket();
 				packet.Write((byte) SatelliteStorage.MessageType.TryCraftRecipe);
 				packet.Write((byte) player.whoAmI);
-				packet.Write7BitEncodedInt(craftOnMouseRecipe);
+				packet.Write7BitEncodedInt(_craftOnMouseRecipe);
 				packet.Send();
 				packet.Close();
 			}
@@ -354,9 +354,9 @@ namespace SatelliteStorage.UI
 				if (item != null && !item.favorited && !item.IsAir)
 				{
 					var driveItem = new DriveItem();
-					driveItem.type = item.type;
+					driveItem.Type = item.type;
 					driveItem.Stack = item.stack;
-					driveItem.prefix = item.prefix;
+					driveItem.Prefix = item.prefix;
 
 					if (Main.netMode == NetmodeID.SinglePlayer)
 					{
@@ -406,7 +406,7 @@ namespace SatelliteStorage.UI
 
 		public override void Draw(SpriteBatch spriteBatch)
 		{
-			craftOnMouseRecipe = -1;
+			_craftOnMouseRecipe = -1;
 			if (!_isDrawing)
 				return;
 
@@ -434,32 +434,32 @@ namespace SatelliteStorage.UI
 
 			DrawButtons(spriteBatch);
 
-			if (craftDisplay != null && !UICraftDisplay.Hidden)
+			if (_craftDisplay != null && !UiCraftDisplay.Hidden)
 			{
-				Terraria.Utils.DrawBorderString(spriteBatch, Language.GetTextValue("Mods.SatelliteStorage.UITitles.DriveChestRecipes"), craftDisplay.GetDimensions().Position() + new Vector2(30, 47),
+				Terraria.Utils.DrawBorderString(spriteBatch, Language.GetTextValue("Mods.SatelliteStorage.UITitles.DriveChestRecipes"), _craftDisplay.GetDimensions().Position() + new Vector2(30, 47),
 					Color.White, 1f);
 			}
 
-			if (craftRecipe != null && !UICraftRecipe.Hidden)
+			if (_craftRecipe != null && !UiCraftRecipe.Hidden)
 			{
-				Terraria.Utils.DrawBorderString(spriteBatch, Language.GetTextValue("Mods.SatelliteStorage.UITitles.DriveChestCraft"), craftRecipe.GetDimensions().Position() + new Vector2(30, 47),
+				Terraria.Utils.DrawBorderString(spriteBatch, Language.GetTextValue("Mods.SatelliteStorage.UITitles.DriveChestCraft"), _craftRecipe.GetDimensions().Position() + new Vector2(30, 47),
 					Color.White, 1f);
 			}
 
-			if (_currentRecipe > -1 && !UICraftRecipe.Hidden)
+			if (_currentRecipe > -1 && !UiCraftRecipe.Hidden)
 			{
 				var recipe = Main.recipe[_currentRecipe];
-				craftResultItem = recipe.createItem;
-				var itemSlotHitbox = GetSlotHitbox((int) craftResultSlotPos.X, (int) craftResultSlotPos.Y);
+				_craftResultItem = recipe.createItem;
+				var itemSlotHitbox = GetSlotHitbox((int) _craftResultSlotPos.X, (int) _craftResultSlotPos.Y);
 				var flag = false;
 				if (IsMouseHovering && itemSlotHitbox.Contains(Main.MouseScreen.ToPoint()) && !PlayerInput.IgnoreMouseInterface)
 				{
 					Main.LocalPlayer.mouseInterface = true;
 
-					ItemSlot.OverrideHover(ref craftResultItem, 26);
-					ItemSlot.MouseHover(ref craftResultItem, 26);
+					ItemSlot.OverrideHover(ref _craftResultItem, 26);
+					ItemSlot.MouseHover(ref _craftResultItem, 26);
 
-					craftOnMouseRecipe = _currentRecipe;
+					_craftOnMouseRecipe = _currentRecipe;
 					flag = true;
 				}
 				else
@@ -468,12 +468,12 @@ namespace SatelliteStorage.UI
 				}
 
 				UILinkPointNavigator.Shortcuts.CREATIVE_ItemSlotShouldHighlightAsSelected = flag;
-				ItemSlot.Draw(spriteBatch, ref craftResultItem, 26, itemSlotHitbox.TopLeft());
-				UICraftResultBG.Hidden = false;
+				ItemSlot.Draw(spriteBatch, ref _craftResultItem, 26, itemSlotHitbox.TopLeft());
+				UiCraftResultBg.Hidden = false;
 			}
 			else
 			{
-				UICraftResultBG.Hidden = true;
+				UiCraftResultBg.Hidden = true;
 			}
 		}
 
@@ -483,30 +483,30 @@ namespace SatelliteStorage.UI
 
 			_isDrawing = false;
 
-			if (driveChestInterface?.CurrentState != null)
+			if (_driveChestInterface?.CurrentState != null)
 			{
 				_isDrawing = true;
-				var elapsedTime = gameTime.TotalGameTime.TotalMilliseconds - lastCraftsResearchTime;
+				var elapsedTime = gameTime.TotalGameTime.TotalMilliseconds - _lastCraftsResearchTime;
 
 				_lastUpdateUiGameTime = gameTime;
 
 				if (_isMouseDownOnCraftItem)
 				{
-					if (!mouseDownOnCraftItemToggle)
+					if (!_mouseDownOnCraftItemToggle)
 					{
-						mouseDownItemCraftCooldown = gameTime.TotalGameTime.TotalMilliseconds;
-						mouseDownOnCraftItemTime = gameTime.TotalGameTime.TotalMilliseconds;
-						mouseDownOnCraftItemToggle = true;
+						_mouseDownItemCraftCooldown = gameTime.TotalGameTime.TotalMilliseconds;
+						_mouseDownOnCraftItemTime = gameTime.TotalGameTime.TotalMilliseconds;
+						_mouseDownOnCraftItemToggle = true;
 					}
 				}
 				else
 				{
-					mouseDownOnCraftItemToggle = false;
+					_mouseDownOnCraftItemToggle = false;
 				}
 
-				var mouseDownOnCraftItemElapsed = gameTime.TotalGameTime.TotalMilliseconds - mouseDownOnCraftItemTime;
+				var mouseDownOnCraftItemElapsed = gameTime.TotalGameTime.TotalMilliseconds - _mouseDownOnCraftItemTime;
 
-				if (mouseDownOnCraftItemToggle && _isMouseDownOnCraftItem)
+				if (_mouseDownOnCraftItemToggle && _isMouseDownOnCraftItem)
 				{
 					double waitTime = 999999;
 					if (mouseDownOnCraftItemElapsed >= 1000)
@@ -520,9 +520,9 @@ namespace SatelliteStorage.UI
 					if (mouseDownOnCraftItemElapsed >= 3000)
 						waitTime = 16;
 
-					if (gameTime.TotalGameTime.TotalMilliseconds > mouseDownItemCraftCooldown + waitTime)
+					if (gameTime.TotalGameTime.TotalMilliseconds > _mouseDownItemCraftCooldown + waitTime)
 					{
-						mouseDownItemCraftCooldown = gameTime.TotalGameTime.TotalMilliseconds;
+						_mouseDownItemCraftCooldown = gameTime.TotalGameTime.TotalMilliseconds;
 						TryCraftItem();
 					}
 
@@ -532,7 +532,7 @@ namespace SatelliteStorage.UI
 					_isDrawing = false;
 
 				CalculateSize();
-				driveChestInterface.Update(gameTime);
+				_driveChestInterface.Update(gameTime);
 
 				var player = Main.LocalPlayer;
 				var mouseItem = player.inventory[58];
@@ -558,14 +558,14 @@ namespace SatelliteStorage.UI
 				if (elapsedTime > 256 && (!DriveChestSystem.CheckRecipesRefresh || SatelliteStoragePlayer.CheckAdjChanged()))
 				{
 					DriveChestSystem.CheckRecipesRefresh = true;
-					lastCraftsResearchTime = gameTime.TotalGameTime.TotalMilliseconds;
+					_lastCraftsResearchTime = gameTime.TotalGameTime.TotalMilliseconds;
 					DriveChestSystem.ResearchRecipes();
-					Instance.craftDisplay.RebuildPage();
-					Instance.craftRecipe.RebuildPage();
+					Instance._craftDisplay.RebuildPage();
+					Instance._craftRecipe.RebuildPage();
 				}
 				
 				if (!Main.playerInventory)
-					SatelliteStorage.SetUIState((int) UITypes.DriveChest, false);
+					SatelliteStorage.SetUiState((int) UiTypes.DriveChest, false);
 
 			}
 		}
@@ -576,110 +576,110 @@ namespace SatelliteStorage.UI
 			var height = GetDimensions().Height;
 
 
-			if (windowHeight != height || windowWidth != width)
+			if (_windowHeight != height || _windowWidth != width)
 			{
-				windowWidth = width;
-				windowHeight = height;
+				_windowWidth = width;
+				_windowHeight = height;
 
-				if (display != null)
+				if (_display != null)
 				{
-					display.HAlign = 0.5f;
-					display.VAlign = 0.5f;
+					_display.HAlign = 0.5f;
+					_display.VAlign = 0.5f;
 
-					display.Width.Set(width * 0.3f, 0);
-					display.Height.Set(height * 0.6f, 0);
-					display.MinWidth.Set(500, 0);
+					_display.Width.Set(width * 0.3f, 0);
+					_display.Height.Set(height * 0.6f, 0);
+					_display.MinWidth.Set(500, 0);
 
 
 					var smallWidth = false;
 					if (width < 1650)
 					{
-						display.Height.Set(height * 0.35f, 0);
-						display.VAlign = 0.85f;
+						_display.Height.Set(height * 0.35f, 0);
+						_display.VAlign = 0.85f;
 						smallWidth = true;
 					}
 
-					display.Recalculate();
+					_display.Recalculate();
 
 
 					if (smallWidth)
 					{
-						buttonsPos = new(
-							display.GetDimensions().X + 30,
-							display.GetDimensions().Y - 50
+						_buttonsPos = new(
+							_display.GetDimensions().X + 30,
+							_display.GetDimensions().Y - 50
 						);
 					}
 					else
 					{
-						buttonsPos = new(
-							display.GetDimensions().X + display.GetDimensions().Width + 15,
-							display.GetDimensions().Y + 70
+						_buttonsPos = new(
+							_display.GetDimensions().X + _display.GetDimensions().Width + 15,
+							_display.GetDimensions().Y + 70
 						);
 					}
 
 
 					var craftDisplayWidth = MathF.Max(width * 0.2f, 150);
-					var craftDisplayHeight = MathF.Max(display.Height.Pixels * 0.77f, 150);
-					craftDisplay.Left.Set(display.GetDimensions().X - craftDisplayWidth - 15, 0);
-					craftDisplay.Top.Set(display.GetDimensions().Y + (display.Height.Pixels - craftDisplayHeight), 0);
-					craftDisplay.Width.Set(craftDisplayWidth, 0);
-					craftDisplay.Height.Set(craftDisplayHeight, 0);
+					var craftDisplayHeight = MathF.Max(_display.Height.Pixels * 0.77f, 150);
+					_craftDisplay.Left.Set(_display.GetDimensions().X - craftDisplayWidth - 15, 0);
+					_craftDisplay.Top.Set(_display.GetDimensions().Y + (_display.Height.Pixels - craftDisplayHeight), 0);
+					_craftDisplay.Width.Set(craftDisplayWidth, 0);
+					_craftDisplay.Height.Set(craftDisplayHeight, 0);
 
-					craftDisplay.Recalculate();
+					_craftDisplay.Recalculate();
 
 					if (smallWidth)
 					{
 						var craftRecipeWidth = MathF.Max(width * 0.1f, 150);
-						var craftRecipeHeight = MathF.Max(craftDisplay.Height.Pixels * 0.55f, 150);
-						craftRecipe.Left.Set(craftDisplay.GetDimensions().X, 0);
-						craftRecipe.Top.Set(craftDisplay.GetDimensions().Y - craftRecipeHeight + 25, 0);
-						craftRecipe.Width.Set(craftDisplay.Width.Pixels, 0);
-						craftRecipe.Height.Set(craftRecipeHeight, 0);
+						var craftRecipeHeight = MathF.Max(_craftDisplay.Height.Pixels * 0.55f, 150);
+						_craftRecipe.Left.Set(_craftDisplay.GetDimensions().X, 0);
+						_craftRecipe.Top.Set(_craftDisplay.GetDimensions().Y - craftRecipeHeight + 25, 0);
+						_craftRecipe.Width.Set(_craftDisplay.Width.Pixels, 0);
+						_craftRecipe.Height.Set(craftRecipeHeight, 0);
 
-						craftRecipe.Recalculate();
+						_craftRecipe.Recalculate();
 
-						var craftResultWidth = craftRecipe.Width.Pixels * 0.25f;
-						var craftResultHeight = craftRecipe.Width.Pixels * 0.25f;
-						craftResultPanel.Left.Set(craftRecipe.GetDimensions().X + (craftRecipe.Width.Pixels / 2) - (craftResultWidth / 2), 0);
-						craftResultPanel.Top.Set(craftRecipe.GetDimensions().Y - craftResultHeight + 30, 0);
-						craftResultPanel.Width.Set(craftResultWidth, 0);
-						craftResultPanel.Height.Set(craftResultHeight, 0);
+						var craftResultWidth = _craftRecipe.Width.Pixels * 0.25f;
+						var craftResultHeight = _craftRecipe.Width.Pixels * 0.25f;
+						_craftResultPanel.Left.Set(_craftRecipe.GetDimensions().X + (_craftRecipe.Width.Pixels / 2) - (craftResultWidth / 2), 0);
+						_craftResultPanel.Top.Set(_craftRecipe.GetDimensions().Y - craftResultHeight + 30, 0);
+						_craftResultPanel.Width.Set(craftResultWidth, 0);
+						_craftResultPanel.Height.Set(craftResultHeight, 0);
 					}
 					else
 					{
 						var craftRecipeWidth = MathF.Max(width * 0.1f, 150);
-						var craftRecipeHeight = MathF.Max(craftDisplay.Height.Pixels * 0.55f, 150);
-						craftRecipe.Left.Set(craftDisplay.GetDimensions().X - craftRecipeWidth - 15, 0);
-						craftRecipe.Top.Set(craftDisplay.GetDimensions().Y, 0);
-						craftRecipe.Width.Set(craftRecipeWidth, 0);
-						craftRecipe.Height.Set(craftRecipeHeight, 0);
+						var craftRecipeHeight = MathF.Max(_craftDisplay.Height.Pixels * 0.55f, 150);
+						_craftRecipe.Left.Set(_craftDisplay.GetDimensions().X - craftRecipeWidth - 15, 0);
+						_craftRecipe.Top.Set(_craftDisplay.GetDimensions().Y, 0);
+						_craftRecipe.Width.Set(craftRecipeWidth, 0);
+						_craftRecipe.Height.Set(craftRecipeHeight, 0);
 
-						craftRecipe.Recalculate();
+						_craftRecipe.Recalculate();
 
 
-						var craftResultWidth = craftRecipe.Width.Pixels * 0.35f;
-						craftResultPanel.Left.Set(craftRecipe.GetDimensions().X + (craftRecipe.Width.Pixels / 2) - (craftResultWidth / 2), 0);
-						craftResultPanel.Top.Set(craftRecipe.GetDimensions().Y + craftRecipe.Height.Pixels + 15, 0);
-						craftResultPanel.Width.Set(craftRecipe.Width.Pixels * 0.35f, 0);
-						craftResultPanel.Height.Set(craftRecipe.Width.Pixels * 0.35f, 0);
+						var craftResultWidth = _craftRecipe.Width.Pixels * 0.35f;
+						_craftResultPanel.Left.Set(_craftRecipe.GetDimensions().X + (_craftRecipe.Width.Pixels / 2) - (craftResultWidth / 2), 0);
+						_craftResultPanel.Top.Set(_craftRecipe.GetDimensions().Y + _craftRecipe.Height.Pixels + 15, 0);
+						_craftResultPanel.Width.Set(_craftRecipe.Width.Pixels * 0.35f, 0);
+						_craftResultPanel.Height.Set(_craftRecipe.Width.Pixels * 0.35f, 0);
 					}
 
 
 
-					craftResultPanel.Recalculate();
+					_craftResultPanel.Recalculate();
 
 					if (smallWidth)
 					{
-						craftResultSlotPos = new(
-							craftResultPanel.GetDimensions().X + (craftResultPanel.Width.Pixels / 2) - (40 / 2) - 1,
-							craftResultPanel.GetDimensions().Y + (craftResultPanel.Height.Pixels / 2) - (40 / 2) + 1
+						_craftResultSlotPos = new(
+							_craftResultPanel.GetDimensions().X + (_craftResultPanel.Width.Pixels / 2) - (40 / 2) - 1,
+							_craftResultPanel.GetDimensions().Y + (_craftResultPanel.Height.Pixels / 2) - (40 / 2) + 1
 						);
 					}
 					else
 					{
-						craftResultSlotPos = new(
-							craftResultPanel.GetDimensions().X + (craftResultPanel.Width.Pixels / 2) - (40 / 2),
-							craftResultPanel.GetDimensions().Y + (craftResultPanel.Height.Pixels / 2) - (40 / 2)
+						_craftResultSlotPos = new(
+							_craftResultPanel.GetDimensions().X + (_craftResultPanel.Width.Pixels / 2) - (40 / 2),
+							_craftResultPanel.GetDimensions().Y + (_craftResultPanel.Height.Pixels / 2) - (40 / 2)
 						);
 					}
 				}
@@ -695,9 +695,9 @@ namespace SatelliteStorage.UI
 					"SatelliteStorage: DriveChestUI",
 					delegate
 					{
-						if (_lastUpdateUiGameTime != null && driveChestInterface?.CurrentState != null)
+						if (_lastUpdateUiGameTime != null && _driveChestInterface?.CurrentState != null)
 						{
-							driveChestInterface.Draw(Main.spriteBatch, _lastUpdateUiGameTime);
+							_driveChestInterface.Draw(Main.spriteBatch, _lastUpdateUiGameTime);
 						}
 
 						return true;
@@ -711,7 +711,7 @@ namespace SatelliteStorage.UI
 			if (state)
 			{
 				Instance = this;
-				driveChestInterface?.SetState(this);
+				_driveChestInterface?.SetState(this);
 				CalculateSize();
 				ReloadItems();
 				DriveChestSystem.CheckRecipesRefresh = false;
@@ -719,7 +719,7 @@ namespace SatelliteStorage.UI
 			else
 			{
 				_isMouseDownOnCraftItem = false;
-				driveChestInterface?.SetState(null);
+				_driveChestInterface?.SetState(null);
 
 				for (var i = 0; i < 2; i++)
 				{
@@ -731,16 +731,16 @@ namespace SatelliteStorage.UI
 
 		public override bool GetState()
 		{
-			return driveChestInterface?.CurrentState != null;
+			return _driveChestInterface?.CurrentState != null;
 		}
 
 		private void DrawButtons(SpriteBatch spritebatch)
 		{
-			if (Instance.display == null)
+			if (Instance._display == null)
 				return;
 			for (var i = 0; i < 2; i++)
 			{
-				DrawButton(spritebatch, i, (int) (Instance.buttonsPos.X), (int) (Instance.buttonsPos.Y));
+				DrawButton(spritebatch, i, (int) (Instance._buttonsPos.X), (int) (Instance._buttonsPos.Y));
 			}
 		}
 

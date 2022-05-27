@@ -17,7 +17,7 @@ using Terraria.UI;
 
 namespace SatelliteStorage.UIElements
 {
-	public class UIItemsDisplay : UIElement
+	public class UiItemsDisplay : UIElement
 	{
 		private readonly List<int> _itemIdsAvailableTotal;
 
@@ -31,7 +31,7 @@ namespace SatelliteStorage.UIElements
 
 		private UIPanel _searchBoxPanel;
 
-		private UIState _parentUIState;
+		private UIState _parentUiState;
 
 		private string _searchString;
 
@@ -54,11 +54,11 @@ namespace SatelliteStorage.UIElements
 		private bool _didClickSomething;
 
 		private bool _didClickSearchBar;
-		private UICreativeItemsInfiniteFilteringOptions uICreativeItemsInfiniteFilteringOptions;
+		private UICreativeItemsInfiniteFilteringOptions _uICreativeItemsInfiniteFilteringOptions;
 
-		public UIItemsDisplay(UIState uiStateThatHoldsThis)
+		public UiItemsDisplay(UIState uiStateThatHoldsThis)
 		{
-			_parentUIState = uiStateThatHoldsThis;
+			_parentUiState = uiStateThatHoldsThis;
 			_itemIdsAvailableTotal = new();
 			_itemIdsAvailableToShow = new();
 			_filterer = new();
@@ -98,7 +98,7 @@ namespace SatelliteStorage.UIElements
 				if (Main.netMode == NetmodeID.SinglePlayer)
 				{
 					if (!DriveChestSystem.AddItem(DriveItem.FromItem(Main.mouseItem))) return;
-					DriveChestUI.ReloadItems();
+					DriveChestUi.ReloadItems();
 
 					mouseItem.TurnToAir();
 					Main.mouseItem.TurnToAir();
@@ -160,7 +160,7 @@ namespace SatelliteStorage.UIElements
 		public void UpdateItemsTypes()
 		{
 			var types = new List<int>();
-			DriveChestSystem.GetItems().ForEach(v => types.Add(v.type));
+			DriveChestSystem.GetItems().ForEach(v => types.Add(v.Type));
 			_itemIdsAvailableTotal.Clear();
 			_itemIdsAvailableTotal.AddRange(types);
 		}
@@ -201,8 +201,8 @@ namespace SatelliteStorage.UIElements
 
 		private void TakeItem(UIMouseEvent evt, UIElement listeningElement, int clickType)
 		{
-			if (_itemGrid.hoverItemIndex <= -1) return;
-			var driveItem = _itemGrid._driveItems[_itemGrid.hoverItemIndex];
+			if (_itemGrid.HoverItemIndex <= -1) return;
+			var driveItem = _itemGrid.DriveItems[_itemGrid.HoverItemIndex];
 			if (driveItem == null) return;
 			//SatelliteStorage.Debug("driveItem: " + driveItem.type + ", stack: " + driveItem.stack);
 			var mousePos = evt.MousePosition;
@@ -212,7 +212,7 @@ namespace SatelliteStorage.UIElements
 			var mouseItem = player.inventory[58];
 
 			var isMouseItemAir = mouseItem.IsAir && Main.mouseItem.IsAir;
-			var isMouseItemSame = mouseItem.type == driveItem.type;
+			var isMouseItemSame = mouseItem.type == driveItem.Type;
 			if (!isMouseItemAir && !isMouseItemSame) return;
 
 			if (clickType == 1)
@@ -230,7 +230,7 @@ namespace SatelliteStorage.UIElements
 
 			if (Main.netMode == NetmodeID.SinglePlayer)
 			{
-				var takeItem = DriveChestSystem.TakeItem(driveItem.type, driveItem.prefix, clickType == 1 ? 1 : 0);
+				var takeItem = DriveChestSystem.TakeItem(driveItem.Type, driveItem.Prefix, clickType == 1 ? 1 : 0);
 				if (takeItem == null) return;
 
 				if (clickType == 1)
@@ -248,7 +248,7 @@ namespace SatelliteStorage.UIElements
 					Main.mouseItem = takeItem;
 				}
 
-				DriveChestUI.ReloadItems();
+				DriveChestUi.ReloadItems();
 
 				if (clickType == 1)
 				{
@@ -269,8 +269,8 @@ namespace SatelliteStorage.UIElements
 				packet.Write((byte)SatelliteStorage.MessageType.TakeDriveChestItem);
 				packet.Write((byte)player.whoAmI);
 				packet.Write((byte)clickType);
-				packet.Write7BitEncodedInt(driveItem.type);
-				packet.Write7BitEncodedInt(driveItem.prefix);
+				packet.Write7BitEncodedInt(driveItem.Type);
+				packet.Write7BitEncodedInt(driveItem.Prefix);
 				packet.Send();
 				packet.Close();
 			}
@@ -325,13 +325,13 @@ namespace SatelliteStorage.UIElements
 			uIPanel.Append(uIScrollbar);
 			uIList.SetScrollbar(uIScrollbar);
 			uIList.Add(item);
-			uICreativeItemsInfiniteFilteringOptions = new(_filterer, "CreativeInfinitesFilter");
-			uICreativeItemsInfiniteFilteringOptions.OnClickingOption += filtersHelper_OnClickingOption;
-			uICreativeItemsInfiniteFilteringOptions.Left = new(20f, 0f);
-			totalContainer.Append(uICreativeItemsInfiniteFilteringOptions);
-			uICreativeItemsInfiniteFilteringOptions.OnUpdate += Hover_OnUpdate;
-			uICreativeItemsInfiniteFilteringOptions.OnMouseOver += Hover_OnMouseOver;
-			uICreativeItemsInfiniteFilteringOptions.OnMouseOut += Hover_OnMouseOut;
+			_uICreativeItemsInfiniteFilteringOptions = new(_filterer, "CreativeInfinitesFilter");
+			_uICreativeItemsInfiniteFilteringOptions.OnClickingOption += filtersHelper_OnClickingOption;
+			_uICreativeItemsInfiniteFilteringOptions.Left = new(20f, 0f);
+			totalContainer.Append(_uICreativeItemsInfiniteFilteringOptions);
+			_uICreativeItemsInfiniteFilteringOptions.OnUpdate += Hover_OnUpdate;
+			_uICreativeItemsInfiniteFilteringOptions.OnMouseOver += Hover_OnMouseOver;
+			_uICreativeItemsInfiniteFilteringOptions.OnMouseOut += Hover_OnMouseOut;
 		}
 
 		private void UpdateSacrificeAnimation()

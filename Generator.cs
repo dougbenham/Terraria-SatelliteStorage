@@ -5,31 +5,31 @@ namespace SatelliteStorage;
 
 public class Generator
 {
-	public int chance;
+	private readonly List<int> _dropsChances = new();
 
-	private readonly List<int> dropsChances = new();
-	public List<int[]> drops = new();
+	public readonly int Chance;
+	public readonly List<int[]> Drops = new();
 
 	public Generator(int chance)
 	{
-		this.chance = chance;
+		this.Chance = chance;
 	}
 
 	public Generator AddDrop(int type, int count, int chance, int chanceType)
 	{
-		drops.Add(new int[4] { type, count, chance, chanceType });
-		dropsChances.Add(chance);
+		Drops.Add(new int[4] { type, count, chance, chanceType });
+		_dropsChances.Add(chance);
 		return this;
 	}
 
 	public int GetRandomDropIndex()
 	{
-		var index = RandomUtils.Roulette(dropsChances);
+		var index = RandomUtils.Roulette(_dropsChances);
 		return index;
 	}
 
 	public int[] GetDropData(int index) // 0 - type, 1 - count, 2 - chance
 	{
-		return drops[index];
+		return Drops[index];
 	}
 }

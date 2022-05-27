@@ -13,9 +13,9 @@ namespace SatelliteStorage
 {
     class SatelliteStorageSystem : ModSystem
     {
-        private double lastGeneratorsTickTime;
-        private long lastGeneratorsServerTimestamp;
-        private bool requestStates;
+        private double _lastGeneratorsTickTime;
+        private long _lastGeneratorsServerTimestamp;
+        private bool _requestStates;
 
         public override void UpdateUI(GameTime gameTime)
         {
@@ -29,13 +29,13 @@ namespace SatelliteStorage
 
         public override void SaveWorldData(TagCompound tag)
         {
-            IList<DriveItem> t_items = DriveChestSystem.GetItems();
+            IList<DriveItem> tItems = DriveChestSystem.GetItems();
 
             IList<TagCompound> itemsCompound = new List<TagCompound>();
 
-            for (var i = 0; i < t_items.Count; i++)
+            for (var i = 0; i < tItems.Count; i++)
             {
-                var item = t_items[i];
+                var item = tItems[i];
                 itemsCompound.Add(DriveItemsSerializer.SaveDriveItem(item));
             }
 
@@ -105,9 +105,9 @@ namespace SatelliteStorage
 
         public override void PostUpdateWorld()
         {
-            if (Main.netMode == NetmodeID.SinglePlayer && Main.gameTimeCache.TotalGameTime.TotalMilliseconds > lastGeneratorsTickTime + SatelliteStorage.GeneratorsInterval)
+            if (Main.netMode == NetmodeID.SinglePlayer && Main.gameTimeCache.TotalGameTime.TotalMilliseconds > _lastGeneratorsTickTime + SatelliteStorage.GeneratorsInterval)
             {
-                lastGeneratorsTickTime = Main.gameTimeCache.TotalGameTime.TotalMilliseconds;
+                _lastGeneratorsTickTime = Main.gameTimeCache.TotalGameTime.TotalMilliseconds;
 
                 DriveChestSystem.OnGeneratorsTick();
             }
@@ -120,18 +120,18 @@ namespace SatelliteStorage
         {
             if (Main.netMode == NetmodeID.Server) {
                 var timestamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
-                if (timestamp > lastGeneratorsServerTimestamp + SatelliteStorage.GeneratorsInterval)
+                if (timestamp > _lastGeneratorsServerTimestamp + SatelliteStorage.GeneratorsInterval)
                 {
-                    lastGeneratorsServerTimestamp = timestamp;
+                    _lastGeneratorsServerTimestamp = timestamp;
                     DriveChestSystem.OnGeneratorsTick();
                 }
             }
 
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
-                if (!requestStates)
+                if (!_requestStates)
                 {
-                    requestStates = true;
+                    _requestStates = true;
 
                     var player = Main.LocalPlayer;
 

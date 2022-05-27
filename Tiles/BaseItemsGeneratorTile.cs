@@ -14,8 +14,7 @@ namespace SatelliteStorage.Tiles
 {
     class BaseItemsGeneratorTile : ModTile
     {
-		public byte generatorType;
-		public int itemDrop;
+		public byte GeneratorType;
 
 		public override void SetStaticDefaults()
 		{
@@ -55,8 +54,8 @@ namespace SatelliteStorage.Tiles
 
 		public virtual void SetGeneratorDefaults()
         {
-			itemDrop = ModContent.ItemType<DriveChestItem>();
-			generatorType = (byte)SatelliteStorage.GeneratorTypes.BaseGenerator;
+			ItemDrop = ModContent.ItemType<DriveChestItem>();
+			GeneratorType = (byte)SatelliteStorage.GeneratorTypes.BaseGenerator;
 		}
 
 		public override void NumDust(int i, int j, bool fail, ref int num)
@@ -73,10 +72,10 @@ namespace SatelliteStorage.Tiles
 		{
 			if (Main.netMode == NetmodeID.SinglePlayer || Main.netMode == NetmodeID.Server)
 			{
-				DriveChestSystem.SubGenerator(generatorType);
+				DriveChestSystem.SubGenerator(GeneratorType);
 			}
 
-			Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, itemDrop);
+			Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ((ModBlockType) this).ItemDrop);
 		}
 
 		public override void MouseOver(int i, int j)
@@ -118,7 +117,7 @@ namespace SatelliteStorage.Tiles
 		{
 			if (Main.netMode == NetmodeID.SinglePlayer)
 			{
-				DriveChestSystem.AddGenerator(generatorType);
+				DriveChestSystem.AddGenerator(GeneratorType);
 			}
 
 			if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -128,7 +127,7 @@ namespace SatelliteStorage.Tiles
 				packet.Write((byte)SatelliteStorage.MessageType.AddDriveChestItem);
 				packet.Write((byte)player.whoAmI);
 				
-				packet.Write(generatorType);
+				packet.Write(GeneratorType);
 				packet.Write((byte)1);
 
 				packet.Send();

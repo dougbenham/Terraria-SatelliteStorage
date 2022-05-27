@@ -19,10 +19,10 @@ namespace SatelliteStorage.DriveSystem
 			}
 		}
 
-		public int type;
-		public int prefix;
-		public int context = 0;
-		public int recipe = -1;
+		public int Type;
+		public int Prefix;
+		public int Context = 0;
+		public int Recipe = -1;
 
 		public DriveItem()
 		{
@@ -33,20 +33,20 @@ namespace SatelliteStorage.DriveSystem
 		{
 			var driveItem = new DriveItem();
 			driveItem.Stack = item.stack;
-			driveItem.type = item.type;
-			driveItem.prefix = item.prefix;
+			driveItem.Type = item.type;
+			driveItem.Prefix = item.prefix;
 			return driveItem;
 		}
 
 		public Item ToItem()
 		{
 			var item = new Item();
-			item.type = type;
+			item.type = Type;
 			item.SetDefaults(item.type);
 			item.stack = Stack;
 			if (item.stack > item.maxStack)
 				item.stack = item.maxStack;
-			item.prefix = prefix;
+			item.prefix = Prefix;
 			return item;
 		}
 	}

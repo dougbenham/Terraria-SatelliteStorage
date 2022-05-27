@@ -10,7 +10,7 @@ using Terraria.UI;
 
 namespace SatelliteStorage.UIElements
 {
-	class UICraftDisplay : UIElement
+	class UiCraftDisplay : UIElement
 	{
 		private int _lastCheckedVersionForEdits = -1;
 		private UIElement _containerInfinites;
@@ -21,10 +21,10 @@ namespace SatelliteStorage.UIElements
 		private CreativeUnlocksTracker _lastTrackerCheckedForEdits;
 		private EntrySorter<int, ICreativeItemSortStep> _sorter;
 		public Action<int> OnRecipeChoosen;
-		public int selectedRecipe = -1;
+		public int SelectedRecipe = -1;
 		public static bool Hidden = true;
 
-		public UICraftDisplay(UIState uiStateThatHoldsThis)
+		public UiCraftDisplay(UIState uiStateThatHoldsThis)
 		{
 			_itemIdsAvailableTotal = new();
 			_itemIdsAvailableToShow = new();
@@ -81,9 +81,9 @@ namespace SatelliteStorage.UIElements
 
 		private void SelectItem(UIMouseEvent evt, UIElement listeningElement)
 		{
-			if (_itemGrid.hoverItemIndex <= -1)
+			if (_itemGrid.HoverItemIndex <= -1)
 				return;
-			var driveItem = _itemGrid._driveItems[_itemGrid.hoverItemIndex];
+			var driveItem = _itemGrid.DriveItems[_itemGrid.HoverItemIndex];
 			if (driveItem == null)
 				return;
 
@@ -92,11 +92,11 @@ namespace SatelliteStorage.UIElements
 
 			if (!mouseItem.IsAir || !Main.mouseItem.IsAir)
 				return;
-			if (selectedRecipe == driveItem.recipe)
+			if (SelectedRecipe == driveItem.Recipe)
 				return;
-			selectedRecipe = driveItem.recipe;
+			SelectedRecipe = driveItem.Recipe;
 			UpdateContents();
-			OnRecipeChoosen(driveItem.recipe);
+			OnRecipeChoosen(driveItem.Recipe);
 		}
 
 		private void BuildInfinitesMenuContents(UIElement totalContainer)
@@ -175,28 +175,28 @@ namespace SatelliteStorage.UIElements
 			{
 				var item = DriveChestSystem.AvailableRecipes[key].createItem;
 				var driveItem = new DriveItem();
-				driveItem.type = item.type;
+				driveItem.Type = item.type;
 				driveItem.Stack = item.stack;
-				driveItem.prefix = item.prefix;
-				driveItem.recipe = key;
-				driveItem.context = 26;
-				if (selectedRecipe == key)
+				driveItem.Prefix = item.prefix;
+				driveItem.Recipe = key;
+				driveItem.Context = 26;
+				if (SelectedRecipe == key)
 				{
 					hasRecipe = true;
-					driveItem.context = 34;
+					driveItem.Context = 34;
 				}
 
 				recipeItems.Add(driveItem);
 			}
 
-			UICraftRecipe.Hidden = !hasRecipe;
+			UiCraftRecipe.Hidden = !hasRecipe;
 
 			_itemGrid.SetContentsToShow(_itemIdsAvailableToShow, recipeItems);
 			Hidden = false;
 			if (DriveChestSystem.AvailableRecipes.Keys.Count <= 0)
 			{
 				Hidden = true;
-				UICraftRecipe.Hidden = true;
+				UiCraftRecipe.Hidden = true;
 			}
 		}
 

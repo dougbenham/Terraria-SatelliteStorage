@@ -10,7 +10,7 @@ using Terraria.UI;
 
 namespace SatelliteStorage.UIElements
 {
-	class UICraftRecipe : UIElement
+	class UiCraftRecipe : UIElement
 	{
 		private int _lastCheckedVersionForEdits = -1;
 		private UIElement _containerInfinites;
@@ -25,11 +25,11 @@ namespace SatelliteStorage.UIElements
 		private EntrySorter<int, ICreativeItemSortStep> _sorter;
 		private bool _didClickSomething;
 		private bool _didClickSearchBar;
-		private int currentRecipe = -1;
+		private int _currentRecipe = -1;
 
 		public static bool Hidden = true;
 
-		public UICraftRecipe(UIState uiStateThatHoldsThis)
+		public UiCraftRecipe(UIState uiStateThatHoldsThis)
 		{
 			_itemIdsAvailableTotal = new();
 			_itemIdsAvailableToShow = new();
@@ -154,9 +154,9 @@ namespace SatelliteStorage.UIElements
 
 		private void UpdateContents()
 		{
-			if (currentRecipe <= -1)
+			if (_currentRecipe <= -1)
 				return;
-			var recipe = Main.recipe[currentRecipe];
+			var recipe = Main.recipe[_currentRecipe];
 			var types = new List<int>();
 
 			recipe.requiredItem.ForEach(item => { types.Add(item.type); });
@@ -174,7 +174,7 @@ namespace SatelliteStorage.UIElements
 			recipe.requiredItem.ForEach(item =>
 			{
 				var driveItem = DriveItem.FromItem(item);
-				driveItem.context = 26;
+				driveItem.Context = 26;
 				driveItems.Add(driveItem);
 			});
 
@@ -183,7 +183,7 @@ namespace SatelliteStorage.UIElements
 
 		public void SetRecipe(int recipe)
 		{
-			currentRecipe = recipe;
+			_currentRecipe = recipe;
 			UpdateContents();
 		}
 

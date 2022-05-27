@@ -9,7 +9,7 @@ namespace SatelliteStorage.Global
     {
         public override bool OnPickup(Item item, Player player)
         {
-            if (SatelliteStorage.GetUIState((int)UITypes.DriveChest))
+            if (SatelliteStorage.GetUiState((int)UiTypes.DriveChest))
             {
                 DriveChestSystem.CheckRecipesRefresh = false;
             }
@@ -19,7 +19,7 @@ namespace SatelliteStorage.Global
 
         public override void OnConsumeItem(Item item, Player player)
         {
-            if (SatelliteStorage.GetUIState((int)UITypes.DriveChest))
+            if (SatelliteStorage.GetUiState((int)UiTypes.DriveChest))
             {
                 DriveChestSystem.CheckRecipesRefresh = false;
             }

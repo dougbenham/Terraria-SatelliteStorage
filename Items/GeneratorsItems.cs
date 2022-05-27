@@ -12,7 +12,7 @@ namespace SatelliteStorage.Items
 			Item.value = 500;
 			Item.createTile = ModContent.TileType<HellstoneGeneratorTile>();
 			Item.rare = ItemRarityID.Green;
-			generatorType = (byte) SatelliteStorage.GeneratorTypes.HellstoneGenerator;
+			GeneratorType = (byte) SatelliteStorage.GeneratorTypes.HellstoneGenerator;
 		}
 
 		public override void AddGeneratorRecipes()
@@ -33,7 +33,7 @@ namespace SatelliteStorage.Items
 			Item.value = 500;
 			Item.createTile = ModContent.TileType<MeteoriteGeneratorTile>();
 			Item.rare = ItemRarityID.Blue;
-			generatorType = (byte) SatelliteStorage.GeneratorTypes.MeteoriteGenerator;
+			GeneratorType = (byte) SatelliteStorage.GeneratorTypes.MeteoriteGenerator;
 		}
 
 		public override void AddGeneratorRecipes()
@@ -54,7 +54,7 @@ namespace SatelliteStorage.Items
 			Item.value = 500;
 			Item.createTile = ModContent.TileType<ShroomiteGeneratorTile>();
 			Item.rare = ItemRarityID.Lime;
-			generatorType = (byte) SatelliteStorage.GeneratorTypes.ShroomiteGenerator;
+			GeneratorType = (byte) SatelliteStorage.GeneratorTypes.ShroomiteGenerator;
 		}
 
 		public override void AddGeneratorRecipes()
@@ -75,7 +75,7 @@ namespace SatelliteStorage.Items
 			Item.value = 500;
 			Item.createTile = ModContent.TileType<SpectreGeneratorTile>();
 			Item.rare = ItemRarityID.Lime;
-			generatorType = (byte) SatelliteStorage.GeneratorTypes.SpectreGenerator;
+			GeneratorType = (byte) SatelliteStorage.GeneratorTypes.SpectreGenerator;
 		}
 
 		public override void AddGeneratorRecipes()
@@ -96,7 +96,7 @@ namespace SatelliteStorage.Items
 			Item.value = 500;
 			Item.createTile = ModContent.TileType<LuminiteGeneratorTile>();
 			Item.rare = ItemRarityID.Red;
-			generatorType = (byte) SatelliteStorage.GeneratorTypes.LuminiteGenerator;
+			GeneratorType = (byte) SatelliteStorage.GeneratorTypes.LuminiteGenerator;
 		}
 
 		public override void AddGeneratorRecipes()
@@ -117,7 +117,7 @@ namespace SatelliteStorage.Items
 			Item.value = 500;
 			Item.createTile = ModContent.TileType<ChlorophyteGeneratorTile>();
 			Item.rare = ItemRarityID.Lime;
-			generatorType = (byte) SatelliteStorage.GeneratorTypes.ChlorophyteGenerator;
+			GeneratorType = (byte) SatelliteStorage.GeneratorTypes.ChlorophyteGenerator;
 		}
 
 		public override void AddGeneratorRecipes()
@@ -138,7 +138,7 @@ namespace SatelliteStorage.Items
 			Item.value = 500;
 			Item.createTile = ModContent.TileType<HallowedGeneratorTile>();
 			Item.rare = ItemRarityID.LightRed;
-			generatorType = (byte) SatelliteStorage.GeneratorTypes.HallowedGenerator;
+			GeneratorType = (byte) SatelliteStorage.GeneratorTypes.HallowedGenerator;
 		}
 
 		public override void AddGeneratorRecipes()
@@ -159,7 +159,7 @@ namespace SatelliteStorage.Items
 			Item.value = 500;
 			Item.createTile = ModContent.TileType<SoulGeneratorTile>();
 			Item.rare = ItemRarityID.Orange;
-			generatorType = (byte) SatelliteStorage.GeneratorTypes.SoulGenerator;
+			GeneratorType = (byte) SatelliteStorage.GeneratorTypes.SoulGenerator;
 		}
 
 		public override void AddGeneratorRecipes()
@@ -180,7 +180,7 @@ namespace SatelliteStorage.Items
 			Item.value = 500;
 			Item.createTile = ModContent.TileType<PowerGeneratorTile>();
 			Item.rare = ItemRarityID.Pink;
-			generatorType = (byte) SatelliteStorage.GeneratorTypes.PowerGenerator;
+			GeneratorType = (byte) SatelliteStorage.GeneratorTypes.PowerGenerator;
 		}
 
 		public override void AddGeneratorRecipes()

@@ -15,8 +15,7 @@ namespace SatelliteStorage
 	public class SatelliteStorage : Mod
 	{
 		public static SatelliteStorage Instance;
-		public DriveChestSystem driveChestSystem;
-		private readonly Dictionary<int, BaseUIState> uidict = new();
+		private readonly Dictionary<int, BaseUiState> _uidict = new();
 
 		public static bool TakeDriveChestItemSended;
 		public static bool AddDriveChestItemSended;
@@ -61,14 +60,14 @@ namespace SatelliteStorage
 			VeryLowChance
 		}
 
-		public Dictionary<int, Generator> generators = new();
+		public Dictionary<int, Generator> Generators = new();
 
 		public override void Load()
 		{
 			Instance = this;
-			driveChestSystem = new();
+			var driveChestSystem = new DriveChestSystem();
 
-			generators.Add((int) GeneratorTypes.BaseGenerator,
+			Generators.Add((int) GeneratorTypes.BaseGenerator,
 				new Generator(25)
 					.AddDrop(ItemID.TinBar, 1, 100, (int) ChancesTypes.VeryHighChance)
 					.AddDrop(ItemID.CopperBar, 1, 100, (int) ChancesTypes.VeryHighChance)
@@ -85,31 +84,31 @@ namespace SatelliteStorage
 					.AddDrop(ItemID.Amethyst, 1, 5, (int) ChancesTypes.VeryLowChance)
 			);
 
-			generators.Add((int) GeneratorTypes.HellstoneGenerator,
+			Generators.Add((int) GeneratorTypes.HellstoneGenerator,
 				new Generator(25)
 					.AddDrop(ItemID.Obsidian, 1, 100, (int) ChancesTypes.VeryHighChance)
 					.AddDrop(ItemID.HellstoneBar, 1, 25, (int) ChancesTypes.AverageChance)
 			);
 
-			generators.Add((int) GeneratorTypes.MeteoriteGenerator,
+			Generators.Add((int) GeneratorTypes.MeteoriteGenerator,
 				new Generator(10)
 					.AddDrop(ItemID.MeteoriteBar, 1, 100, (int) ChancesTypes.AverageChance)
 			);
 
-			generators.Add((int) GeneratorTypes.ShroomiteGenerator,
+			Generators.Add((int) GeneratorTypes.ShroomiteGenerator,
 				new Generator(25)
 					.AddDrop(ItemID.GlowingMushroom, 1, 100, (int) ChancesTypes.VeryHighChance)
 					.AddDrop(ItemID.ChlorophyteBar, 1, 15, (int) ChancesTypes.VeryLowChance)
 			);
 
-			generators.Add((int) GeneratorTypes.SpectreGenerator,
+			Generators.Add((int) GeneratorTypes.SpectreGenerator,
 				new Generator(25)
 					.AddDrop(ItemID.Bone, 1, 100, (int) ChancesTypes.VeryHighChance)
 					.AddDrop(ItemID.Ectoplasm, 1, 50, (int) ChancesTypes.HighChance)
 					.AddDrop(ItemID.ChlorophyteBar, 1, 15, (int) ChancesTypes.VeryLowChance)
 			);
 
-			generators.Add((int) GeneratorTypes.LuminiteGenerator,
+			Generators.Add((int) GeneratorTypes.LuminiteGenerator,
 				new Generator(15)
 					.AddDrop(ItemID.LunarBar, 1, 50, (int) ChancesTypes.HighChance)
 					.AddDrop(ItemID.FragmentSolar, 1, 50, (int) ChancesTypes.HighChance)
@@ -118,7 +117,7 @@ namespace SatelliteStorage
 					.AddDrop(ItemID.FragmentStardust, 1, 50, (int) ChancesTypes.HighChance)
 			);
 
-			generators.Add((int) GeneratorTypes.ChlorophyteGenerator,
+			Generators.Add((int) GeneratorTypes.ChlorophyteGenerator,
 				new Generator(25)
 					.AddDrop(ItemID.JungleSpores, 1, 100, (int) ChancesTypes.VeryHighChance)
 					.AddDrop(ItemID.Stinger, 1, 100, (int) ChancesTypes.VeryHighChance)
@@ -126,7 +125,7 @@ namespace SatelliteStorage
 					.AddDrop(ItemID.ChlorophyteBar, 1, 50, (int) ChancesTypes.HighChance)
 			);
 
-			generators.Add((int) GeneratorTypes.HallowedGenerator,
+			Generators.Add((int) GeneratorTypes.HallowedGenerator,
 				new Generator(25)
 					.AddDrop(ItemID.SilverCoin, 1, 100, (int) ChancesTypes.VeryHighChance)
 					.AddDrop(ItemID.HallowedBar, 1, 25, (int) ChancesTypes.LowChance)
@@ -134,14 +133,14 @@ namespace SatelliteStorage
 					.AddDrop(ItemID.SuperManaPotion, 1, 5, (int) ChancesTypes.VeryLowChance)
 			);
 
-			generators.Add((int) GeneratorTypes.SoulGenerator,
+			Generators.Add((int) GeneratorTypes.SoulGenerator,
 				new Generator(25)
 					.AddDrop(ItemID.SoulofFlight, 1, 100, (int) ChancesTypes.VeryHighChance)
 					.AddDrop(ItemID.SoulofLight, 1, 100, (int) ChancesTypes.VeryHighChance)
 					.AddDrop(ItemID.SoulofNight, 1, 100, (int) ChancesTypes.VeryHighChance)
 			);
 
-			generators.Add((int) GeneratorTypes.PowerGenerator,
+			Generators.Add((int) GeneratorTypes.PowerGenerator,
 				new Generator(25)
 					.AddDrop(ItemID.SoulofMight, 1, 100, (int) ChancesTypes.VeryHighChance)
 					.AddDrop(ItemID.SoulofSight, 1, 100, (int) ChancesTypes.VeryHighChance)
@@ -152,31 +151,31 @@ namespace SatelliteStorage
 
 			if (!Main.dedServ)
 			{
-				uidict.Add((int) UITypes.DriveChest, new DriveChestUI());
+				_uidict.Add((int) UiTypes.DriveChest, new DriveChestUi());
 
-				foreach (var ui in uidict.Values)
+				foreach (var ui in _uidict.Values)
 				{
 					ui.Activate();
 				}
 			}
 		}
 
-		public static void SetUIState(int type, bool state)
+		public static void SetUiState(int type, bool state)
 		{
-			if (Instance.uidict.ContainsKey(type))
-				Instance.uidict[type].SetState(state);
+			if (Instance._uidict.ContainsKey(type))
+				Instance._uidict[type].SetState(state);
 		}
 
-		public static bool GetUIState(int type)
+		public static bool GetUiState(int type)
 		{
-			if (!Instance.uidict.ContainsKey(type))
+			if (!Instance._uidict.ContainsKey(type))
 				return false;
-			return Instance.uidict[type].GetState();
+			return Instance._uidict[type].GetState();
 		}
 
 		public void OnUpdateUI(GameTime gameTime)
 		{
-			foreach (var ui in uidict.Values)
+			foreach (var ui in _uidict.Values)
 			{
 				ui.OnUpdateUI(gameTime);
 			}
@@ -184,7 +183,7 @@ namespace SatelliteStorage
 
 		public void OnModifyInterfaceLayers(List<GameInterfaceLayer> layers)
 		{
-			foreach (var ui in uidict.Values)
+			foreach (var ui in _uidict.Values)
 			{
 				ui.OnModifyInterfaceLayers(layers);
 			}
@@ -226,21 +225,6 @@ namespace SatelliteStorage
 					case MessageType.SetSputnikState:
 						DriveChestSystem.IsSputnikPlaced = reader.ReadByte() == 1;
 						SendSputnikState(); // sync to all clients
-						break;
-					case MessageType.ChangeGeneratorState:
-						playernumber = reader.ReadByte();
-						var generatorType = reader.ReadByte();
-						var changeTo = reader.ReadByte();
-
-						if (changeTo == 1)
-						{
-							DriveChestSystem.AddGenerator(generatorType);
-						}
-						else
-						{
-							DriveChestSystem.SubGenerator(generatorType);
-						}
-
 						break;
 					case MessageType.RequestStates:
 						playernumber = reader.ReadByte();
@@ -335,9 +319,9 @@ namespace SatelliteStorage
 						var added = false;
 
 						var addItem = new DriveItem();
-						addItem.type = amouseItem.type;
+						addItem.Type = amouseItem.type;
 						addItem.Stack = amouseItem.stack;
-						addItem.prefix = amouseItem.prefix;
+						addItem.Prefix = amouseItem.prefix;
 
 						if (!amouseItem.IsAir && DriveChestSystem.AddItem(addItem))
 						{
@@ -354,8 +338,8 @@ namespace SatelliteStorage
 						break;
 					case MessageType.TryCraftRecipe:
 						playernumber = reader.ReadByte();
-						var recipeID = reader.Read7BitEncodedInt();
-						var recipe = Main.recipe[recipeID];
+						var recipeId = reader.Read7BitEncodedInt();
+						var recipe = Main.recipe[recipeId];
 						var plInvItems = Main.player[playernumber].inventory;
 						var plMouseItem = plInvItems[58];
 
@@ -379,21 +363,21 @@ namespace SatelliteStorage
 						uses.ForEach(u =>
 						{
 							var item = new Item();
-							item.type = u.type;
+							item.type = u.Type;
 							item.SetDefaults(item.type);
 							item.stack = 1;
 
-							if (u.from == 0)
+							if (u.From == 0)
 							{
-								plInvItems[u.slot].stack -= u.stack;
-								if (plInvItems[u.slot].stack <= 0)
-									plInvItems[u.slot].TurnToAir();
+								plInvItems[u.Slot].stack -= u.Stack;
+								if (plInvItems[u.Slot].stack <= 0)
+									plInvItems[u.Slot].TurnToAir();
 
-								changedInvSlots[u.slot] = plInvItems[u.slot].stack;
+								changedInvSlots[u.Slot] = plInvItems[u.Slot].stack;
 							}
 							else
 							{
-								DriveChestSystem.SubItem(u.type, u.stack);
+								DriveChestSystem.SubItem(u.Type, u.Stack);
 							}
 						});
 
@@ -435,12 +419,12 @@ namespace SatelliteStorage
 							return;
 
 						var depositItem = new DriveItem();
-						depositItem.type = invItem.type;
+						depositItem.Type = invItem.type;
 						depositItem.Stack = invItem.stack;
-						depositItem.prefix = invItem.prefix;
+						depositItem.Prefix = invItem.prefix;
 
 
-						if ((depositType == 1 ? true : DriveChestSystem.HasItem(depositItem)) && DriveChestSystem.AddItem(depositItem))
+						if ((depositType == 1 || DriveChestSystem.HasItem(depositItem)) && DriveChestSystem.AddItem(depositItem))
 						{
 							invItem.TurnToAir();
 
@@ -471,7 +455,7 @@ namespace SatelliteStorage
 						DriveChestSystem.InitItems(items);
 						SoundEngine.PlaySound(SoundID.MenuOpen);
 						Main.playerInventory = true;
-						SetUIState((int) UITypes.DriveChest, true);
+						SetUiState((int) UiTypes.DriveChest, true);
 
 						break;
 					case MessageType.TakeDriveChestItem:
@@ -531,7 +515,7 @@ namespace SatelliteStorage
 					case MessageType.SyncGeneratorState:
 						var generatorType = reader.ReadByte();
 						var generatorCount = reader.Read7BitEncodedInt();
-						DriveChestSystem.Instance.generators[generatorType] = generatorCount;
+						DriveChestSystem.Instance.Generators[generatorType] = generatorCount;
 
 						break;
 					case MessageType.TryCraftRecipe:
@@ -569,12 +553,12 @@ namespace SatelliteStorage
 
 						var syncItem = new DriveItem();
 
-						syncItem.type = reader.Read7BitEncodedInt();
+						syncItem.Type = reader.Read7BitEncodedInt();
 						syncItem.Stack = reader.Read7BitEncodedInt();
-						syncItem.prefix = reader.Read7BitEncodedInt();
+						syncItem.Prefix = reader.Read7BitEncodedInt();
 
 						DriveChestSystem.SyncItem(syncItem);
-						DriveChestUI.ReloadItems();
+						DriveChestUi.ReloadItems();
 
 						break;
 					default:

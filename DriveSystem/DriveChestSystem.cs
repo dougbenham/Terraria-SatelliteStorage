@@ -11,9 +11,9 @@ namespace SatelliteStorage.DriveSystem
     {
         public static DriveChestSystem Instance;
         public static readonly Dictionary<int, Recipe> AvailableRecipes = new();
-        private List<DriveItem> items = new();
-		public Dictionary<int, int> generators = new();
-		private readonly Dictionary<int, int> generatedItemsQueue = new();
+        private List<DriveItem> _items = new();
+		public Dictionary<int, int> Generators = new();
+		private readonly Dictionary<int, int> _generatedItemsQueue = new();
 		public static bool IsSputnikPlaced = false;
 		public static bool CheckRecipesRefresh;
 
@@ -25,41 +25,41 @@ namespace SatelliteStorage.DriveSystem
         public static void InitItems(List<DriveItem> items)
         {
             CheckRecipesRefresh = false;
-            Instance.items = items;
+            Instance._items = items;
         }
 
         public static void ClearItems()
         {
-            Instance.items.Clear();
+            Instance._items.Clear();
         }
 
         public static List<DriveItem> GetItems()
         {
-            return Instance.items;
+            return Instance._items;
         }
 
 		public static void InitGenerators(Dictionary<int, int> generators)
 		{
-			Instance.generators = generators;
+			Instance.Generators = generators;
 		}
 
 		public static Dictionary<int, int> GetGenerators()
         {
-			return Instance.generators;
+			return Instance.Generators;
         }
 
 		public static void AddGenerator(byte type)
         {
-			if (Instance.generators.ContainsKey(type)) Instance.generators[type]++;
-			else Instance.generators[type] = 1;
+			if (Instance.Generators.ContainsKey(type)) Instance.Generators[type]++;
+			else Instance.Generators[type] = 1;
 			SyncGenerator(type);
 		}
 
 		public static void SubGenerator(byte type)
         {
-			if (!Instance.generators.ContainsKey(type)) return;
-			Instance.generators[type]--;
-			if (Instance.generators[type] < 0) Instance.generators[type] = 0;
+			if (!Instance.Generators.ContainsKey(type)) return;
+			Instance.Generators[type]--;
+			if (Instance.Generators[type] < 0) Instance.Generators[type] = 0;
 			SyncGenerator(type);
 		}
 
@@ -70,14 +70,14 @@ namespace SatelliteStorage.DriveSystem
 			var packet = SatelliteStorage.Instance.GetPacket();
 			packet.Write((byte)SatelliteStorage.MessageType.SyncGeneratorState);
 			packet.Write(type);
-			packet.Write7BitEncodedInt(Instance.generators[type]);
+			packet.Write7BitEncodedInt(Instance.Generators[type]);
 			packet.Send(to);
 			packet.Close();
 		}
 
 		public static void SyncAllGeneratorsTo(int to)
         {
-			foreach (byte key in Instance.generators.Keys)
+			foreach (byte key in Instance.Generators.Keys)
             {
 				SyncGenerator(key, to);
             }
@@ -85,7 +85,7 @@ namespace SatelliteStorage.DriveSystem
 
 		public static bool AddItem(DriveItem item, bool needSync = true)
         {
-            var searchItem = Instance.items.Find(v => v.type == item.type && v.prefix == item.prefix);
+            var searchItem = Instance._items.Find(v => v.Type == item.Type && v.Prefix == item.Prefix);
             if (searchItem != null)
             {
                 searchItem.Stack += item.Stack;
@@ -93,7 +93,7 @@ namespace SatelliteStorage.DriveSystem
                 return true;
             }
 
-            Instance.items.Add(item);
+            Instance._items.Add(item);
 
             if (needSync) Instance.SendItemSync(item);
 
@@ -102,29 +102,29 @@ namespace SatelliteStorage.DriveSystem
 
 		public static void SyncItemByType(int type)
         {
-			var searchItem = Instance.items.Find(v => v.type == type);
+			var searchItem = Instance._items.Find(v => v.Type == type);
 			if (searchItem == null) return;
 			Instance.SendItemSync(searchItem);
 		}
 
         public static bool HasItem(DriveItem item)
         {
-            var searchItem = Instance.items.Find(v => v.type == item.type && v.prefix == item.prefix);
+            var searchItem = Instance._items.Find(v => v.Type == item.Type && v.Prefix == item.Prefix);
             if (searchItem != null) return true;
             return false;
         }
 
         public static void SyncItem(DriveItem item)
         {
-            var searchItem = Instance.items.Find(v => v.type == item.type && v.prefix == item.prefix);
+            var searchItem = Instance._items.Find(v => v.Type == item.Type && v.Prefix == item.Prefix);
             if (searchItem != null)
             {
                 searchItem.Stack = item.Stack;
-                if (searchItem.Stack <= 0) Instance.items.Remove(searchItem);
+                if (searchItem.Stack <= 0) Instance._items.Remove(searchItem);
             }
             else
             {
-                Instance.items.Add(item);
+                Instance._items.Add(item);
             }
 
             CheckRecipesRefresh = false;
@@ -140,23 +140,23 @@ namespace SatelliteStorage.DriveSystem
 
             var packet = SatelliteStorage.Instance.GetPacket();
             packet.Write((byte)SatelliteStorage.MessageType.SyncDriveChestItem);
-            packet.Write7BitEncodedInt(item.type);
+            packet.Write7BitEncodedInt(item.Type);
             packet.Write7BitEncodedInt(item.Stack);
-            packet.Write7BitEncodedInt(item.prefix);
+            packet.Write7BitEncodedInt(item.Prefix);
             packet.Send();
             packet.Close();
         }
 
         public static Item TakeItem(int type, int prefix, int count = 0)
         {
-            var searchItem = Instance.items.Find(v => v.type == type && v.prefix == prefix);
+            var searchItem = Instance._items.Find(v => v.Type == type && v.Prefix == prefix);
             if (searchItem == null) return null;
             var item = searchItem.ToItem();
 			if (count > 0) item.stack = count;
 			if (item.stack > item.maxStack) item.stack = item.maxStack;
 			
 			searchItem.Stack -= item.stack;
-            if (searchItem.Stack <= 0) Instance.items.Remove(searchItem);
+            if (searchItem.Stack <= 0) Instance._items.Remove(searchItem);
 
             Instance.SendItemSync(searchItem);
 
@@ -165,11 +165,11 @@ namespace SatelliteStorage.DriveSystem
 
 		public static void SubItem(int type, int count)
         {
-			var searchItem = Instance.items.Find(v => v.type == type);
+			var searchItem = Instance._items.Find(v => v.Type == type);
 			if (searchItem == null) return;
 
 			searchItem.Stack -= count;
-			if (searchItem.Stack <= 0) Instance.items.Remove(searchItem);
+			if (searchItem.Stack <= 0) Instance._items.Remove(searchItem);
 
 			Instance.SendItemSync(searchItem);
 		}
@@ -197,40 +197,40 @@ namespace SatelliteStorage.DriveSystem
 					{
 						hasItems[invItem.type] += invItem.stack;
 						var usesItem = new RecipeItemUse();
-						usesItem.type = invItem.type;
-						usesItem.stack = invItem.stack;
+						usesItem.Type = invItem.type;
+						usesItem.Stack = invItem.stack;
 						//int difference = 0;
 						//difference = invItem.stack - playerInv[l].stack;
 						//SatelliteStorage.Debug("DIFF: " + difference);
 						//if (difference > 0) usesItem.stack -= difference;
 
 						if (hasItems[invItem.type] > recipeItems[invItem.type]) hasItems[invItem.type] = recipeItems[invItem.type];
-						if (usesItem.stack > recipeItems[usesItem.type]) usesItem.stack = recipeItems[usesItem.type];
+						if (usesItem.Stack > recipeItems[usesItem.Type]) usesItem.Stack = recipeItems[usesItem.Type];
 
-						usesItem.slot = l;
-						usesItem.from = 0;
+						usesItem.Slot = l;
+						usesItem.From = 0;
 
-						if (usesItem.stack > 0) uses.Add(usesItem);
+						if (usesItem.Stack > 0) uses.Add(usesItem);
 					}
 				}
 			}
 			
 
-			for (var i = 0; i < Instance.items.Count; i++)
+			for (var i = 0; i < Instance._items.Count; i++)
 			{
-				var driveItem = Instance.items[i];
-				if (recipeItems.ContainsKey(driveItem.type))
+				var driveItem = Instance._items[i];
+				if (recipeItems.ContainsKey(driveItem.Type))
                 {
-					if (hasItems[driveItem.type] < recipeItems[driveItem.type])
+					if (hasItems[driveItem.Type] < recipeItems[driveItem.Type])
                     {
-						var needItems = recipeItems[driveItem.type] - hasItems[driveItem.type];
+						var needItems = recipeItems[driveItem.Type] - hasItems[driveItem.Type];
 						var usesItem = new RecipeItemUse();
-						usesItem.type = driveItem.type;
-						usesItem.stack = driveItem.Stack;
-						usesItem.from = 1;
-						hasItems[driveItem.type] += driveItem.Stack;
-						if (hasItems[driveItem.type] > recipeItems[driveItem.type]) hasItems[driveItem.type] = recipeItems[driveItem.type];
-						if (usesItem.stack > needItems) usesItem.stack = needItems;
+						usesItem.Type = driveItem.Type;
+						usesItem.Stack = driveItem.Stack;
+						usesItem.From = 1;
+						hasItems[driveItem.Type] += driveItem.Stack;
+						if (hasItems[driveItem.Type] > recipeItems[driveItem.Type]) hasItems[driveItem.Type] = recipeItems[driveItem.Type];
+						if (usesItem.Stack > needItems) usesItem.Stack = needItems;
 						uses.Add(usesItem);
 					}
 				}
@@ -249,9 +249,9 @@ namespace SatelliteStorage.DriveSystem
 			var player = Main.LocalPlayer;
 			Main.mouseRightRelease = false;
 
-			if (SatelliteStorage.GetUIState((int)UITypes.DriveChest))
+			if (SatelliteStorage.GetUiState((int)UiTypes.DriveChest))
 			{
-				SatelliteStorage.SetUIState((int)UITypes.DriveChest, false);
+				SatelliteStorage.SetUiState((int)UiTypes.DriveChest, false);
 				SoundEngine.PlaySound(SoundID.MenuClose);
 				return true;
 			}
@@ -282,7 +282,7 @@ namespace SatelliteStorage.DriveSystem
 			{
 				SoundEngine.PlaySound(SoundID.MenuOpen);
 				Main.playerInventory = true;
-				SatelliteStorage.SetUIState((int)UITypes.DriveChest, true);
+				SatelliteStorage.SetUiState((int)UiTypes.DriveChest, true);
 			}
 
 			if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -303,33 +303,33 @@ namespace SatelliteStorage.DriveSystem
 			
 			var random = new Random();
 
-			foreach (var key in Instance.generators.Keys)
+			foreach (var key in Instance.Generators.Keys)
             {
-				for (var i = 0; i < Instance.generators[key]; i++)
+				for (var i = 0; i < Instance.Generators[key]; i++)
 				{
-					var generator = SatelliteStorage.Instance.generators[key];
+					var generator = SatelliteStorage.Instance.Generators[key];
 
-					if (random.Next(0, 100) <= generator.chance)
+					if (random.Next(0, 100) <= generator.Chance)
 					{
 						var index = generator.GetRandomDropIndex();
 						var data = generator.GetDropData(index);
 
 
-						if (Instance.generatedItemsQueue.ContainsKey(data[0])) Instance.generatedItemsQueue[data[0]] += data[1];
-						else Instance.generatedItemsQueue.Add(data[0], data[1]);
+						if (Instance._generatedItemsQueue.ContainsKey(data[0])) Instance._generatedItemsQueue[data[0]] += data[1];
+						else Instance._generatedItemsQueue.Add(data[0], data[1]);
 					}
 				}
             }
 
-			foreach (var key in Instance.generatedItemsQueue.Keys)
+			foreach (var key in Instance._generatedItemsQueue.Keys)
 			{
 				var addItem = new DriveItem();
-				addItem.type = key;
-				addItem.Stack = Instance.generatedItemsQueue[key];
+				addItem.Type = key;
+				addItem.Stack = Instance._generatedItemsQueue[key];
 				AddItem(addItem);
 			}
 
-			Instance.generatedItemsQueue.Clear();
+			Instance._generatedItemsQueue.Clear();
 		}
 
         public static void ResearchRecipes()
@@ -365,13 +365,13 @@ namespace SatelliteStorage.DriveSystem
 			{
 				var driveItem = driveItems[l];
 
-				if (dictionary.ContainsKey(driveItem.type))
+				if (dictionary.ContainsKey(driveItem.Type))
 				{
-					dictionary[driveItem.type] += driveItem.Stack;
+					dictionary[driveItem.Type] += driveItem.Stack;
 				}
 				else
 				{
-					dictionary[driveItem.type] = driveItem.Stack;
+					dictionary[driveItem.Type] = driveItem.Stack;
 				}
 			}
 

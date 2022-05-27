@@ -4,7 +4,7 @@ using Terraria.UI;
 
 namespace SatelliteStorage.UI
 {
-    public class BaseUIState : UIState
+    public class BaseUiState : UIState
     {
         public virtual void OnUpdateUI(GameTime gameTime)
         {

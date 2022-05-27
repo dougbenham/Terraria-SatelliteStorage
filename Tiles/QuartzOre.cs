@@ -41,13 +41,13 @@ namespace SatelliteStorage.Tiles
 
 			// The first step is an Ore. Most vanilla ores are generated in a step called "Shinies", so for maximum compatibility, we will also do this.
 			// First, we find out which step "Shinies" is.
-			var ShiniesIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Shinies"));
+			var shiniesIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Shinies"));
 
-			if (ShiniesIndex != -1)
+			if (shiniesIndex != -1)
 			{
 				// Next, we insert our pass directly after the original "Shinies" pass.
 				// ExampleOrePass is a class seen bellow
-				tasks.Insert(ShiniesIndex + 1, new QuartzOrePass("Quartz Ore", 237.4298f));
+				tasks.Insert(shiniesIndex + 1, new QuartzOrePass("Quartz Ore", 237.4298f));
 			}
 		}
 	}

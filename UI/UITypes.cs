@@ -1,6 +1,6 @@
 ﻿namespace SatelliteStorage.UI
 {
-    public enum UITypes
+    public enum UiTypes
     {
         DriveChest = 1
     }
