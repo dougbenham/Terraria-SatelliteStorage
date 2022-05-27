@@ -1,25 +1,20 @@
-﻿using System.Linq;
-using Terraria;
-using Terraria.UI;
-using Terraria.ModLoader;
-using Terraria.ModLoader.UI;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria.ID;
-using Terraria.GameContent.Creative;
-using Microsoft.Xna.Framework;
+﻿using System;
 using System.Collections.Generic;
-using Terraria.IO;
-using Terraria.WorldBuilding;
-using System;
-using ReLogic.Content;
-using Terraria.GameContent.UI.Elements;
-using Terraria.Localization;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using SatelliteStorage.DriveSystem;
+using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.GameContent.UI.Elements;
+using Terraria.GameInput;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
+using Terraria.UI;
 using Terraria.UI.Chat;
 using Terraria.UI.Gamepad;
-using Terraria.GameInput;
 
 namespace SatelliteStorage.UI
 {
@@ -434,6 +429,11 @@ namespace SatelliteStorage.UI
 			{
 				if (craftOnMouseRecipe > -1)
                 {
+	                if (Main.keyState.IsKeyDown(Keys.LeftControl) || Main.keyState.IsKeyDown(Keys.RightControl))
+	                {
+		                while (TryCraftItem()) ;
+		                return;
+	                }
 					mouseDownOnCraftItemToggle = false;
 					isMouseDownOnCraftItem = true;
 					TryCraftItem();
@@ -472,9 +472,9 @@ namespace SatelliteStorage.UI
 			*/
 		}
 
-		private void TryCraftItem()
+		private bool TryCraftItem()
         {
-			if (craftOnMouseRecipe <= -1) return;
+			if (craftOnMouseRecipe <= -1) return false;
 
 			Recipe recipe = Main.recipe[craftOnMouseRecipe];
 			Player player = Main.LocalPlayer;
@@ -482,17 +482,17 @@ namespace SatelliteStorage.UI
 
 			bool isMouseItemAir = mouseItem.IsAir && Main.mouseItem.IsAir;
 			bool isMouseItemSame = mouseItem.type == recipe.createItem.type;
-			if (!isMouseItemAir && !isMouseItemSame) return;
+			if (!isMouseItemAir && !isMouseItemSame) return false;
 
 			if (isMouseItemSame)
             {
-				if (mouseItem.stack + recipe.createItem.stack > mouseItem.maxStack) return;
+				if (mouseItem.stack + recipe.createItem.stack > mouseItem.maxStack) return false;
 			}
 
 			if (Main.netMode == NetmodeID.SinglePlayer)
 			{
 				List<RecipeItemsUses> uses = DriveChestSystem.GetItemsUsesForCraft(player.inventory, recipe);
-				if (uses == null) return;
+				if (uses == null) return false;
 				uses.ForEach(u =>
 				{
 					Item item = new Item();
@@ -529,7 +529,7 @@ namespace SatelliteStorage.UI
 			if (Main.netMode == NetmodeID.MultiplayerClient)
             {
 				List<RecipeItemsUses> uses = DriveChestSystem.GetItemsUsesForCraft(player.inventory, recipe);
-				if (uses == null) return;
+				if (uses == null) return false;
 
 				ModPacket packet = SatelliteStorage.instance.GetPacket();
 				packet.Write((byte)SatelliteStorage.MessageType.TryCraftRecipe);
@@ -538,15 +538,15 @@ namespace SatelliteStorage.UI
 				packet.Send();
 				packet.Close();
 			}
-			
-		}
+
+			return true;
+        }
 
 		private void TryDepositItems(bool newItems = false)
         {
 			Player player = Main.LocalPlayer;
-			List<Item> items = new List<Item>();
 			bool itemAdded = false;
-			for (int i = 10; i < player.inventory.Length; i++)
+			for (int i = 10; i < 54; i++)
 			{
 				Item item = player.inventory[i];
 
@@ -650,18 +650,23 @@ namespace SatelliteStorage.UI
 		}
 
 		public override void Draw(SpriteBatch spriteBatch)
-        {
+		{
 			craftOnMouseRecipe = -1;
-			if (!isDrawing) return;
+			if (!isDrawing)
+				return;
 
-			if (Main.CreativeMenu.Enabled) Main.CreativeMenu.CloseMenu();
-			if (Main.editChest) Main.editChest = false;
+			if (Main.CreativeMenu.Enabled)
+				Main.CreativeMenu.CloseMenu();
+			if (Main.editChest)
+				Main.editChest = false;
 
 			Main.LocalPlayer.chest = -1;
-			
-			if (Main.npcChatText.Length > 0) Main.CloseNPCChatOrSign();
 
-			if (!Main.hidePlayerCraftingMenu) Main.hidePlayerCraftingMenu = true;
+			if (Main.npcChatText.Length > 0)
+				Main.CloseNPCChatOrSign();
+
+			if (!Main.hidePlayerCraftingMenu)
+				Main.hidePlayerCraftingMenu = true;
 
 			base.Draw(spriteBatch);
 
@@ -671,23 +676,26 @@ namespace SatelliteStorage.UI
 			{
 				Main.player[Main.myPlayer].mouseInterface = true;
 			}
+
 			DrawButtons(spriteBatch);
 
 			if (craftDisplay != null && !UIElements.UICraftDisplay.hidden)
-            {
-				Terraria.Utils.DrawBorderString(spriteBatch, Language.GetTextValue("Mods.SatelliteStorage.UITitles.DriveChestRecipes"), craftDisplay.GetDimensions().Position() + new Vector2(30, 47), Color.White, 1f);
+			{
+				Terraria.Utils.DrawBorderString(spriteBatch, Language.GetTextValue("Mods.SatelliteStorage.UITitles.DriveChestRecipes"), craftDisplay.GetDimensions().Position() + new Vector2(30, 47),
+					Color.White, 1f);
 			}
 
 			if (craftRecipe != null && !UIElements.UICraftRecipe.hidden)
 			{
-				Terraria.Utils.DrawBorderString(spriteBatch, Language.GetTextValue("Mods.SatelliteStorage.UITitles.DriveChestCraft"), craftRecipe.GetDimensions().Position() + new Vector2(30, 47), Color.White, 1f);
+				Terraria.Utils.DrawBorderString(spriteBatch, Language.GetTextValue("Mods.SatelliteStorage.UITitles.DriveChestCraft"), craftRecipe.GetDimensions().Position() + new Vector2(30, 47),
+					Color.White, 1f);
 			}
 
 			if (currentRecipe > -1 && !UIElements.UICraftRecipe.hidden)
 			{
 				Recipe recipe = Main.recipe[currentRecipe];
 				craftResultItem = recipe.createItem;
-				Rectangle itemSlotHitbox = GetSlotHitbox((int)craftResultSlotPos.X, (int)craftResultSlotPos.Y);
+				Rectangle itemSlotHitbox = GetSlotHitbox((int) craftResultSlotPos.X, (int) craftResultSlotPos.Y);
 				bool cREATIVE_ItemSlotShouldHighlightAsSelected = false;
 				if (IsMouseHovering && itemSlotHitbox.Contains(Main.MouseScreen.ToPoint()) && !PlayerInput.IgnoreMouseInterface)
 				{
@@ -700,29 +708,24 @@ namespace SatelliteStorage.UI
 
 					craftOnMouseRecipe = currentRecipe;
 					cREATIVE_ItemSlotShouldHighlightAsSelected = true;
-				} else
-                {
+				}
+				else
+				{
 					isMouseDownOnCraftItem = false;
 				}
+
 				UILinkPointNavigator.Shortcuts.CREATIVE_ItemSlotShouldHighlightAsSelected = cREATIVE_ItemSlotShouldHighlightAsSelected;
 				ItemSlot.Draw(spriteBatch, ref craftResultItem, 26, itemSlotHitbox.TopLeft());
 				UIElements.UICraftResultBG.hidden = false;
-			} else
-            {
+			}
+			else
+			{
 				UIElements.UICraftResultBG.hidden = true;
 			}
-			
-
-			/*
-			if (display != null)
-            {
-				Terraria.Utils.DrawBorderString(spriteBatch, header, display.GetDimensions().Position() + headerPos, Color.White, 2f);
-			}
-			*/
 		}
 
 
-        public override void OnUpdateUI(GameTime gameTime)
+		public override void OnUpdateUI(GameTime gameTime)
 		{
 
 			isDrawing = false;
@@ -795,49 +798,12 @@ namespace SatelliteStorage.UI
 				if (elapsedTime > 256 && (!DriveChestSystem.checkRecipesRefresh || SatelliteStoragePlayer.CheckAdjChanged()))
 				{
 					DriveChestSystem.checkRecipesRefresh = true;
-					//SatelliteStorage.Debug("checkRecipes");
 					lastCraftsResearchTime = gameTime.TotalGameTime.TotalMilliseconds;
 					DriveChestSystem.ResearchRecipes();
 					instance.craftDisplay.RebuildPage();
 					instance.craftRecipe.RebuildPage();
 				}
 				
-				
-
-
-				//if (Main.craftingHide) SatelliteStorage.Debug("qwer");
-
-
-				//SatelliteStorage.Debug(scrollbar.GetValue().ToString());
-
-				/*
-				float scrollbarValue = scrollbar.GetValue();
-				if (scrollbarValue != lastScrollbarValue)
-                {
-					lastScrollbarValue = scrollbarValue;
-
-					if (scrollbarValue < 1) scrollbarValue = 1;
-					if (scrollMaxValue < 1) scrollMaxValue = 1;
-
-					if (currentYCount < itemsYCount)
-					{
-						itemsPanel.Top.Set(0, 0);
-					}
-					else
-					{
-						itemsPanel.Top.Set(-(allItemsHeight + itemOffsety - itemsCoverPanel.Height.Pixels) * (scrollbarValue / scrollMaxValue), 0);
-					}
-				}
-
-				string searchValue = searchTextBox.currentString;
-				if (searchValue != lastSearchValue)
-                {
-					lastSearchValue = searchValue;
-					RenderItems();
-				}
-				*/
-
-
 				if (checkPosition)
 				{
 					if (Main.LocalPlayer.position.Distance(openPosition) > 100) SatelliteStorage.SetUIState((int)UITypes.DriveChest, false);
