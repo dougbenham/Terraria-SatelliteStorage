@@ -269,6 +269,40 @@ namespace SatelliteStorage.UI
 			OnMouseUp += (_, _) => { _isMouseDownOnCraftItem = false; };
 		}
 
+		public static void DepositCursorItem()
+		{
+			var player = Main.LocalPlayer;
+			if (Main.mouseItem.IsAir)
+				return;
+
+			if (Main.netMode == NetmodeID.SinglePlayer)
+			{
+				if (!DriveChestSystem.AddItem(DriveItem.FromItem(Main.mouseItem)))
+					return;
+				ReloadItems();
+
+				Main.mouseItem.TurnToAir();
+				SoundEngine.PlaySound(SoundID.Grab);
+			}
+
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+			{
+				if (SatelliteStorage.AddDriveChestItemSended)
+					return;
+				SatelliteStorage.AddDriveChestItemSended = true;
+				var packet = SatelliteStorage.Instance.GetPacket();
+				packet.Write((byte) SatelliteStorage.MessageType.AddDriveChestItem);
+				packet.Write((byte) player.whoAmI);
+				/*
+					packet.Write7BitEncodedInt(Main.mouseItem.type);
+					packet.Write7BitEncodedInt(Main.mouseItem.stack);
+					packet.Write7BitEncodedInt(Main.mouseItem.prefix);
+					*/
+				packet.Send();
+				packet.Close();
+			}
+		}
+
 		private bool TryCraftItem()
 		{
 			if (_craftOnMouseRecipe <= -1)

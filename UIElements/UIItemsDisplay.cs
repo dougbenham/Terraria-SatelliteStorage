@@ -88,39 +88,7 @@ namespace SatelliteStorage.UIElements
 			});
 
 
-			OnMouseDown += (_, _) =>
-			{
-				var player = Main.LocalPlayer;
-				var mouseItem = player.inventory[58];
-
-				if (mouseItem.IsAir || Main.mouseItem.IsAir) return;
-
-				if (Main.netMode == NetmodeID.SinglePlayer)
-				{
-					if (!DriveChestSystem.AddItem(DriveItem.FromItem(Main.mouseItem))) return;
-					DriveChestUi.ReloadItems();
-
-					mouseItem.TurnToAir();
-					Main.mouseItem.TurnToAir();
-					SoundEngine.PlaySound(SoundID.Grab);
-				}
-
-				if (Main.netMode == NetmodeID.MultiplayerClient)
-				{
-					if (SatelliteStorage.AddDriveChestItemSended) return;
-					SatelliteStorage.AddDriveChestItemSended = true;
-					var packet = SatelliteStorage.Instance.GetPacket();
-					packet.Write((byte)SatelliteStorage.MessageType.AddDriveChestItem);
-					packet.Write((byte)player.whoAmI);
-					/*
-					packet.Write7BitEncodedInt(Main.mouseItem.type);
-					packet.Write7BitEncodedInt(Main.mouseItem.stack);
-					packet.Write7BitEncodedInt(Main.mouseItem.prefix);
-					*/
-					packet.Send();
-					packet.Close();
-				}
-			};
+			OnMouseDown += (_, _) => { DriveChestUi.DepositCursorItem(); };
 
 			BuildPage();
 		}
@@ -543,5 +511,5 @@ namespace SatelliteStorage.UIElements
             base.Recalculate();
 			if (_itemGrid != null) _itemGrid.Recalculate();
         }
-    }
+	}
 }

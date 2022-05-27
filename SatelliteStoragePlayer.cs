@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
+using Terraria.UI;
 
 namespace SatelliteStorage
 {
@@ -38,6 +39,28 @@ namespace SatelliteStorage
             }
 
             return false;
+        }
+
+        public override bool ShiftClickSlot(Item[] inventory, int context, int slot)
+        {
+	        if (context != ItemSlot.Context.InventoryItem && context != ItemSlot.Context.InventoryCoin && context != ItemSlot.Context.InventoryAmmo)
+		        return false;
+	        if (storageAccess.X < 0 || storageAccess.Y < 0)
+		        return false;
+	        Item item = inventory[slot];
+	        if (item.favorited || item.IsAir)
+		        return false;
+	        int oldType = item.type;
+	        int oldStack = item.stack;
+	        GetStorageHeart().TryDeposit(item);
+
+	        if (item.type != oldType || item.stack != oldStack)
+	        {
+		        SoundEngine.PlaySound(SoundID.Grab);
+		        StorageGUI.RefreshItems();
+	        }
+
+	        return true;
         }
     }
 }
