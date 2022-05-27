@@ -41,14 +41,14 @@ namespace SatelliteStorage.Items
 			};
 			tooltips.Add(line);
 
-			Generator gen = SatelliteStorage.instance.generators[generatorType];
+			var gen = SatelliteStorage.instance.generators[generatorType];
 
-			foreach (int[] data in gen.drops)
+			foreach (var data in gen.drops)
 			{
-				Item itm = new Item();
+				var itm = new Item();
 				itm.SetDefaults(data[0]);
 
-				line = new TooltipLine(Mod, "dropText_" + Item.Name + "_" + itm.Name, "● " + itm.Name + " (" + Language.GetTextValue("Mods.SatelliteStorage.ChanceNames._" + data[3]) + ")")
+				line = new(Mod, "dropText_" + Item.Name + "_" + itm.Name, "● " + itm.Name + " (" + Language.GetTextValue("Mods.SatelliteStorage.ChanceNames._" + data[3]) + ")")
 				{
 					OverrideColor = Terraria.GameContent.UI.ItemRarity.GetColor(itm.rare)
 				};

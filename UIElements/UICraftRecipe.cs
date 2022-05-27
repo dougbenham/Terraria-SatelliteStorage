@@ -17,8 +17,8 @@ namespace SatelliteStorage.UIElements
 		private UIElement _containerSacrifice;
 		private bool _hovered;
 		private UISearchBar _searchBar;
-		private List<int> _itemIdsAvailableTotal;
-		private List<int> _itemIdsAvailableToShow;
+		private readonly List<int> _itemIdsAvailableTotal;
+		private readonly List<int> _itemIdsAvailableToShow;
 
 		private DynamicItemCollection _itemGrid;
 		private CreativeUnlocksTracker _lastTrackerCheckedForEdits;
@@ -33,8 +33,8 @@ namespace SatelliteStorage.UIElements
 
 		public UICraftRecipe(UIState uiStateThatHoldsThis)
 		{
-			_itemIdsAvailableTotal = new List<int>();
-			_itemIdsAvailableToShow = new List<int>();
+			_itemIdsAvailableTotal = new();
+			_itemIdsAvailableToShow = new();
 
 			BuildPage();
 		}
@@ -52,14 +52,14 @@ namespace SatelliteStorage.UIElements
 			_lastCheckedVersionForEdits = -1;
 			RemoveAllChildren();
 			SetPadding(0f);
-			UIElement uIElement = new UIElement
+			var uIElement = new UIElement
 			{
 				Width = StyleDimension.Fill,
 				Height = StyleDimension.Fill
 			};
 			uIElement.SetPadding(0f);
 			_containerInfinites = uIElement;
-			UIElement uIElement2 = new UIElement
+			var uIElement2 = new UIElement
 			{
 				Width = StyleDimension.Fill,
 				Height = StyleDimension.Fill
@@ -76,7 +76,7 @@ namespace SatelliteStorage.UIElements
 
 		private static UIPanel CreateBasicPanel()
 		{
-			UIPanel uIPanel = new UIPanel();
+			var uIPanel = new UIPanel();
 			SetBasicSizesForCreativeSacrificeOrInfinitesPanel(uIPanel);
 			uIPanel.BackgroundColor *= 0.8f;
 			uIPanel.BorderColor *= 0.8f;
@@ -85,19 +85,19 @@ namespace SatelliteStorage.UIElements
 
 		private static void SetBasicSizesForCreativeSacrificeOrInfinitesPanel(UIElement element)
 		{
-			element.Width = new StyleDimension(0f, 1f);
-			element.Height = new StyleDimension(-38f, 1f);
-			element.Top = new StyleDimension(38f, 0f);
+			element.Width = new(0f, 1f);
+			element.Height = new(-38f, 1f);
+			element.Top = new(38f, 0f);
 		}
 
 		private void BuildInfinitesMenuContents(UIElement totalContainer)
 		{
-			UIPanel uIPanel = CreateBasicPanel();
+			var uIPanel = CreateBasicPanel();
 			totalContainer.Append(uIPanel);
 			uIPanel.OnUpdate += Hover_OnUpdate;
 			uIPanel.OnMouseOver += Hover_OnMouseOver;
 			uIPanel.OnMouseOut += Hover_OnMouseOut;
-			DynamicItemCollection item = (_itemGrid = new DynamicItemCollection());
+			var item = (_itemGrid = new());
 
 			item.OnMouseDown += (UIMouseEvent evt, UIElement listeningElement) =>
 			{
@@ -111,27 +111,27 @@ namespace SatelliteStorage.UIElements
 				return;
 			};
 
-			UIElement uIElement = new UIElement
+			var uIElement = new UIElement
 			{
-				Height = new StyleDimension(24f, 0f),
-				Width = new StyleDimension(0f, 1f)
+				Height = new(24f, 0f),
+				Width = new(0f, 1f)
 			};
 			uIElement.SetPadding(0f);
 			uIPanel.Append(uIElement);
 
-			UIList uIList = new UIList
+			var uIList = new UIList
 			{
-				Width = new StyleDimension(-25f, 1f),
-				Height = new StyleDimension(-28f, 1f),
+				Width = new(-25f, 1f),
+				Height = new(-28f, 1f),
 				VAlign = 1f,
 				HAlign = 0f
 			};
 			uIPanel.Append(uIList);
-			float num = 4f;
-			UIScrollbar uIScrollbar = new UIScrollbar
+			var num = 4f;
+			var uIScrollbar = new UIScrollbar
 			{
-				Height = new StyleDimension(-28f - num * 2f, 1f),
-				Top = new StyleDimension(0f - num, 0f),
+				Height = new(-28f - num * 2f, 1f),
+				Top = new(0f - num, 0f),
 				VAlign = 1f,
 				HAlign = 1f
 			};
@@ -161,8 +161,8 @@ namespace SatelliteStorage.UIElements
 		private void UpdateContents()
 		{
 			if (currentRecipe <= -1) return;
-			Recipe recipe = Main.recipe[currentRecipe];
-			List<int> types = new List<int>();
+			var recipe = Main.recipe[currentRecipe];
+			var types = new List<int>();
 
 			recipe.requiredItem.ForEach(item =>
 			{
@@ -178,10 +178,10 @@ namespace SatelliteStorage.UIElements
 			_itemIdsAvailableToShow.AddRange(_itemIdsAvailableTotal);
 			_itemIdsAvailableToShow.Sort(_sorter);
 
-			List<DriveItem> driveItems = new List<DriveItem>();
+			var driveItems = new List<DriveItem>();
 			recipe.requiredItem.ForEach(item =>
 			{
-				DriveItem driveItem = DriveItem.FromItem(item);
+				var driveItem = DriveItem.FromItem(item);
 				driveItem.context = 26;
 				driveItems.Add(driveItem);
 			});
@@ -232,13 +232,13 @@ namespace SatelliteStorage.UIElements
 		private void UICreativeInfiniteItemsDisplay_OnUpdate(UIElement affectedElement)
 		{
 			RemoveAllChildren();
-			CreativeUnlocksTracker localPlayerCreativeTracker = Main.LocalPlayerCreativeTracker;
+			var localPlayerCreativeTracker = Main.LocalPlayerCreativeTracker;
 			if (_lastTrackerCheckedForEdits != localPlayerCreativeTracker)
 			{
 				_lastTrackerCheckedForEdits = localPlayerCreativeTracker;
 				_lastCheckedVersionForEdits = -1;
 			}
-			int lastEditId = localPlayerCreativeTracker.ItemSacrifices.LastEditId;
+			var lastEditId = localPlayerCreativeTracker.ItemSacrifices.LastEditId;
 			if (_lastCheckedVersionForEdits != lastEditId)
 			{
 				_lastCheckedVersionForEdits = lastEditId;

@@ -37,7 +37,7 @@ namespace SatelliteStorage.Items
 		{
 			if (Main.rand.NextBool(10))
 			{
-				Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, DustID.IceTorch);
+				Dust.NewDust(new(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, DustID.IceTorch);
 			}
 		}
 

@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
+﻿using Terraria;
 using Terraria.GameContent.UI.Elements;
 using SatelliteStorage.DriveSystem;
 
@@ -7,26 +6,26 @@ namespace SatelliteStorage.UIElements
 {
     class DriveItemPanel : UIPanel
     {
-        private UIItemIcon itemIcon;
-        private UIText stackText;
+        private readonly UIItemIcon itemIcon;
+        private readonly UIText stackText;
         public Item item;
 
         public DriveItemPanel(DriveItem driveItem)
         {
-            item = new Item();
+            item = new();
             item.type = driveItem.type;
             item.SetDefaults(item.type);
             item.stack = driveItem.stack;
             item.prefix = driveItem.prefix;
 
-            itemIcon = new UIItemIcon(item, false);
+            itemIcon = new(item, false);
 
             itemIcon.VAlign = 0.5f;
             itemIcon.HAlign = 0.5f;
 
-            BorderColor = new Color(0, 0, 0, 0);
+            BorderColor = new(0, 0, 0, 0);
 
-            stackText = new UIText(Utils.StringUtils.GetStackCount(item.stack), 0.77f);
+            stackText = new(Utils.StringUtils.GetStackCount(item.stack), 0.77f);
             stackText.Top.Set(12, 0);
             stackText.Left.Set(-6, 0);
 

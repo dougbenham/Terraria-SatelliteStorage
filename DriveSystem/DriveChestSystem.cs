@@ -1,5 +1,4 @@
 ﻿using Terraria;
-using Terraria.ModLoader;
 using Terraria.ID;
 using System.Collections.Generic;
 using System;
@@ -7,69 +6,67 @@ using Terraria.Audio;
 
 namespace SatelliteStorage.DriveSystem
 {
-	public class RecipeItemsUses
+	public class RecipeItemUse
     {
-		public int type = 0;
-		public int stack = 0;
-		public int from = 0;
-		public int slot = 0;
+		public int type;
+		public int stack;
+		public int from;
+		public int slot;
     }
 
     public class DriveChestSystem
     {
-        public static DriveChestSystem instance;
-        private List<DriveItem> items = new List<DriveItem>();
-		public Dictionary<int, int> generators = new Dictionary<int, int>();
-		public static Dictionary<int, Recipe> availableRecipes = new Dictionary<int, Recipe>();
-		private Dictionary<int, int> generatedItemsQueue = new Dictionary<int, int>();
-
-		public static bool isSputnikPlaced = false;
-
-        public static bool checkRecipesRefresh = false;
+        public static DriveChestSystem Instance;
+        public static readonly Dictionary<int, Recipe> AvailableRecipes = new();
+        private List<DriveItem> items = new();
+		public Dictionary<int, int> generators = new();
+		private readonly Dictionary<int, int> generatedItemsQueue = new();
+		public static bool IsSputnikPlaced = false;
+		public static bool CheckRecipesRefresh;
 
         public DriveChestSystem()
         {
-            instance = this;
+            Instance = this;
 		}
 
         public static void InitItems(List<DriveItem> items)
         {
-            checkRecipesRefresh = false;
-            instance.items = items;
+            CheckRecipesRefresh = false;
+            Instance.items = items;
         }
 
         public static void ClearItems()
         {
-            instance.items.Clear();
+            Instance.items.Clear();
         }
 
         public static List<DriveItem> GetItems()
         {
-            return instance.items;
+            return Instance.items;
         }
 
 		public static void InitGenerators(Dictionary<int, int> generators)
 		{
-			instance.generators = generators;
+			Instance.generators = generators;
 		}
 
 		public static Dictionary<int, int> GetGenerators()
         {
-			return instance.generators;
+			return Instance.generators;
         }
 
 		public static void AddGenerator(byte type)
         {
-			if (instance.generators.ContainsKey(type)) instance.generators[type]++;
-			else instance.generators[type] = 1;
+			if (Instance.generators.ContainsKey(type)) Instance.generators[type]++;
+			else Instance.generators[type] = 1;
 			SyncGenerator(type);
 		}
 
 		public static void SubGenerator(byte type)
         {
-			if (!instance.generators.ContainsKey(type)) return;
-			instance.generators[type]--;
-			if (instance.generators[type] < 0) instance.generators[type] = 0;
+			if (!Instance.generators.ContainsKey(type)) return;
+			Instance.generators[type]--;
+			if (Instance.generators[type] < 0) Instance.generators[type] = 0;
 			SyncGenerator(type);
 		}
 
@@ -80,14 +77,14 @@ namespace SatelliteStorage.DriveSystem
 			var packet = SatelliteStorage.instance.GetPacket();
 			packet.Write((byte)SatelliteStorage.MessageType.SyncGeneratorState);
 			packet.Write((byte)type);
-			packet.Write7BitEncodedInt(instance.generators[type]);
+			packet.Write7BitEncodedInt(Instance.generators[type]);
 			packet.Send(to);
 			packet.Close();
 		}
 
 		public static void SyncAllGeneratorsTo(int to)
         {
-			foreach (byte key in instance.generators.Keys)
+			foreach (byte key in Instance.generators.Keys)
             {
 				SyncGenerator(key, to);
             }
@@ -95,56 +92,56 @@ namespace SatelliteStorage.DriveSystem
 
 		public static bool AddItem(DriveItem item, bool needSync = true)
         {
-            DriveItem searchItem = instance.items.Find(v => v.type == item.type && v.prefix == item.prefix);
+            var searchItem = Instance.items.Find(v => v.type == item.type && v.prefix == item.prefix);
             if (searchItem != null)
             {
                 searchItem.stack += item.stack;
-				if (needSync) instance.SendItemSync(searchItem);
+				if (needSync) Instance.SendItemSync(searchItem);
                 return true;
             }
 
-            instance.items.Add(item);
+            Instance.items.Add(item);
 
-            if (needSync) instance.SendItemSync(item);
+            if (needSync) Instance.SendItemSync(item);
 
             return true;
         }
 
 		public static void SyncItemByType(int type)
         {
-			DriveItem searchItem = instance.items.Find(v => v.type == type);
+			var searchItem = Instance.items.Find(v => v.type == type);
 			if (searchItem == null) return;
-			instance.SendItemSync(searchItem);
+			Instance.SendItemSync(searchItem);
 		}
 
         public static bool HasItem(DriveItem item)
         {
-            DriveItem searchItem = instance.items.Find(v => v.type == item.type && v.prefix == item.prefix);
+            var searchItem = Instance.items.Find(v => v.type == item.type && v.prefix == item.prefix);
             if (searchItem != null) return true;
             return false;
         }
 
         public static void SyncItem(DriveItem item)
         {
-            DriveItem searchItem = instance.items.Find(v => v.type == item.type && v.prefix == item.prefix);
+            var searchItem = Instance.items.Find(v => v.type == item.type && v.prefix == item.prefix);
             if (searchItem != null)
             {
                 searchItem.stack = item.stack;
-                if (searchItem.stack <= 0) instance.items.Remove(searchItem);
+                if (searchItem.stack <= 0) Instance.items.Remove(searchItem);
             }
             else
             {
-                instance.items.Add(item);
+                Instance.items.Add(item);
             }
 
-            checkRecipesRefresh = false;
+            CheckRecipesRefresh = false;
         }
        
         private void SendItemSync(DriveItem item)
         {
             if (Main.netMode != NetmodeID.Server)
             {
-                checkRecipesRefresh = false;
+                CheckRecipesRefresh = false;
                 return;
             }
 
@@ -159,44 +156,44 @@ namespace SatelliteStorage.DriveSystem
 
         public static Item TakeItem(int type, int prefix, int count = 0)
         {
-            DriveItem searchItem = instance.items.Find(v => v.type == type && v.prefix == prefix);
+            var searchItem = Instance.items.Find(v => v.type == type && v.prefix == prefix);
             if (searchItem == null) return null;
-            Item item = new Item();
+            var item = new Item();
             item.type = searchItem.type;
             item.SetDefaults(item.type);
             item.prefix = searchItem.prefix;
 
-            int stack = searchItem.stack;
+            var stack = searchItem.stack;
 			if (count > 0) stack = count;
 			if (stack > item.maxStack) stack = item.maxStack;
 			
 
             item.stack = stack;
             searchItem.stack -= stack;
-            if (searchItem.stack <= 0) instance.items.Remove(searchItem);
+            if (searchItem.stack <= 0) Instance.items.Remove(searchItem);
 
-            instance.SendItemSync(searchItem);
+            Instance.SendItemSync(searchItem);
 
             return item;
         }
 
 		public static void SubItem(int type, int count)
         {
-			DriveItem searchItem = instance.items.Find(v => v.type == type);
+			var searchItem = Instance.items.Find(v => v.type == type);
 			if (searchItem == null) return;
 
 			searchItem.stack -= count;
-			if (searchItem.stack <= 0) instance.items.Remove(searchItem);
+			if (searchItem.stack <= 0) Instance.items.Remove(searchItem);
 
-			instance.SendItemSync(searchItem);
+			Instance.SendItemSync(searchItem);
 		}
 
 
-		public static List<RecipeItemsUses> GetItemsUsesForCraft(Item[] playerInv, Recipe recipe)
+		public static List<RecipeItemUse> GetItemUsesForCraft(Item[] playerInv, Recipe recipe)
 		{
-			List<RecipeItemsUses> uses = new List<RecipeItemsUses>();
-			Dictionary<int, int> recipeItems = new Dictionary<int, int>();
-			Dictionary<int, int> hasItems = new Dictionary<int, int>();
+			var uses = new List<RecipeItemUse>();
+			var recipeItems = new Dictionary<int, int>();
+			var hasItems = new Dictionary<int, int>();
 
 			recipe.requiredItem.ForEach(r =>
 			{
@@ -205,15 +202,15 @@ namespace SatelliteStorage.DriveSystem
 			});
 
 			
-			for (int l = 0; l < 58; l++)
+			for (var l = 0; l < 58; l++)
 			{
-				Item invItem = playerInv[l];
+				var invItem = playerInv[l];
 				if (recipeItems.ContainsKey(invItem.type))
                 {
 					if (hasItems[invItem.type] < recipeItems[invItem.type])
 					{
 						hasItems[invItem.type] += invItem.stack;
-						RecipeItemsUses usesItem = new RecipeItemsUses();
+						var usesItem = new RecipeItemUse();
 						usesItem.type = invItem.type;
 						usesItem.stack = invItem.stack;
 						//int difference = 0;
@@ -233,15 +230,15 @@ namespace SatelliteStorage.DriveSystem
 			}
 			
 
-			for (int i = 0; i < instance.items.Count; i++)
+			for (var i = 0; i < Instance.items.Count; i++)
 			{
-				DriveItem driveItem = instance.items[i];
+				var driveItem = Instance.items[i];
 				if (recipeItems.ContainsKey(driveItem.type))
                 {
 					if (hasItems[driveItem.type] < recipeItems[driveItem.type])
                     {
-						int needItems = recipeItems[driveItem.type] - hasItems[driveItem.type];
-						RecipeItemsUses usesItem = new RecipeItemsUses();
+						var needItems = recipeItems[driveItem.type] - hasItems[driveItem.type];
+						var usesItem = new RecipeItemUse();
 						usesItem.type = driveItem.type;
 						usesItem.stack = driveItem.stack;
 						usesItem.from = 1;
@@ -253,7 +250,7 @@ namespace SatelliteStorage.DriveSystem
 				}
 			}
 
-			foreach(int key in recipeItems.Keys)
+			foreach(var key in recipeItems.Keys)
             {
 				if (hasItems[key] < recipeItems[key]) return null;
             }
@@ -263,7 +260,7 @@ namespace SatelliteStorage.DriveSystem
 
 		public static bool RequestOpenDriveChest(bool checkPosition = false)
         {
-			Player player = Main.LocalPlayer;
+			var player = Main.LocalPlayer;
 			Main.mouseRightRelease = false;
 
 			if (SatelliteStorage.GetUIState((int)UI.UITypes.DriveChest))
@@ -305,7 +302,7 @@ namespace SatelliteStorage.DriveSystem
 
 			if (Main.netMode == NetmodeID.MultiplayerClient)
 			{
-				ModPacket packet = SatelliteStorage.instance.GetPacket();
+				var packet = SatelliteStorage.instance.GetPacket();
 				packet.Write((byte)SatelliteStorage.MessageType.RequestDriveChestItems);
 				packet.Write((byte)player.whoAmI);
 				packet.Send();
@@ -319,91 +316,52 @@ namespace SatelliteStorage.DriveSystem
 		public static void OnGeneratorsTick()
         {
 			if (Main.netMode != NetmodeID.SinglePlayer && Main.netMode != NetmodeID.Server) return;
+			
+			var random = new Random();
 
-			Dictionary<int, int> drops = new Dictionary<int, int>();
-
-			Random random = new Random();
-
-			foreach (int key in instance.generators.Keys)
+			foreach (var key in Instance.generators.Keys)
             {
-				for (int i = 0; i < instance.generators[key]; i++)
+				for (var i = 0; i < Instance.generators[key]; i++)
 				{
-					Generator generator = SatelliteStorage.instance.generators[key];
+					var generator = SatelliteStorage.instance.generators[key];
 
 					if (random.Next(0, 100) <= generator.chance)
 					{
-						int index = generator.GetRandomDropIndex();
-						int[] data = generator.GetDropData(index);
+						var index = generator.GetRandomDropIndex();
+						var data = generator.GetDropData(index);
 
 
-						if (instance.generatedItemsQueue.ContainsKey(data[0])) instance.generatedItemsQueue[data[0]] += data[1];
-						else instance.generatedItemsQueue.Add(data[0], data[1]);
+						if (Instance.generatedItemsQueue.ContainsKey(data[0])) Instance.generatedItemsQueue[data[0]] += data[1];
+						else Instance.generatedItemsQueue.Add(data[0], data[1]);
 					}
 				}
             }
 
-			foreach (int key in instance.generatedItemsQueue.Keys)
+			foreach (var key in Instance.generatedItemsQueue.Keys)
 			{
-				DriveItem addItem = new DriveItem();
+				var addItem = new DriveItem();
 				addItem.type = key;
-				addItem.stack = instance.generatedItemsQueue[key];
+				addItem.stack = Instance.generatedItemsQueue[key];
 				AddItem(addItem);
 			}
 
-			instance.generatedItemsQueue.Clear();
+			Instance.generatedItemsQueue.Clear();
 		}
 
         public static void ResearchRecipes()
         {
-			Player player = Main.LocalPlayer;
-			Item mouseItem = player.inventory[58];
-			int mouseItemType = -1;
-			if (!mouseItem.IsAir && !Main.mouseItem.IsAir) mouseItemType = mouseItem.type;
+			var player = Main.LocalPlayer;
 
-			int maxRecipes = Recipe.maxRecipes;
-
-			//int num = Main.availableRecipe[Main.focusRecipe];
-
-			availableRecipes.Clear();
-
-			/*
-			if (Main.guideItem.type > 0 && Main.guideItem.stack > 0 && Main.guideItem.Name != "")
-			{
-				for (int j = 0; j < maxRecipes && Main.recipe[j].createItem.type != 0; j++)
-				{
-
-					for (int k = 0; k < maxRequirements && Main.recipe[j].requiredItem[k].type != 0; k++)
-					{
-						if (!Main.guideItem.IsNotSameTypePrefixAndStack(Main.recipe[j].requiredItem[k]) || Main.recipe[j].useWood(Main.guideItem.type, Main.recipe[j].requiredItem[k].type) || Main.recipe[j].useSand(Main.guideItem.type, Main.recipe[j].requiredItem[k].type) || Main.recipe[j].useIronBar(Main.guideItem.type, Main.recipe[j].requiredItem[k].type) || Main.recipe[j].useFragment(Main.guideItem.type, Main.recipe[j].requiredItem[k].type) || Main.recipe[j].AcceptedByItemGroups(Main.guideItem.type, Main.recipe[j].requiredItem[k].type) || Main.recipe[j].usePressurePlate(Main.guideItem.type, Main.recipe[j].requiredItem[k].type))
-						{
-							Main.availableRecipe[Main.numAvailableRecipes] = j;
-							Main.numAvailableRecipes++;
-							break;
-						}
-					}
-				}
-			}
-			else
-			*/
+			var maxRecipes = Recipe.maxRecipes;
 			
+			AvailableRecipes.Clear();
 			
-
-			Dictionary<int, int> dictionary = new Dictionary<int, int>();
-			Item[] array = null;
-			Item item = null;
-			array = Main.player[Main.myPlayer].inventory;
-
-			/*
-			oldPlayerInv = new Item[array.Length];
-
-            for (int i = 0; i < array.Length; i++) {
-				oldPlayerInv[i] = array[i].Clone();
-			}
-			*/
-
-			for (int l = 0; l < 58; l++)
+			var dictionary = new Dictionary<int, int>();
+			var array = Main.player[Main.myPlayer].inventory;
+			
+			for (var l = 0; l < 58; l++)
 			{
-				item = array[l];
+				var item = array[l];
 				if (item.stack > 0)
 				{
 					if (dictionary.ContainsKey(item.type))
@@ -417,11 +375,11 @@ namespace SatelliteStorage.DriveSystem
 				}
 			}
 
-            List<DriveItem> driveItems = GetItems();
+            var driveItems = GetItems();
 
-			for (int l = 0; l < driveItems.Count; l++)
+			for (var l = 0; l < driveItems.Count; l++)
 			{
-				DriveItem driveItem = driveItems[l];
+				var driveItem = driveItems[l];
 
 				if (dictionary.ContainsKey(driveItem.type))
 				{
@@ -474,12 +432,12 @@ namespace SatelliteStorage.DriveSystem
 			}
 			*/
 
-			for (int n = 0; n < maxRecipes && Main.recipe[n].createItem.type != 0; n++)
+			for (var n = 0; n < maxRecipes && Main.recipe[n].createItem.type != 0; n++)
 			{
-				bool flag = true;
+				var flag = true;
 				if (flag)
 				{
-					for (int num3 = 0; num3 < Main.recipe[n].requiredTile.Count && Main.recipe[n].requiredTile[num3] != -1; num3++)
+					for (var num3 = 0; num3 < Main.recipe[n].requiredTile.Count && Main.recipe[n].requiredTile[num3] != -1; num3++)
 					{
 						if (!Main.player[Main.myPlayer].adjTile[Main.recipe[n].requiredTile[num3]])
 						{
@@ -490,15 +448,15 @@ namespace SatelliteStorage.DriveSystem
 				}
 				if (flag)
 				{
-					for (int num4 = 0; num4 < Main.recipe[n].requiredItem.Count; num4++)
+					for (var num4 = 0; num4 < Main.recipe[n].requiredItem.Count; num4++)
 					{
-						item = Main.recipe[n].requiredItem[num4];
+						var item = Main.recipe[n].requiredItem[num4];
 						if (item.type == 0)
 						{
 							break;
 						}
-						int num5 = item.stack;
-						bool flag2 = false;
+						var num5 = item.stack;
+						var flag2 = false;
 						/*
 						foreach (int key in dictionary.Keys)
 						{
@@ -522,11 +480,11 @@ namespace SatelliteStorage.DriveSystem
 				}
 				if (flag)
 				{
-					bool num6 = !Main.recipe[n].HasCondition(Recipe.Condition.NearWater) || Main.player[Main.myPlayer].adjWater || Main.player[Main.myPlayer].adjTile[172];
-					bool flag3 = !Main.recipe[n].HasCondition(Recipe.Condition.NearHoney) || Main.recipe[n].HasCondition(Recipe.Condition.NearHoney) == Main.player[Main.myPlayer].adjHoney;
-					bool flag4 = !Main.recipe[n].HasCondition(Recipe.Condition.NearLava) || Main.recipe[n].HasCondition(Recipe.Condition.NearLava) == Main.player[Main.myPlayer].adjLava;
-					bool flag5 = !Main.recipe[n].HasCondition(Recipe.Condition.InSnow) || Main.player[Main.myPlayer].ZoneSnow;
-					bool flag6 = !Main.recipe[n].HasCondition(Recipe.Condition.InGraveyardBiome) || Main.player[Main.myPlayer].ZoneGraveyard;
+					var num6 = !Main.recipe[n].HasCondition(Recipe.Condition.NearWater) || Main.player[Main.myPlayer].adjWater || Main.player[Main.myPlayer].adjTile[172];
+					var flag3 = !Main.recipe[n].HasCondition(Recipe.Condition.NearHoney) || Main.recipe[n].HasCondition(Recipe.Condition.NearHoney) == Main.player[Main.myPlayer].adjHoney;
+					var flag4 = !Main.recipe[n].HasCondition(Recipe.Condition.NearLava) || Main.recipe[n].HasCondition(Recipe.Condition.NearLava) == Main.player[Main.myPlayer].adjLava;
+					var flag5 = !Main.recipe[n].HasCondition(Recipe.Condition.InSnow) || Main.player[Main.myPlayer].ZoneSnow;
+					var flag6 = !Main.recipe[n].HasCondition(Recipe.Condition.InGraveyardBiome) || Main.player[Main.myPlayer].ZoneGraveyard;
 					if (!(num6 && flag3 && flag4 && flag5 && flag6))
 					{
 						flag = false;
@@ -534,13 +492,7 @@ namespace SatelliteStorage.DriveSystem
 				}
 				if (flag)
 				{
-					if (mouseItemType > -1 && Main.recipe[n].createItem.type == mouseItemType)
-                    {
-						//Main.focusRecipe = Main.numAvailableRecipes;
-
-					}
-
-					availableRecipes[n] = Main.recipe[n];
+					AvailableRecipes[n] = Main.recipe[n];
 				}
 			}
 		}

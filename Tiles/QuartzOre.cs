@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.IO;
@@ -22,9 +21,9 @@ namespace SatelliteStorage.Tiles
 			Main.tileSolid[Type] = true;
 			Main.tileBlockLight[Type] = true;
 
-			ModTranslation name = CreateMapEntryName();
+			var name = CreateMapEntryName();
 			name.SetDefault("QuartzOre");
-			AddMapEntry(new Color(152, 171, 198), name);
+			AddMapEntry(new(152, 171, 198), name);
 
 			DustType = 84;
 			ItemDrop = ModContent.ItemType<Items.QuartzShard>();
@@ -43,7 +42,7 @@ namespace SatelliteStorage.Tiles
 
 			// The first step is an Ore. Most vanilla ores are generated in a step called "Shinies", so for maximum compatibility, we will also do this.
 			// First, we find out which step "Shinies" is.
-			int ShiniesIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Shinies"));
+			var ShiniesIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Shinies"));
 
 			if (ShiniesIndex != -1)
 			{
@@ -68,14 +67,14 @@ namespace SatelliteStorage.Tiles
 
 			// Ores are quite simple, we simply use a for loop and the WorldGen.TileRunner to place splotches of the specified Tile in the world.
 			// "6E-05" is "scientific notation". It simply means 0.00006 but in some ways is easier to read.
-			for (int k = 0; k < (int)(Main.maxTilesX * Main.maxTilesY * 6E-05); k++)
+			for (var k = 0; k < (int)(Main.maxTilesX * Main.maxTilesY * 6E-05); k++)
 			{
 				// The inside of this for loop corresponds to one single splotch of our Ore.
 				// First, we randomly choose any coordinate in the world by choosing a random x and y value.
-				int x = WorldGen.genRand.Next(0, Main.maxTilesX);
+				var x = WorldGen.genRand.Next(0, Main.maxTilesX);
 
 				// WorldGen.worldSurfaceLow is actually the highest surface tile. In practice you might want to use WorldGen.rockLayer or other WorldGen values.
-				int y = WorldGen.genRand.Next((int)WorldGen.worldSurfaceLow, Main.maxTilesY);
+				var y = WorldGen.genRand.Next((int)WorldGen.worldSurfaceLow, Main.maxTilesY);
 
 				
 				// Then, we call WorldGen.TileRunner with random "strength" and random "steps", as well as the Tile we wish to place.

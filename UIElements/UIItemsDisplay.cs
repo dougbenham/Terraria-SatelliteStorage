@@ -13,7 +13,6 @@ using Terraria.UI;
 using SatelliteStorage.DriveSystem;
 using Terraria.GameContent.UI.Elements;
 using Terraria;
-using Terraria.ModLoader;
 
 namespace SatelliteStorage.UIElements
 {
@@ -25,9 +24,9 @@ namespace SatelliteStorage.UIElements
 			InfiniteItemsResearch
 		}
 
-		private List<int> _itemIdsAvailableTotal;
+		private readonly List<int> _itemIdsAvailableTotal;
 
-		private List<int> _itemIdsAvailableToShow;
+		private readonly List<int> _itemIdsAvailableToShow;
 
 		private CreativeUnlocksTracker _lastTrackerCheckedForEdits;
 
@@ -43,9 +42,9 @@ namespace SatelliteStorage.UIElements
 
 		private DynamicItemCollection _itemGrid;
 
-		private EntryFilterer<Item, IItemEntryFilter> _filterer;
+		private readonly EntryFilterer<Item, IItemEntryFilter> _filterer;
 
-		private EntrySorter<int, ICreativeItemSortStep> _sorter;
+		private readonly EntrySorter<int, ICreativeItemSortStep> _sorter;
 
 		private UIElement _containerInfinites;
 
@@ -63,11 +62,11 @@ namespace SatelliteStorage.UIElements
 
 		public const string SnapPointName_InfinitesItemSlot = "CreativeInfinitesSlot";
 
-		private List<UIImage> _sacrificeCogsSmall = new List<UIImage>();
+		private List<UIImage> _sacrificeCogsSmall = new();
 
-		private List<UIImage> _sacrificeCogsMedium = new List<UIImage>();
+		private List<UIImage> _sacrificeCogsMedium = new();
 
-		private List<UIImage> _sacrificeCogsBig = new List<UIImage>();
+		private List<UIImage> _sacrificeCogsBig = new();
 
 		private UIImageFramed _sacrificePistons;
 
@@ -95,10 +94,10 @@ namespace SatelliteStorage.UIElements
 		public UIItemsDisplay(UIState uiStateThatHoldsThis)
 		{
 			_parentUIState = uiStateThatHoldsThis;
-			_itemIdsAvailableTotal = new List<int>();
-			_itemIdsAvailableToShow = new List<int>();
-			_filterer = new EntryFilterer<Item, IItemEntryFilter>();
-			List<IItemEntryFilter> list = new List<IItemEntryFilter>
+			_itemIdsAvailableTotal = new();
+			_itemIdsAvailableToShow = new();
+			_filterer = new();
+			var list = new List<IItemEntryFilter>
 			{
 				new ItemFilters.Weapon(),
 				new ItemFilters.Armor(),
@@ -111,13 +110,13 @@ namespace SatelliteStorage.UIElements
 				new ItemFilters.Tools(),
 				new ItemFilters.Materials()
 			};
-			List<IItemEntryFilter> list2 = new List<IItemEntryFilter>();
+			var list2 = new List<IItemEntryFilter>();
 			list2.AddRange(list);
 			list2.Add(new ItemFilters.MiscFallback(list));
 			_filterer.AddFilters(list2);
 			_filterer.SetSearchFilterObject(new ItemFilters.BySearch());
-			_sorter = new EntrySorter<int, ICreativeItemSortStep>();
-			_sorter.AddSortSteps(new List<ICreativeItemSortStep>
+			_sorter = new();
+			_sorter.AddSortSteps(new()
 			{
 				new SortingSteps.ByCreativeSortingId(),
 				new SortingSteps.Alphabetical()
@@ -126,8 +125,8 @@ namespace SatelliteStorage.UIElements
 
 			OnMouseDown += (UIMouseEvent evt, UIElement listeningElement) =>
 			{
-				Player player = Main.LocalPlayer;
-				Item mouseItem = player.inventory[58];
+				var player = Main.LocalPlayer;
+				var mouseItem = player.inventory[58];
 
 				if (mouseItem.IsAir || Main.mouseItem.IsAir) return;
 
@@ -145,7 +144,7 @@ namespace SatelliteStorage.UIElements
 				{
 					if (SatelliteStorage.AddDriveChestItemSended) return;
 					SatelliteStorage.AddDriveChestItemSended = true;
-					ModPacket packet = SatelliteStorage.instance.GetPacket();
+					var packet = SatelliteStorage.instance.GetPacket();
 					packet.Write((byte)SatelliteStorage.MessageType.AddDriveChestItem);
 					packet.Write((byte)player.whoAmI);
 					/*
@@ -173,14 +172,14 @@ namespace SatelliteStorage.UIElements
 			_lastCheckedVersionForEdits = -1;
 			RemoveAllChildren();
 			SetPadding(0f);
-			UIElement uIElement = new UIElement
+			var uIElement = new UIElement
 			{
 				Width = StyleDimension.Fill,
 				Height = StyleDimension.Fill
 			};
 			uIElement.SetPadding(0f);
 			_containerInfinites = uIElement;
-			UIElement uIElement2 = new UIElement
+			var uIElement2 = new UIElement
 			{
 				Width = StyleDimension.Fill,
 				Height = StyleDimension.Fill
@@ -197,7 +196,7 @@ namespace SatelliteStorage.UIElements
 
 		public void UpdateItemsTypes()
 		{
-			List<int> types = new List<int>();
+			var types = new List<int>();
 			DriveChestSystem.GetItems().ForEach(v => types.Add(v.type));
 			_itemIdsAvailableTotal.Clear();
 			_itemIdsAvailableTotal.AddRange(types);
@@ -223,7 +222,7 @@ namespace SatelliteStorage.UIElements
 
 		private static UIPanel CreateBasicPanel()
 		{
-			UIPanel uIPanel = new UIPanel();
+			var uIPanel = new UIPanel();
 			SetBasicSizesForCreativeSacrificeOrInfinitesPanel(uIPanel);
 			uIPanel.BackgroundColor *= 0.8f;
 			uIPanel.BorderColor *= 0.8f;
@@ -232,25 +231,25 @@ namespace SatelliteStorage.UIElements
 
 		private static void SetBasicSizesForCreativeSacrificeOrInfinitesPanel(UIElement element)
 		{
-			element.Width = new StyleDimension(0f, 1f);
-			element.Height = new StyleDimension(-38f, 1f);
-			element.Top = new StyleDimension(38f, 0f);
+			element.Width = new(0f, 1f);
+			element.Height = new(-38f, 1f);
+			element.Top = new(38f, 0f);
 		}
 
 		private void TakeItem(UIMouseEvent evt, UIElement listeningElement, int clickType)
 		{
 			if (_itemGrid.hoverItemIndex <= -1) return;
-			DriveItem driveItem = _itemGrid._driveItems[_itemGrid.hoverItemIndex];
+			var driveItem = _itemGrid._driveItems[_itemGrid.hoverItemIndex];
 			if (driveItem == null) return;
 			//SatelliteStorage.Debug("driveItem: " + driveItem.type + ", stack: " + driveItem.stack);
-			Vector2 mousePos = evt.MousePosition;
+			var mousePos = evt.MousePosition;
 
 
-			Player player = Main.LocalPlayer;
-			Item mouseItem = player.inventory[58];
+			var player = Main.LocalPlayer;
+			var mouseItem = player.inventory[58];
 
-			bool isMouseItemAir = mouseItem.IsAir && Main.mouseItem.IsAir;
-			bool isMouseItemSame = mouseItem.type == driveItem.type;
+			var isMouseItemAir = mouseItem.IsAir && Main.mouseItem.IsAir;
+			var isMouseItemSame = mouseItem.type == driveItem.type;
 			if (!isMouseItemAir && !isMouseItemSame) return;
 
 			if (clickType == 1)
@@ -268,7 +267,7 @@ namespace SatelliteStorage.UIElements
 
 			if (Main.netMode == NetmodeID.SinglePlayer)
 			{
-				Item takeItem = DriveChestSystem.TakeItem(driveItem.type, driveItem.prefix, clickType == 1 ? 1 : 0);
+				var takeItem = DriveChestSystem.TakeItem(driveItem.type, driveItem.prefix, clickType == 1 ? 1 : 0);
 				if (takeItem == null) return;
 
 				if (clickType == 1)
@@ -303,7 +302,7 @@ namespace SatelliteStorage.UIElements
 				if (SatelliteStorage.TakeDriveChestItemSended) return;
 				SatelliteStorage.TakeDriveChestItemSended = true;
 
-				ModPacket packet = SatelliteStorage.instance.GetPacket();
+				var packet = SatelliteStorage.instance.GetPacket();
 				packet.Write((byte)SatelliteStorage.MessageType.TakeDriveChestItem);
 				packet.Write((byte)player.whoAmI);
 				packet.Write((byte)clickType);
@@ -318,12 +317,12 @@ namespace SatelliteStorage.UIElements
 
 		private void BuildInfinitesMenuContents(UIElement totalContainer)
 		{
-			UIPanel uIPanel = CreateBasicPanel();
+			var uIPanel = CreateBasicPanel();
 			totalContainer.Append(uIPanel);
 			uIPanel.OnUpdate += Hover_OnUpdate;
 			uIPanel.OnMouseOver += Hover_OnMouseOver;
 			uIPanel.OnMouseOut += Hover_OnMouseOut;
-			DynamicItemCollection item = (_itemGrid = new DynamicItemCollection());
+			var item = (_itemGrid = new());
 
 			item.OnMouseDown += (UIMouseEvent evt, UIElement listeningElement) =>
 			{
@@ -337,37 +336,37 @@ namespace SatelliteStorage.UIElements
 				return;
 			};
 
-			UIElement uIElement = new UIElement
+			var uIElement = new UIElement
 			{
-				Height = new StyleDimension(24f, 0f),
-				Width = new StyleDimension(0f, 1f)
+				Height = new(24f, 0f),
+				Width = new(0f, 1f)
 			};
 			uIElement.SetPadding(0f);
 			uIPanel.Append(uIElement);
 			AddSearchBar(uIElement);
 			_searchBar.SetContents(null, forced: true);
-			UIList uIList = new UIList
+			var uIList = new UIList
 			{
-				Width = new StyleDimension(-25f, 1f),
-				Height = new StyleDimension(-28f, 1f),
+				Width = new(-25f, 1f),
+				Height = new(-28f, 1f),
 				VAlign = 1f,
 				HAlign = 0f
 			};
 			uIPanel.Append(uIList);
-			float num = 4f;
-			UIScrollbar uIScrollbar = new UIScrollbar
+			var num = 4f;
+			var uIScrollbar = new UIScrollbar
 			{
-				Height = new StyleDimension(-28f - num * 2f, 1f),
-				Top = new StyleDimension(0f - num, 0f),
+				Height = new(-28f - num * 2f, 1f),
+				Top = new(0f - num, 0f),
 				VAlign = 1f,
 				HAlign = 1f
 			};
 			uIPanel.Append(uIScrollbar);
 			uIList.SetScrollbar(uIScrollbar);
 			uIList.Add(item);
-			uICreativeItemsInfiniteFilteringOptions = new UICreativeItemsInfiniteFilteringOptions(_filterer, "CreativeInfinitesFilter");
+			uICreativeItemsInfiniteFilteringOptions = new(_filterer, "CreativeInfinitesFilter");
 			uICreativeItemsInfiniteFilteringOptions.OnClickingOption += filtersHelper_OnClickingOption;
-			uICreativeItemsInfiniteFilteringOptions.Left = new StyleDimension(20f, 0f);
+			uICreativeItemsInfiniteFilteringOptions.Left = new(20f, 0f);
 			totalContainer.Append(uICreativeItemsInfiniteFilteringOptions);
 			uICreativeItemsInfiniteFilteringOptions.OnUpdate += Hover_OnUpdate;
 			uICreativeItemsInfiniteFilteringOptions.OnMouseOver += Hover_OnMouseOver;
@@ -390,13 +389,13 @@ namespace SatelliteStorage.UIElements
 		private void UICreativeInfiniteItemsDisplay_OnUpdate(UIElement affectedElement)
 		{
 			RemoveAllChildren();
-			CreativeUnlocksTracker localPlayerCreativeTracker = Main.LocalPlayerCreativeTracker;
+			var localPlayerCreativeTracker = Main.LocalPlayerCreativeTracker;
 			if (_lastTrackerCheckedForEdits != localPlayerCreativeTracker)
 			{
 				_lastTrackerCheckedForEdits = localPlayerCreativeTracker;
 				_lastCheckedVersionForEdits = -1;
 			}
-			int lastEditId = localPlayerCreativeTracker.ItemSacrifices.LastEditId;
+			var lastEditId = localPlayerCreativeTracker.ItemSacrifices.LastEditId;
 			if (_lastCheckedVersionForEdits != lastEditId)
 			{
 				_lastCheckedVersionForEdits = lastEditId;
@@ -435,7 +434,7 @@ namespace SatelliteStorage.UIElements
 
 		private void AddSearchBar(UIElement searchArea)
 		{
-			UIImageButton uIImageButton = new UIImageButton(Main.Assets.Request<Texture2D>("Images/UI/Bestiary/Button_Search", (AssetRequestMode)1))
+			var uIImageButton = new UIImageButton(Main.Assets.Request<Texture2D>("Images/UI/Bestiary/Button_Search", (AssetRequestMode)1))
 			{
 				VAlign = 0.5f,
 				HAlign = 0f
@@ -445,24 +444,24 @@ namespace SatelliteStorage.UIElements
 			uIImageButton.SetVisibility(1f, 1f);
 			uIImageButton.SetSnapPoint("CreativeInfinitesSearch", 0);
 			searchArea.Append(uIImageButton);
-			UIPanel uIPanel = (_searchBoxPanel = new UIPanel
+			var uIPanel = (_searchBoxPanel = new()
 			{
-				Width = new StyleDimension(0f - uIImageButton.Width.Pixels - 3f, 1f),
-				Height = new StyleDimension(0f, 1f),
+				Width = new(0f - uIImageButton.Width.Pixels - 3f, 1f),
+				Height = new(0f, 1f),
 				VAlign = 0.5f,
 				HAlign = 1f
 			});
-			uIPanel.BackgroundColor = new Color(35, 40, 83);
-			uIPanel.BorderColor = new Color(35, 40, 83);
+			uIPanel.BackgroundColor = new(35, 40, 83);
+			uIPanel.BorderColor = new(35, 40, 83);
 			uIPanel.SetPadding(0f);
 			searchArea.Append(uIPanel);
-			UISearchBar uISearchBar = (_searchBar = new UISearchBar(Language.GetText("UI.PlayerNameSlot"), 0.8f)
+			var uISearchBar = (_searchBar = new(Language.GetText("UI.PlayerNameSlot"), 0.8f)
 			{
-				Width = new StyleDimension(0f, 1f),
-				Height = new StyleDimension(0f, 1f),
+				Width = new(0f, 1f),
+				Height = new(0f, 1f),
 				HAlign = 0f,
 				VAlign = 0.5f,
-				Left = new StyleDimension(0f, 0f),
+				Left = new(0f, 0f),
 				IgnoresMouseInteraction = true
 			});
 			uIPanel.OnClick += Click_SearchArea;
@@ -473,11 +472,11 @@ namespace SatelliteStorage.UIElements
 			uISearchBar.OnEndTakingInput += OnEndTakingInput;
 			uISearchBar.OnNeedingVirtualKeyboard += OpenVirtualKeyboardWhenNeeded;
 			uISearchBar.OnCancledTakingInput += OnCancledInput;
-			UIImageButton uIImageButton2 = new UIImageButton(Main.Assets.Request<Texture2D>("Images/UI/SearchCancel", (AssetRequestMode)1))
+			var uIImageButton2 = new UIImageButton(Main.Assets.Request<Texture2D>("Images/UI/SearchCancel", (AssetRequestMode)1))
 			{
 				HAlign = 1f,
 				VAlign = 0.5f,
-				Left = new StyleDimension(-2f, 0f)
+				Left = new(-2f, 0f)
 			};
 			uIImageButton2.OnMouseOver += searchCancelButton_OnMouseOver;
 			uIImageButton2.OnClick += searchCancelButton_OnClick;
@@ -558,20 +557,20 @@ namespace SatelliteStorage.UIElements
 
 		private void OnEndTakingInput()
 		{
-			_searchBoxPanel.BorderColor = new Color(35, 40, 83);
+			_searchBoxPanel.BorderColor = new(35, 40, 83);
 		}
 
 		private void OpenVirtualKeyboardWhenNeeded()
 		{
-			int maxInputLength = 40;
-			UIVirtualKeyboard uIVirtualKeyboard = new UIVirtualKeyboard(Language.GetText("UI.PlayerNameSlot").Value, _searchString, OnFinishedSettingName, GoBackHere, 3, allowEmpty: true);
+			var maxInputLength = 40;
+			var uIVirtualKeyboard = new UIVirtualKeyboard(Language.GetText("UI.PlayerNameSlot").Value, _searchString, OnFinishedSettingName, GoBackHere, 3, allowEmpty: true);
 			uIVirtualKeyboard.SetMaxInputLength(maxInputLength);
 			IngameFancyUI.OpenUIState(uIVirtualKeyboard);
 		}
 
 		private static UserInterface GetCurrentInterface()
 		{
-			UserInterface activeInstance = UserInterface.ActiveInstance;
+			var activeInstance = UserInterface.ActiveInstance;
 			if (Main.gameMenu)
 			{
 				return Main.MenuUI;
@@ -581,7 +580,7 @@ namespace SatelliteStorage.UIElements
 
 		private void OnFinishedSettingName(string name)
 		{
-			string contents = name.Trim();
+			var contents = name.Trim();
 			_searchBar.SetContents(contents);
 			GoBackHere();
 		}

@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
@@ -31,9 +30,9 @@ namespace SatelliteStorage.Tiles
 			// Names
 			ContainerName.SetDefault(Language.GetTextValue("Mods.SatelliteStorage.UITitles.DriveChest"));
 
-			ModTranslation name = CreateMapEntryName();
+			var name = CreateMapEntryName();
 			name.SetDefault(Language.GetTextValue("Mods.SatelliteStorage.UITitles.DriveChest"));
-			AddMapEntry(new Color(108, 65, 138), name, MapName);
+			AddMapEntry(new(108, 65, 138), name, MapName);
 			
 			//name = CreateMapEntryName(Name + "_Locked"); // With multiple map entries, you need unique translation keys.
 			//name.SetDefault("Locked Example Chest");
@@ -41,7 +40,7 @@ namespace SatelliteStorage.Tiles
 
 			// Placement
 			TileObjectData.newTile.CopyFrom(TileObjectData.Style6x3);
-			TileObjectData.newTile.Origin = new Point16(2, 1);
+			TileObjectData.newTile.Origin = new(2, 1);
 			TileObjectData.newTile.CoordinateHeights = new int[3] { 16, 16, 16 };
 			TileObjectData.newTile.CoordinateWidth = 16;
 
@@ -50,7 +49,7 @@ namespace SatelliteStorage.Tiles
 			TileObjectData.newTile.StyleHorizontal = true;
 			TileObjectData.newTile.LavaDeath = false;
 
-			TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.EmptyTile, TileObjectData.newTile.Width, 0);
+			TileObjectData.newTile.AnchorBottom = new(AnchorType.EmptyTile, TileObjectData.newTile.Width, 0);
 
 			TileObjectData.addTile(Type);
 		}
@@ -58,7 +57,7 @@ namespace SatelliteStorage.Tiles
         public override bool CanPlace(int i, int j)
         {
 			if (!Main.LocalPlayer.ZoneNormalSpace) return false;
-			if (DriveSystem.DriveChestSystem.isSputnikPlaced) return false;
+			if (DriveSystem.DriveChestSystem.IsSputnikPlaced) return false;
             return base.CanPlace(i, j);
         }
 
@@ -76,7 +75,7 @@ namespace SatelliteStorage.Tiles
 		{
 			Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ModContent.ItemType<Items.SputnikItem>());
 
-			DriveSystem.DriveChestSystem.isSputnikPlaced = false;
+			DriveSystem.DriveChestSystem.IsSputnikPlaced = false;
 			SatelliteStorage.SyncIsSputnikPlacedToClients();
 		}
 
@@ -84,11 +83,11 @@ namespace SatelliteStorage.Tiles
         {
 			if (Main.netMode == NetmodeID.MultiplayerClient)
 			{
-				Player player = Main.LocalPlayer;
-				ModPacket packet = SatelliteStorage.instance.GetPacket();
+				var player = Main.LocalPlayer;
+				var packet = SatelliteStorage.instance.GetPacket();
 				packet.Write((byte)SatelliteStorage.MessageType.SetSputnikState);
 				packet.Write((byte)player.whoAmI);
-				packet.Write((byte)(DriveSystem.DriveChestSystem.isSputnikPlaced ? 1 : 0));
+				packet.Write((byte)(DriveSystem.DriveChestSystem.IsSputnikPlaced ? 1 : 0));
 				packet.Send();
 				packet.Close();
 			}
@@ -103,7 +102,7 @@ namespace SatelliteStorage.Tiles
 		public override void MouseOver(int i, int j)
 		{
 
-			Player player = Main.LocalPlayer;
+			var player = Main.LocalPlayer;
 
 
 			player.cursorItemIconText = Language.GetTextValue("Mods.SatelliteStorage.UITitles.DriveChest");
@@ -115,7 +114,7 @@ namespace SatelliteStorage.Tiles
 		public override void MouseOverFar(int i, int j)
 		{
 			MouseOver(i, j);
-			Player player = Main.LocalPlayer;
+			var player = Main.LocalPlayer;
 			if (player.cursorItemIconText == "")
 			{
 				player.cursorItemIconEnabled = false;
@@ -125,7 +124,7 @@ namespace SatelliteStorage.Tiles
 
 		public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
 		{
-			Tile tile = Main.tile[i, j];
+			var tile = Main.tile[i, j];
 			if (tile.TileFrameX == 0)
 			{
 				r = 1f;
@@ -136,7 +135,7 @@ namespace SatelliteStorage.Tiles
 
 		public override void PlaceInWorld(int i, int j, Item item)
 		{
-			DriveSystem.DriveChestSystem.isSputnikPlaced = true;
+			DriveSystem.DriveChestSystem.IsSputnikPlaced = true;
 			SendSyncSputnikState();
 			base.PlaceInWorld(i, j, item);
 		}

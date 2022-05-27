@@ -10,7 +10,7 @@ namespace SatelliteStorage.Utils
     {
         public static TagCompound SaveItem(Item item)
         {
-            TagCompound tag = new TagCompound();
+            var tag = new TagCompound();
             tag["type"] = item.type;
             tag["stack"] = item.stack;
             tag["prefix"] = item.prefix;
@@ -19,10 +19,10 @@ namespace SatelliteStorage.Utils
 
         public static Item LoadItem(TagCompound tag)
         {
-            Item item = new Item();
+            var item = new Item();
             item.SetDefaults(tag.GetInt("type"));
             item.stack = tag.GetInt("stack");
-            int prefix = tag.GetInt("prefix");
+            var prefix = tag.GetInt("prefix");
             if (prefix != 0) item.prefix = prefix;
             return item;
         }
@@ -31,9 +31,9 @@ namespace SatelliteStorage.Utils
         {
             packet.Write7BitEncodedInt(items.Count);
 
-            for(int i = 0; i < items.Count; i++)
+            for(var i = 0; i < items.Count; i++)
             {
-                Item item = items[i];
+                var item = items[i];
                 packet.Write7BitEncodedInt(item.type);
                 packet.Write7BitEncodedInt(item.stack);
                 packet.Write7BitEncodedInt(item.prefix);
@@ -44,13 +44,13 @@ namespace SatelliteStorage.Utils
 
         public static List<Item> ReaderToItems(BinaryReader reader)
         {
-            List<Item> items = new List<Item>();
+            var items = new List<Item>();
 
-            int count = reader.ReadInt32();
+            var count = reader.ReadInt32();
 
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
-                Item item = new Item();
+                var item = new Item();
                 item.type = reader.ReadInt32();
                 item.stack = reader.ReadInt32();
                 item.prefix = reader.ReadInt32();

@@ -35,7 +35,7 @@ namespace SatelliteStorage.Global
 
                 if (Main.netMode == NetmodeID.SinglePlayer)
                 {
-                    List<RecipeItemsUses> uses = DriveChestSystem.GetItemsUsesForCraft(player.inventory, DriveChestSystem.oldPlayerInv, recipe);
+                    List<RecipeItemUse> uses = DriveChestSystem.GetItemUsesForCraft(player.inventory, DriveChestSystem.oldPlayerInv, recipe);
                     uses.ForEach(u =>
                     {
                         Item item = new Item();

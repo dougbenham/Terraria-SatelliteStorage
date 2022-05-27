@@ -11,7 +11,6 @@ using Terraria.GameContent.UI.Elements;
 using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.Localization;
-using Terraria.ModLoader;
 using Terraria.UI;
 using Terraria.UI.Chat;
 using Terraria.UI.Gamepad;
@@ -20,250 +19,85 @@ namespace SatelliteStorage.UI
 {
 	public class DriveChestUI : BaseUIState
 	{
-		public static bool mouseOver;
-		public static DriveChestUI instance;
-		private UIPanel mainPanel;
-		private UIScrollbar scrollbar;
-		private UIElements.TextBox searchTextBox;
-		internal UserInterface DriveChestInterface;
+		public static DriveChestUI Instance;
+
+		private readonly float[] _buttonScale = new float[2];
+		private readonly bool[] _buttonHovered = new bool[2];
+		private Item _itemOnMouse;
+		private bool _isDrawing;
+		private int _currentRecipe = -1;
+		private bool _isMouseDownOnCraftItem;
+		private UserInterface driveChestInterface;
 		private GameTime _lastUpdateUiGameTime;
-		private UIPanel itemsCoverPanel;
-		private UIPanel itemsPanel;
-		private List<UIElements.DriveItemPanel> driveItemsPanels = new List<UIElements.DriveItemPanel>();
-		private List<DriveItem> driveItems = new List<DriveItem>();
-		private float allItemsHeight = 0;
-		private double lastCraftsResearchTime = 0;
-
-		private string header = "";
-		private Vector2 headerPos;
-
-		UIElements.UIItemsDisplay display;
-		UIElements.UICraftDisplay craftDisplay;
-		UIElements.UICraftRecipe craftRecipe;
-		UIPanel craftResultPanel;
-
-		private int defaultInventoryItemsCount;
-
-		private float lastScrollbarValue = 0;
-		private string lastSearchValue = "";
-
-		private const float itemOffsetx = 42;
-		private const float itemOffsety = 42;
-
-		private const int itemsXCount = 5;
-		private const int itemsYCount = 5;
-
-		private int itemsCount = 0;
-		private int currentYCount = 0;
-
-		private float scrollMaxValue = 0;
-
+		private double lastCraftsResearchTime;
+		private UIElements.UIItemsDisplay display;
+		private UIElements.UICraftDisplay craftDisplay;
+		private UIElements.UICraftRecipe craftRecipe;
+		private UIPanel craftResultPanel;
 		private float windowWidth;
 		private float windowHeight;
-
 		private Vector2 openPosition;
-		private bool checkPosition = false;
-
+		private bool checkPosition;
 		private Vector2 buttonsPos;
 		private Vector2 craftResultSlotPos;
-
-		private Item craftResultItem = new Item(5, 5);
-
+		private Item craftResultItem = new(5, 5);
 		private int craftOnMouseRecipe = -1;
+		private double mouseDownOnCraftItemTime;
+		private bool mouseDownOnCraftItemToggle;
+		private double mouseDownItemCraftCooldown;
 
-		public class ButtonID
-		{
-			public const int DepositAll = 0;
-
-			public const int QuickStack = 1;
-		}
-
-		public const float buttonScaleMinimum = 0.75f;
-		public const float buttonScaleMaximum = 1f;
-		public static float[] ButtonScale = new float[2];
-		public static bool[] ButtonHovered = new bool[2];
-
-		private static Item itemOnMouse;
-
-		public static bool isDrawing = false;
-
-		public static int currentRecipe = -1;
-
-		public static bool isMouseDownOnCraftItem = false;
-		private double mouseDownOnCraftItemTime = 0;
-		private bool mouseDownOnCraftItemToggle = false;
-		private double mouseDownItemCraftCooldown = 0;
-
-		public static void UpdateHover(int ID, bool hovering)
+		public void UpdateHover(int id, bool hovering)
 		{
 			if (hovering)
 			{
-				if (!ButtonHovered[ID])
+				if (!_buttonHovered[id])
 				{
 					SoundEngine.PlaySound(12);
 				}
-				ButtonHovered[ID] = true;
-				ButtonScale[ID] += 0.05f;
-				if (ButtonScale[ID] > 1f)
+
+				_buttonHovered[id] = true;
+				_buttonScale[id] += 0.05f;
+				if (_buttonScale[id] > 1f)
 				{
-					ButtonScale[ID] = 1f;
+					_buttonScale[id] = 1f;
 				}
 			}
 			else
 			{
-				ButtonHovered[ID] = false;
-				ButtonScale[ID] -= 0.05f;
-				if (ButtonScale[ID] < 0.75f)
+				_buttonHovered[id] = false;
+				_buttonScale[id] -= 0.05f;
+				if (_buttonScale[id] < 0.75f)
 				{
-					ButtonScale[ID] = 0.75f;
+					_buttonScale[id] = 0.75f;
 				}
 			}
 		}
 
-		public override void OnActivate()
-        {
-            base.OnActivate();
-		}
-
 		public static void ReloadItems()
-        {
-			if (instance == null) return;
-			if (!instance.GetState()) return;
+		{
+			if (Instance == null)
+				return;
+			if (!Instance.GetState())
+				return;
 
-			instance.display.RebuildPage();
+			Instance.display.RebuildPage();
 		}
 
 
 		public static void SetOpenedPosition(Vector2 pos)
-        {
-			instance.checkPosition = true;
-			instance.openPosition = pos;
-		}
-
-		public static void ResetOpenedPosition()
 		{
-			instance.checkPosition = false;
+			Instance.checkPosition = true;
+			Instance.openPosition = pos;
 		}
-
-		public static void ReloadCraftItems()
-        {
-			List<DriveItem> driveItems = DriveChestSystem.GetItems();
-			Item[] oldItems = new Item[instance.defaultInventoryItemsCount];
-			for(int i = 0; i < instance.defaultInventoryItemsCount; i++)
-            {
-				oldItems[i] = Main.LocalPlayer.inventory[i];
-            }
-			Main.LocalPlayer.inventory = new Item[instance.defaultInventoryItemsCount + driveItems.Count];
-
-			for(int i = 0; i < instance.defaultInventoryItemsCount; i++)
-            {
-				Main.LocalPlayer.inventory[i] = oldItems[i];
-			}
-
-			for (int i = 0; i < driveItems.Count; i++)
-			{
-				DriveItem driveItem = driveItems[i];
-				Item item = new Item();
-				item.type = driveItem.type;
-				item.SetDefaults(item.type);
-				item.stack = driveItem.stack;
-				item.prefix = driveItem.prefix;
-
-				Main.LocalPlayer.inventory[i+instance.defaultInventoryItemsCount] = item;
-			}
-
-			//SatelliteStorage.Debug(Main.LocalPlayer.inventory.Length.ToString());
-		}
-		/*
-		private void UpdateItems(List<DriveItem> items)
-        {
-			return;
-			//driveItems = items;
-
-			//RenderItems();
-		}
-		*/
-
-		/*
-		private void RenderItems()
-        {
-			
-			itemsPanel.RemoveAllChildren();
-
-			lastScrollbarValue = -1;
-			//scrollbar.ViewPosition = 0;
-			float xpos = 0;
-			float ypos = 0;
-
-			int ycount = 0;
-
-			driveItemsPanels.ForEach(driveItemPanel =>
-			{
-				driveItemPanel.Deactivate();
-			});
-			driveItemsPanels.Clear();
-
-			driveItems.ForEach(item =>
-			{
-				UIElements.DriveItemPanel driveItemPanel = new UIElements.DriveItemPanel(item);
-				if (lastSearchValue.Length > 0 && driveItemPanel.item.Name.ToLower().IndexOf(lastSearchValue.ToLower()) < 0) return;
-				driveItemsPanels.Add(driveItemPanel);
-			});
-
-			driveItemsPanels = driveItemsPanels.OrderBy(v => v.item.type).ToList();
-
-			driveItemsPanels.ForEach(driveItemPanel =>
-			{
-				if (xpos > itemsXCount - 1)
-				{
-					xpos = 0;
-					ypos++;
-					ycount++;
-				}
-
-				driveItemPanel.Width.Set(40, 0);
-				driveItemPanel.Height.Set(40, 0);
-				driveItemPanel.Left.Set(-9 + (itemOffsetx * xpos), 0);
-				driveItemPanel.Top.Set(-15 + (itemOffsety * ypos), 0);
-				driveItemPanel.VAlign = 0f;
-				driveItemPanel.HAlign = 0f;
-
-				allItemsHeight = itemOffsety * ypos + itemOffsety / 2;
-
-				xpos++;
-
-				itemsPanel.Append(driveItemPanel);
-			});
-
-			currentYCount = ycount;
-
-			const int defaultScrollItemsCount = itemsYCount - 1;
-			float curScrollItemsPrc = (float)defaultScrollItemsCount / (float)ycount;
-			if (curScrollItemsPrc < 0.1f) curScrollItemsPrc = 0.1f;
-			if (curScrollItemsPrc > 1) curScrollItemsPrc = 1;
-
-			int viewCount = (int)MathF.Round((1000 + itemsYCount - ycount) * curScrollItemsPrc);
-			if (viewCount > 1000) viewCount = 1000;
-			//SatelliteStorage.Debug("YCOUNT: " + viewCount);
-
-			scrollMaxValue = 1000 - viewCount;
-			scrollbar.SetView(viewCount, 1000);
-
-		
-			//itemsPanel
-		}
-		*/
 
 		public override void OnInitialize()
-        {
-            base.OnInitialize();
+		{
+			base.OnInitialize();
 
 			CalculateSize();
 
-			DriveChestInterface = new UserInterface();
-
-			defaultInventoryItemsCount = Main.LocalPlayer.inventory.Length;
-
+			driveChestInterface = new();
+			
 			/*
 			mainPanel = new UIPanel();
 			mainPanel.Width.Set(width, 0);
@@ -400,17 +234,15 @@ namespace SatelliteStorage.UI
 			Append(quickStackButton);
 			
 			*/
-			display = new UIElements.UIItemsDisplay(this);
-			
+			display = new(this);
+
 			Append(display);
 
-			header = Language.GetTextValue("Mods.SatelliteStorage.UITitles.DriveChest");
-
-			craftDisplay = new UIElements.UICraftDisplay(this);
+			craftDisplay = new(this);
 
 			Append(craftDisplay);
 
-			craftRecipe = new UIElements.UICraftRecipe(this);
+			craftRecipe = new(this);
 			Append(craftRecipe);
 
 			craftResultPanel = new UIElements.UICraftResultBG();
@@ -420,82 +252,59 @@ namespace SatelliteStorage.UI
 
 			craftDisplay.onRecipeChoosen += (int recipe) =>
 			{
-				currentRecipe = recipe;
+				_currentRecipe = recipe;
 				craftRecipe.SetRecipe(recipe);
 				SoundEngine.PlaySound(12);
 			};
-			
+
 			OnMouseDown += (UIMouseEvent evt, UIElement listeningElement) =>
 			{
 				if (craftOnMouseRecipe > -1)
-                {
-	                if (Main.keyState.IsKeyDown(Keys.LeftControl) || Main.keyState.IsKeyDown(Keys.RightControl))
-	                {
-		                while (TryCraftItem()) ;
-		                return;
-	                }
+				{
+					if (Main.keyState.IsKeyDown(Keys.LeftControl) || Main.keyState.IsKeyDown(Keys.RightControl))
+					{
+						while (TryCraftItem())
+							;
+						return;
+					}
+
 					mouseDownOnCraftItemToggle = false;
-					isMouseDownOnCraftItem = true;
+					_isMouseDownOnCraftItem = true;
 					TryCraftItem();
 				}
 			};
 
-			OnMouseUp += (UIMouseEvent evt, UIElement listeningElement) =>
-			{
-				isMouseDownOnCraftItem = false;
-			};
-			//UICreativeItemsInfiniteFilteringOptions filterItems = new UICreativeItemsInfiniteFilteringOptions();
-
-			/*
-			UIItemSlot slot = new UIItemSlot(null, 0, 0);
-			slot.Width.Set(100, 0);
-			slot.Height.Set(50, 0);
-			slot.HAlign = 0.5f;
-			slot.Top.Set(25, 0); // 2
-			panel.Append(slot);
-			*/
-
-			/*
-			UIPanel button = new UIPanel(); // 1
-			button.Width.Set(100, 0);
-			button.Height.Set(50, 0);
-			button.HAlign = 0.5f;
-			button.Top.Set(25, 0); // 2
-			button.OnClick += OnButtonClick; // 3
-			panel.Append(button);
-			*/
-
-			/*
-			UIText text = new UIText("Click me!");
-			text.HAlign = text.VAlign = 0.5f; // 4
-			button.Append(text); // 5
-			*/
+			OnMouseUp += (UIMouseEvent evt, UIElement listeningElement) => { _isMouseDownOnCraftItem = false; };
 		}
 
 		private bool TryCraftItem()
-        {
-			if (craftOnMouseRecipe <= -1) return false;
+		{
+			if (craftOnMouseRecipe <= -1)
+				return false;
 
-			Recipe recipe = Main.recipe[craftOnMouseRecipe];
-			Player player = Main.LocalPlayer;
-			Item mouseItem = player.inventory[58];
+			var recipe = Main.recipe[craftOnMouseRecipe];
+			var player = Main.LocalPlayer;
+			var mouseItem = player.inventory[58];
 
-			bool isMouseItemAir = mouseItem.IsAir && Main.mouseItem.IsAir;
-			bool isMouseItemSame = mouseItem.type == recipe.createItem.type;
-			if (!isMouseItemAir && !isMouseItemSame) return false;
+			var isMouseItemAir = mouseItem.IsAir && Main.mouseItem.IsAir;
+			var isMouseItemSame = mouseItem.type == recipe.createItem.type;
+			if (!isMouseItemAir && !isMouseItemSame)
+				return false;
 
 			if (isMouseItemSame)
-            {
-				if (mouseItem.stack + recipe.createItem.stack > mouseItem.maxStack) return false;
+			{
+				if (mouseItem.stack + recipe.createItem.stack > mouseItem.maxStack)
+					return false;
 			}
 
 			if (Main.netMode == NetmodeID.SinglePlayer)
 			{
-				List<RecipeItemsUses> uses = DriveChestSystem.GetItemsUsesForCraft(player.inventory, recipe);
-				if (uses == null) return false;
+				var uses = DriveChestSystem.GetItemUsesForCraft(player.inventory, recipe);
+				if (uses == null)
+					return false;
 				uses.ForEach(u =>
 				{
-					Item item = new Item();
+					var item = new Item();
 					item.type = u.type;
 					item.SetDefaults(item.type);
 					item.stack = 1;
@@ -503,7 +312,8 @@ namespace SatelliteStorage.UI
 					if (u.from == 0)
 					{
 						player.inventory[u.slot].stack -= u.stack;
-						if (player.inventory[u.slot].stack <= 0) player.inventory[u.slot].TurnToAir();
+						if (player.inventory[u.slot].stack <= 0)
+							player.inventory[u.slot].TurnToAir();
 					}
 					else
 					{
@@ -523,36 +333,37 @@ namespace SatelliteStorage.UI
 				}
 
 				SoundEngine.PlaySound(7);
-				DriveChestSystem.checkRecipesRefresh = false;
+				DriveChestSystem.CheckRecipesRefresh = false;
 			}
 
 			if (Main.netMode == NetmodeID.MultiplayerClient)
-            {
-				List<RecipeItemsUses> uses = DriveChestSystem.GetItemsUsesForCraft(player.inventory, recipe);
-				if (uses == null) return false;
+			{
+				var uses = DriveChestSystem.GetItemUsesForCraft(player.inventory, recipe);
+				if (uses == null)
+					return false;
 
-				ModPacket packet = SatelliteStorage.instance.GetPacket();
-				packet.Write((byte)SatelliteStorage.MessageType.TryCraftRecipe);
-				packet.Write((byte)player.whoAmI);
+				var packet = SatelliteStorage.instance.GetPacket();
+				packet.Write((byte) SatelliteStorage.MessageType.TryCraftRecipe);
+				packet.Write((byte) player.whoAmI);
 				packet.Write7BitEncodedInt(craftOnMouseRecipe);
 				packet.Send();
 				packet.Close();
 			}
 
 			return true;
-        }
+		}
 
 		private void TryDepositItems(bool newItems = false)
-        {
-			Player player = Main.LocalPlayer;
-			bool itemAdded = false;
-			for (int i = 10; i < 54; i++)
+		{
+			var player = Main.LocalPlayer;
+			var itemAdded = false;
+			for (var i = 10; i < 54; i++)
 			{
-				Item item = player.inventory[i];
+				var item = player.inventory[i];
 
 				if (item != null && !item.favorited && !item.IsAir && i != 58)
 				{
-					DriveItem driveItem = new DriveItem();
+					var driveItem = new DriveItem();
 
 					driveItem.type = item.type;
 					driveItem.stack = item.stack;
@@ -566,14 +377,14 @@ namespace SatelliteStorage.UI
 							itemAdded = true;
 						}
 					}
-					
+
 					if (Main.netMode == NetmodeID.MultiplayerClient)
-                    {
-						ModPacket packet = SatelliteStorage.instance.GetPacket();
-						packet.Write((byte)SatelliteStorage.MessageType.DepositDriveChestItem);
-						packet.Write((byte)player.whoAmI);
-						packet.Write((byte)(newItems ? 1 : 0));
-						packet.Write((byte)i);
+					{
+						var packet = SatelliteStorage.instance.GetPacket();
+						packet.Write((byte) SatelliteStorage.MessageType.DepositDriveChestItem);
+						packet.Write((byte) player.whoAmI);
+						packet.Write((byte) (newItems ? 1 : 0));
+						packet.Write((byte) i);
 						/*
 						packet.Write7BitEncodedInt(item.type);
 						packet.Write7BitEncodedInt(item.stack);
@@ -587,72 +398,27 @@ namespace SatelliteStorage.UI
 							itemAdded = true;
 						}
 					}
-					
+
 				}
 			}
 
 			if (itemAdded)
 			{
 				SoundEngine.PlaySound(7);
-				if (Main.netMode == NetmodeID.SinglePlayer) ReloadItems();
+				if (Main.netMode == NetmodeID.SinglePlayer)
+					ReloadItems();
 			}
-		}
-
-		private void OnScrollbarWheel(UIMouseEvent evt, UIElement listeningElement)
-        {
-
-		}
-
-
-		private void OnPanelMouseDown(UIMouseEvent evt, UIElement listeningElement)
-        {
-			Player player = Main.LocalPlayer;
-			Item mouseItem = player.inventory[58];
-
-			if (mouseItem.IsAir || Main.mouseItem.IsAir) return;
-            
-			if (Main.netMode == NetmodeID.SinglePlayer)
-			{
-				if (!DriveChestSystem.AddItem(DriveItem.FromItem(Main.mouseItem))) return;
-				ReloadItems();
-
-				mouseItem.TurnToAir();
-				Main.mouseItem.TurnToAir();
-				SoundEngine.PlaySound(7);
-			}
-
-			if (Main.netMode == NetmodeID.MultiplayerClient)
-            {
-				if (SatelliteStorage.AddDriveChestItemSended) return;
-				SatelliteStorage.AddDriveChestItemSended = true;
-				ModPacket packet = SatelliteStorage.instance.GetPacket();
-				packet.Write((byte)SatelliteStorage.MessageType.AddDriveChestItem);
-				packet.Write((byte)player.whoAmI);
-				/*
-				packet.Write7BitEncodedInt(Main.mouseItem.type);
-				packet.Write7BitEncodedInt(Main.mouseItem.stack);
-				packet.Write7BitEncodedInt(Main.mouseItem.prefix);
-				*/
-				packet.Send();
-				packet.Close();
-			}
-			
-		}
-
-        private void OnButtonClick(UIMouseEvent evt, UIElement listeningElement)
-		{
-			// We can do stuff in here!
 		}
 
 		private Rectangle GetSlotHitbox(int startX, int startY)
 		{
-			return new Rectangle(startX, startY, 44, 44);
+			return new(startX, startY, 44, 44);
 		}
 
 		public override void Draw(SpriteBatch spriteBatch)
 		{
 			craftOnMouseRecipe = -1;
-			if (!isDrawing)
+			if (!_isDrawing)
 				return;
 
 			if (Main.CreativeMenu.Enabled)
@@ -691,12 +457,12 @@ namespace SatelliteStorage.UI
 					Color.White, 1f);
 			}
 
-			if (currentRecipe > -1 && !UIElements.UICraftRecipe.hidden)
+			if (_currentRecipe > -1 && !UIElements.UICraftRecipe.hidden)
 			{
-				Recipe recipe = Main.recipe[currentRecipe];
+				var recipe = Main.recipe[_currentRecipe];
 				craftResultItem = recipe.createItem;
-				Rectangle itemSlotHitbox = GetSlotHitbox((int) craftResultSlotPos.X, (int) craftResultSlotPos.Y);
-				bool cREATIVE_ItemSlotShouldHighlightAsSelected = false;
+				var itemSlotHitbox = GetSlotHitbox((int) craftResultSlotPos.X, (int) craftResultSlotPos.Y);
+				var cReativeItemSlotShouldHighlightAsSelected = false;
 				if (IsMouseHovering && itemSlotHitbox.Contains(Main.MouseScreen.ToPoint()) && !PlayerInput.IgnoreMouseInterface)
 				{
 					Main.LocalPlayer.mouseInterface = true;
@@ -706,15 +472,15 @@ namespace SatelliteStorage.UI
 					//ItemSlot.RightClick(ref inv, context);
 					ItemSlot.MouseHover(ref craftResultItem, 26);
 
-					craftOnMouseRecipe = currentRecipe;
-					cREATIVE_ItemSlotShouldHighlightAsSelected = true;
+					craftOnMouseRecipe = _currentRecipe;
+					cReativeItemSlotShouldHighlightAsSelected = true;
 				}
 				else
 				{
-					isMouseDownOnCraftItem = false;
+					_isMouseDownOnCraftItem = false;
 				}
 
-				UILinkPointNavigator.Shortcuts.CREATIVE_ItemSlotShouldHighlightAsSelected = cREATIVE_ItemSlotShouldHighlightAsSelected;
+				UILinkPointNavigator.Shortcuts.CREATIVE_ItemSlotShouldHighlightAsSelected = cReativeItemSlotShouldHighlightAsSelected;
 				ItemSlot.Draw(spriteBatch, ref craftResultItem, 26, itemSlotHitbox.TopLeft());
 				UIElements.UICraftResultBG.hidden = false;
 			}
@@ -728,103 +494,112 @@ namespace SatelliteStorage.UI
 		public override void OnUpdateUI(GameTime gameTime)
 		{
 
-			isDrawing = false;
+			_isDrawing = false;
 
-			if (DriveChestInterface?.CurrentState != null)
+			if (driveChestInterface?.CurrentState != null)
 			{
-				isDrawing = true;
-				double elapsedTime = gameTime.TotalGameTime.TotalMilliseconds - lastCraftsResearchTime;
-				
+				_isDrawing = true;
+				var elapsedTime = gameTime.TotalGameTime.TotalMilliseconds - lastCraftsResearchTime;
+
 				_lastUpdateUiGameTime = gameTime;
 
-				if (isMouseDownOnCraftItem)
-                {
+				if (_isMouseDownOnCraftItem)
+				{
 					if (!mouseDownOnCraftItemToggle)
 					{
 						mouseDownItemCraftCooldown = gameTime.TotalGameTime.TotalMilliseconds;
 						mouseDownOnCraftItemTime = gameTime.TotalGameTime.TotalMilliseconds;
 						mouseDownOnCraftItemToggle = true;
 					}
-				} else
-                {
+				}
+				else
+				{
 					mouseDownOnCraftItemToggle = false;
 				}
 
-				double mouseDownOnCraftItemElapsed = gameTime.TotalGameTime.TotalMilliseconds - mouseDownOnCraftItemTime;
+				var mouseDownOnCraftItemElapsed = gameTime.TotalGameTime.TotalMilliseconds - mouseDownOnCraftItemTime;
 
-				if (mouseDownOnCraftItemToggle && isMouseDownOnCraftItem)
-                {
+				if (mouseDownOnCraftItemToggle && _isMouseDownOnCraftItem)
+				{
 					double waitTime = 999999;
-					if (mouseDownOnCraftItemElapsed >= 1000) waitTime = 200;
-					if (mouseDownOnCraftItemElapsed >= 1500) waitTime = 150;
-					if (mouseDownOnCraftItemElapsed >= 2000) waitTime = 100;
-					if (mouseDownOnCraftItemElapsed >= 2500) waitTime = 50;
-					if (mouseDownOnCraftItemElapsed >= 3000) waitTime = 16;
+					if (mouseDownOnCraftItemElapsed >= 1000)
+						waitTime = 200;
+					if (mouseDownOnCraftItemElapsed >= 1500)
+						waitTime = 150;
+					if (mouseDownOnCraftItemElapsed >= 2000)
+						waitTime = 100;
+					if (mouseDownOnCraftItemElapsed >= 2500)
+						waitTime = 50;
+					if (mouseDownOnCraftItemElapsed >= 3000)
+						waitTime = 16;
 
 					if (gameTime.TotalGameTime.TotalMilliseconds > mouseDownItemCraftCooldown + waitTime)
-                    {
+					{
 						mouseDownItemCraftCooldown = gameTime.TotalGameTime.TotalMilliseconds;
 						TryCraftItem();
 					}
 
 				}
 
-				if (Main.recBigList) isDrawing = false;
+				if (Main.recBigList)
+					_isDrawing = false;
 
 				CalculateSize();
-				DriveChestInterface.Update(gameTime);
+				driveChestInterface.Update(gameTime);
 
-				Player player = Main.LocalPlayer;
-				Item mouseItem = player.inventory[58];
+				var player = Main.LocalPlayer;
+				var mouseItem = player.inventory[58];
 
 				if (mouseItem.IsAir || Main.mouseItem.IsAir)
 				{
-					if (itemOnMouse != null)
+					if (_itemOnMouse != null)
 					{
-						itemOnMouse = null;
-						DriveChestSystem.checkRecipesRefresh = false;
+						_itemOnMouse = null;
+						DriveChestSystem.CheckRecipesRefresh = false;
 					}
 				}
 				else
 				{
-					if (itemOnMouse == null || itemOnMouse.IsNotSameTypePrefixAndStack(mouseItem))
+					if (_itemOnMouse == null || _itemOnMouse.IsNotSameTypePrefixAndStack(mouseItem))
 					{
-						itemOnMouse = mouseItem;
-						DriveChestSystem.checkRecipesRefresh = false;
+						_itemOnMouse = mouseItem;
+						DriveChestSystem.CheckRecipesRefresh = false;
 					}
 				}
 
 
-				if (elapsedTime > 256 && (!DriveChestSystem.checkRecipesRefresh || SatelliteStoragePlayer.CheckAdjChanged()))
+				if (elapsedTime > 256 && (!DriveChestSystem.CheckRecipesRefresh || SatelliteStoragePlayer.CheckAdjChanged()))
 				{
-					DriveChestSystem.checkRecipesRefresh = true;
+					DriveChestSystem.CheckRecipesRefresh = true;
 					lastCraftsResearchTime = gameTime.TotalGameTime.TotalMilliseconds;
 					DriveChestSystem.ResearchRecipes();
-					instance.craftDisplay.RebuildPage();
-					instance.craftRecipe.RebuildPage();
-				}
-				
-				if (checkPosition)
-				{
-					if (Main.LocalPlayer.position.Distance(openPosition) > 100) SatelliteStorage.SetUIState((int)UITypes.DriveChest, false);
+					Instance.craftDisplay.RebuildPage();
+					Instance.craftRecipe.RebuildPage();
 				}
 
-				if (!Main.playerInventory) SatelliteStorage.SetUIState((int)UITypes.DriveChest, false);
-				
+				if (checkPosition)
+				{
+					if (Main.LocalPlayer.position.Distance(openPosition) > 100)
+						SatelliteStorage.SetUIState((int) UITypes.DriveChest, false);
+				}
+
+				if (!Main.playerInventory)
+					SatelliteStorage.SetUIState((int) UITypes.DriveChest, false);
+
 			}
 		}
 
 		private void CalculateSize()
-        {
-			float width = GetDimensions().Width;
-			float height = GetDimensions().Height;
+		{
+			var width = GetDimensions().Width;
+			var height = GetDimensions().Height;
 
-			
+
 			if (windowHeight != height || windowWidth != width)
-            {
+			{
 				windowWidth = width;
 				windowHeight = height;
-				
+
 				if (display != null)
 				{
 					display.HAlign = 0.5f;
@@ -835,35 +610,35 @@ namespace SatelliteStorage.UI
 					display.MinWidth.Set(500, 0);
 
 
-					bool smallWidth = false;
+					var smallWidth = false;
 					if (width < 1650)
-                    {
+					{
 						display.Height.Set(height * 0.35f, 0);
 						display.VAlign = 0.85f;
 						smallWidth = true;
 					}
 
 					display.Recalculate();
-					
+
 
 					if (smallWidth)
 					{
-						buttonsPos = new Vector2(
+						buttonsPos = new(
 							display.GetDimensions().X + 30,
 							display.GetDimensions().Y - 50
 						);
 					}
 					else
 					{
-						buttonsPos = new Vector2(
+						buttonsPos = new(
 							display.GetDimensions().X + display.GetDimensions().Width + 15,
 							display.GetDimensions().Y + 70
 						);
 					}
-					
 
-					float craftDisplayWidth = MathF.Max(width * 0.2f, 150);
-					float craftDisplayHeight = MathF.Max(display.Height.Pixels * 0.77f, 150);
+
+					var craftDisplayWidth = MathF.Max(width * 0.2f, 150);
+					var craftDisplayHeight = MathF.Max(display.Height.Pixels * 0.77f, 150);
 					craftDisplay.Left.Set(display.GetDimensions().X - craftDisplayWidth - 15, 0);
 					craftDisplay.Top.Set(display.GetDimensions().Y + (display.Height.Pixels - craftDisplayHeight), 0);
 					craftDisplay.Width.Set(craftDisplayWidth, 0);
@@ -873,8 +648,8 @@ namespace SatelliteStorage.UI
 
 					if (smallWidth)
 					{
-						float craftRecipeWidth = MathF.Max(width * 0.1f, 150);
-						float craftRecipeHeight = MathF.Max(craftDisplay.Height.Pixels * 0.55f, 150);
+						var craftRecipeWidth = MathF.Max(width * 0.1f, 150);
+						var craftRecipeHeight = MathF.Max(craftDisplay.Height.Pixels * 0.55f, 150);
 						craftRecipe.Left.Set(craftDisplay.GetDimensions().X, 0);
 						craftRecipe.Top.Set(craftDisplay.GetDimensions().Y - craftRecipeHeight + 25, 0);
 						craftRecipe.Width.Set(craftDisplay.Width.Pixels, 0);
@@ -882,16 +657,17 @@ namespace SatelliteStorage.UI
 
 						craftRecipe.Recalculate();
 
-						float craftResultWidth = craftRecipe.Width.Pixels * 0.25f;
-						float craftResultHeight = craftRecipe.Width.Pixels * 0.25f;
+						var craftResultWidth = craftRecipe.Width.Pixels * 0.25f;
+						var craftResultHeight = craftRecipe.Width.Pixels * 0.25f;
 						craftResultPanel.Left.Set(craftRecipe.GetDimensions().X + (craftRecipe.Width.Pixels / 2) - (craftResultWidth / 2), 0);
 						craftResultPanel.Top.Set(craftRecipe.GetDimensions().Y - craftResultHeight + 30, 0);
 						craftResultPanel.Width.Set(craftResultWidth, 0);
 						craftResultPanel.Height.Set(craftResultHeight, 0);
-					} else
-                    {
-						float craftRecipeWidth = MathF.Max(width * 0.1f, 150);
-						float craftRecipeHeight = MathF.Max(craftDisplay.Height.Pixels * 0.55f, 150);
+					}
+					else
+					{
+						var craftRecipeWidth = MathF.Max(width * 0.1f, 150);
+						var craftRecipeHeight = MathF.Max(craftDisplay.Height.Pixels * 0.55f, 150);
 						craftRecipe.Left.Set(craftDisplay.GetDimensions().X - craftRecipeWidth - 15, 0);
 						craftRecipe.Top.Set(craftDisplay.GetDimensions().Y, 0);
 						craftRecipe.Width.Set(craftRecipeWidth, 0);
@@ -900,7 +676,7 @@ namespace SatelliteStorage.UI
 						craftRecipe.Recalculate();
 
 
-						float craftResultWidth = craftRecipe.Width.Pixels * 0.35f;
+						var craftResultWidth = craftRecipe.Width.Pixels * 0.35f;
 						craftResultPanel.Left.Set(craftRecipe.GetDimensions().X + (craftRecipe.Width.Pixels / 2) - (craftResultWidth / 2), 0);
 						craftResultPanel.Top.Set(craftRecipe.GetDimensions().Y + craftRecipe.Height.Pixels + 15, 0);
 						craftResultPanel.Width.Set(craftRecipe.Width.Pixels * 0.35f, 0);
@@ -912,14 +688,15 @@ namespace SatelliteStorage.UI
 					craftResultPanel.Recalculate();
 
 					if (smallWidth)
-                    {
-						craftResultSlotPos = new Vector2(
+					{
+						craftResultSlotPos = new(
 							craftResultPanel.GetDimensions().X + (craftResultPanel.Width.Pixels / 2) - (40 / 2) - 1,
 							craftResultPanel.GetDimensions().Y + (craftResultPanel.Height.Pixels / 2) - (40 / 2) + 1
 						);
-					} else
-                    {
-						craftResultSlotPos = new Vector2(
+					}
+					else
+					{
+						craftResultSlotPos = new(
 							craftResultPanel.GetDimensions().X + (craftResultPanel.Width.Pixels / 2) - (40 / 2),
 							craftResultPanel.GetDimensions().Y + (craftResultPanel.Height.Pixels / 2) - (40 / 2)
 						);
@@ -928,78 +705,76 @@ namespace SatelliteStorage.UI
 			}
 		}
 
-		private Dictionary<string, bool> layersActive = new Dictionary<string, bool>();
-
-        public override void OnModifyInterfaceLayers(List<GameInterfaceLayer> layers)
+		public override void OnModifyInterfaceLayers(List<GameInterfaceLayer> layers)
 		{
-
-
-			int mouseTextIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
+			var mouseTextIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
 			if (mouseTextIndex != -1)
 			{
 				layers.Insert(mouseTextIndex, new LegacyGameInterfaceLayer(
 					"SatelliteStorage: DriveChestUI",
 					delegate
 					{
-						if (_lastUpdateUiGameTime != null && DriveChestInterface?.CurrentState != null)
+						if (_lastUpdateUiGameTime != null && driveChestInterface?.CurrentState != null)
 						{
-							DriveChestInterface.Draw(Main.spriteBatch, _lastUpdateUiGameTime);
+							driveChestInterface.Draw(Main.spriteBatch, _lastUpdateUiGameTime);
 						}
+
 						return true;
 					},
-					   InterfaceScaleType.UI));
+					InterfaceScaleType.UI));
 			}
 		}
 
 		public override void SetState(bool state)
-        {
+		{
 			if (state)
 			{
-				instance = this;
-				DriveChestInterface?.SetState(this);
+				Instance = this;
+				driveChestInterface?.SetState(this);
 				CalculateSize();
 				ReloadItems();
-				DriveChestSystem.checkRecipesRefresh = false;
+				DriveChestSystem.CheckRecipesRefresh = false;
 			}
 			else
 			{
 				checkPosition = false;
-				isMouseDownOnCraftItem = false;
-				DriveChestInterface?.SetState(null);
+				_isMouseDownOnCraftItem = false;
+				driveChestInterface?.SetState(null);
 
-				for (int i = 0; i < 2; i++)
+				for (var i = 0; i < 2; i++)
 				{
-					ButtonScale[i] = 0.75f;
-					ButtonHovered[i] = false;
+					_buttonScale[i] = 0.75f;
+					_buttonHovered[i] = false;
 				}
 
 			}
 		}
 
 		public override bool GetState()
-        {
-			return DriveChestInterface?.CurrentState != null ? true : false;
+		{
+			return driveChestInterface?.CurrentState != null ? true : false;
 		}
 
-		private static void DrawButtons(SpriteBatch spritebatch)
+		private void DrawButtons(SpriteBatch spritebatch)
 		{
-			if (instance.display == null) return;
-			for (int i = 0; i < 2; i++)
+			if (Instance.display == null)
+				return;
+			for (var i = 0; i < 2; i++)
 			{
-				DrawButton(spritebatch, i, (int)(instance.buttonsPos.X), (int)(instance.buttonsPos.Y));
+				DrawButton(spritebatch, i, (int) (Instance.buttonsPos.X), (int) (Instance.buttonsPos.Y));
 			}
 		}
 
-		private static void DrawButton(SpriteBatch spriteBatch, int ID, int X, int Y)
+		private void DrawButton(SpriteBatch spriteBatch, int id, int x, int y)
 		{
-			Player player = Main.player[Main.myPlayer];
+			var player = Main.player[Main.myPlayer];
 
-			int num = ID;
+			var num = id;
 
-			Y += num * 26;
-			float num2 = ButtonScale[ID] * 1.3f;
-			string text = "";
-			switch (ID)
+			y += num * 26;
+			var num2 = _buttonScale[id] * 1.3f;
+			var text = "";
+			switch (id)
 			{
 				case 0:
 					text = Lang.inter[30].Value;
@@ -1008,53 +783,60 @@ namespace SatelliteStorage.UI
 					text = Lang.inter[31].Value;
 					break;
 			}
-			Vector2 vector = FontAssets.MouseText.Value.MeasureString(text);
-			Color color = new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor) * num2;
-			color = Color.White * 0.97f * (1f - (255f - (float)(int)Main.mouseTextColor) / 255f * 0.5f);
+
+			var vector = FontAssets.MouseText.Value.MeasureString(text);
+			var color = new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor) * num2;
+			color = Color.White * 0.97f * (1f - (255f - (float) (int) Main.mouseTextColor) / 255f * 0.5f);
 			color.A = byte.MaxValue;
-			X += (int)(vector.X * (num2 / 2f));
-			bool flag = Terraria.Utils.FloatIntersect(Main.mouseX, Main.mouseY, 0f, 0f, (float)X - vector.X / 2f, Y - 12, vector.X, 24f);
-			if (ButtonHovered[ID])
+			x += (int) (vector.X * (num2 / 2f));
+			var flag = Terraria.Utils.FloatIntersect(Main.mouseX, Main.mouseY, 0f, 0f, (float) x - vector.X / 2f, y - 12, vector.X, 24f);
+			if (_buttonHovered[id])
 			{
-				flag = Terraria.Utils.FloatIntersect(Main.mouseX, Main.mouseY, 0f, 0f, (float)X - vector.X / 2f - 10f, Y - 12, vector.X + 16f, 24f);
+				flag = Terraria.Utils.FloatIntersect(Main.mouseX, Main.mouseY, 0f, 0f, (float) x - vector.X / 2f - 10f, y - 12, vector.X + 16f, 24f);
 			}
+
 			if (flag)
 			{
 				color = Main.OurFavoriteColor;
 			}
-			ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.MouseText.Value, text, new Vector2(X, Y), color, 0f, vector / 2f, new Vector2(num2), -1f, 1.5f);
+
+			ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.MouseText.Value, text, new(x, y), color, 0f, vector / 2f, new(num2), -1f, 1.5f);
 			vector *= num2;
-			switch (ID)
+			switch (id)
 			{
 				case 0:
-					UILinkPointNavigator.SetPosition(500, new Vector2((float)X - vector.X * (num2 / 2f * 0.8f), Y));
+					UILinkPointNavigator.SetPosition(500, new((float) x - vector.X * (num2 / 2f * 0.8f), y));
 					break;
 				case 1:
-					UILinkPointNavigator.SetPosition(501, new Vector2((float)X - vector.X * (num2 / 2f * 0.8f), Y));
+					UILinkPointNavigator.SetPosition(501, new((float) x - vector.X * (num2 / 2f * 0.8f), y));
 					break;
 			}
+
 			if (!flag)
 			{
-				UpdateHover(ID, hovering: false);
+				UpdateHover(id, hovering: false);
 				return;
 			}
-			UpdateHover(ID, hovering: true);
+
+			UpdateHover(id, hovering: true);
 			if (PlayerInput.IgnoreMouseInterface)
 			{
 				return;
 			}
+
 			player.mouseInterface = true;
 			if (Main.mouseLeft && Main.mouseLeftRelease)
 			{
-				switch (ID)
+				switch (id)
 				{
 					case 0:
-						instance.TryDepositItems(true);
+						Instance.TryDepositItems(true);
 						break;
 					case 1:
-						instance.TryDepositItems();
+						Instance.TryDepositItems();
 						break;
 				}
+
 				Recipe.FindRecipes();
 			}
 		}

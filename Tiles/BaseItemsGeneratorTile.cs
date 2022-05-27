@@ -27,15 +27,15 @@ namespace SatelliteStorage.Tiles
 			// Names
 			ContainerName.SetDefault(Language.GetTextValue("Mods.SatelliteStorage.UITitles.DriveChest"));
 
-			ModTranslation name = CreateMapEntryName();
+			var name = CreateMapEntryName();
 			name.SetDefault(Language.GetTextValue("Mods.SatelliteStorage.UITitles.DriveChest"));
-			AddMapEntry(new Color(108, 65, 138), name, MapName);
+			AddMapEntry(new(108, 65, 138), name, MapName);
 
 			// Placement
 
 			TileObjectData.newTile.CopyFrom(TileObjectData.Style2xX);
 			TileObjectData.newTile.Height = 3;
-			TileObjectData.newTile.Origin = new Point16(1, 1);
+			TileObjectData.newTile.Origin = new(1, 1);
 			TileObjectData.newTile.CoordinateHeights = new int[3] { 16, 16, 16 };
 			TileObjectData.newTile.CoordinateWidth = 16;
 
@@ -44,7 +44,7 @@ namespace SatelliteStorage.Tiles
 			TileObjectData.newTile.StyleHorizontal = true;
 			TileObjectData.newTile.LavaDeath = false;
 
-			TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
+			TileObjectData.newTile.AnchorBottom = new(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
 
 			TileObjectData.addTile(Type);
 
@@ -80,7 +80,7 @@ namespace SatelliteStorage.Tiles
 		public override void MouseOver(int i, int j)
 		{
 
-			Player player = Main.LocalPlayer;
+			var player = Main.LocalPlayer;
 
 
 			player.cursorItemIconText = Language.GetTextValue("Mods.SatelliteStorage.UITitles.DriveChest");
@@ -93,7 +93,7 @@ namespace SatelliteStorage.Tiles
 		public override void MouseOverFar(int i, int j)
 		{
 			MouseOver(i, j);
-			Player player = Main.LocalPlayer;
+			var player = Main.LocalPlayer;
 			if (player.cursorItemIconText == "")
 			{
 				player.cursorItemIconEnabled = false;
@@ -103,7 +103,7 @@ namespace SatelliteStorage.Tiles
 
 		public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
 		{
-			Tile tile = Main.tile[i, j];
+			var tile = Main.tile[i, j];
 			if (tile.TileFrameX == 0)
 			{
 				r = 1f;
@@ -121,8 +121,8 @@ namespace SatelliteStorage.Tiles
 
 			if (Main.netMode == NetmodeID.MultiplayerClient)
             {
-				Player player = Main.LocalPlayer;
-				ModPacket packet = SatelliteStorage.instance.GetPacket();
+				var player = Main.LocalPlayer;
+				var packet = SatelliteStorage.instance.GetPacket();
 				packet.Write((byte)SatelliteStorage.MessageType.AddDriveChestItem);
 				packet.Write((byte)player.whoAmI);
 				
@@ -157,13 +157,13 @@ namespace SatelliteStorage.Tiles
 
 		public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 		{
-			Tile tile = Main.tile[i, j];
-			Texture2D texture = ModContent.Request<Texture2D>("SatelliteStorage/Tiles/" + Name).Value;
-			Vector2 zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
+			var tile = Main.tile[i, j];
+			var texture = ModContent.Request<Texture2D>("SatelliteStorage/Tiles/" + Name).Value;
+			var zero = Main.drawToScreen ? Vector2.Zero : new(Main.offScreenRange);
 
-			int height = tile.TileFrameY % AnimationFrameHeight == 54 ? 16 : 16;
+			var height = tile.TileFrameY % AnimationFrameHeight == 54 ? 16 : 16;
 
-			int frameYOffset = Main.tileFrame[Type] * AnimationFrameHeight;
+			var frameYOffset = Main.tileFrame[Type] * AnimationFrameHeight;
 
 			/*
 			int uniqueAnimationFrame = Main.tileFrame[Type] + i;

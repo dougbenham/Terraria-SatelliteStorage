@@ -12,9 +12,9 @@ namespace SatelliteStorage
 {
     class SatelliteStorageSystem : ModSystem
     {
-        private double lastGeneratorsTickTime = 0;
-        private long lastGeneratorsServerTimestamp = 0;
-        private bool requestStates = false;
+        private double lastGeneratorsTickTime;
+        private long lastGeneratorsServerTimestamp;
+        private bool requestStates;
 
         public override void UpdateUI(GameTime gameTime)
         {
@@ -32,28 +32,25 @@ namespace SatelliteStorage
 
             IList<TagCompound> itemsCompound = new List<TagCompound>();
 
-            for (int i = 0; i < t_items.Count; i++)
+            for (var i = 0; i < t_items.Count; i++)
             {
-                DriveItem item = t_items[i];
+                var item = t_items[i];
                 itemsCompound.Add(Utils.DriveItemsSerializer.SaveDriveItem(item));
-                
-                //LogManager.GetLogger("SatelliteStorage").Debug(ItemIO.Save(item));
-                //SatelliteStorage.Debug("SAVE Item: " + item.type + ", stack: " + item.stack);
             }
 
             IList<TagCompound> generatorsCompound = new List<TagCompound>();
 
-            Dictionary<int, int> generators = DriveChestSystem.GetGenerators();
-            foreach (int key in generators.Keys)
+            var generators = DriveChestSystem.GetGenerators();
+            foreach (var key in generators.Keys)
             {
-                TagCompound generatorCompound = new TagCompound();
+                var generatorCompound = new TagCompound();
                 generatorCompound.Add("type", key);
                 generatorCompound.Add("count", generators[key]);
                 generatorsCompound.Add(generatorCompound);
             }
 
             tag.Set("SatelliteStorage_DriveChestItems", itemsCompound);
-            tag.Set("SatelliteStorage_IsSputnikPlaced", DriveChestSystem.isSputnikPlaced);
+            tag.Set("SatelliteStorage_IsSputnikPlaced", DriveChestSystem.IsSputnikPlaced);
             tag.Set("SatelliteStorage_Generators", generatorsCompound);
             
             base.SaveWorldData(tag);
@@ -63,22 +60,20 @@ namespace SatelliteStorage
         {
             base.LoadWorldData(tag);
             
-            IList<TagCompound> items = tag.GetList<TagCompound>("SatelliteStorage_DriveChestItems");
-            IList<TagCompound> generatorsCompound = tag.GetList<TagCompound>("SatelliteStorage_Generators");
-            DriveChestSystem.isSputnikPlaced = tag.GetBool("SatelliteStorage_IsSputnikPlaced");
-            List<DriveItem> loadedItems = new List<DriveItem>();
+            var items = tag.GetList<TagCompound>("SatelliteStorage_DriveChestItems");
+            var generatorsCompound = tag.GetList<TagCompound>("SatelliteStorage_Generators");
+            DriveChestSystem.IsSputnikPlaced = tag.GetBool("SatelliteStorage_IsSputnikPlaced");
+            var loadedItems = new List<DriveItem>();
 
-            for(int i = 0; i < items.Count; i++)
+            for(var i = 0; i < items.Count; i++)
             {
-                TagCompound itemCompound = items[i];
-                //LogManager.GetLogger("SatelliteStorage").Debug(itemCompound);
-                DriveItem item = Utils.DriveItemsSerializer.LoadDriveItem(itemCompound);
+                var itemCompound = items[i];
+                var item = Utils.DriveItemsSerializer.LoadDriveItem(itemCompound);
                 loadedItems.Add(item);
-                //SatelliteStorage.Debug("LOAD Item: "+item.type + ", stack: " + item.stack);
             }
 
-            Dictionary<int, int> generators = DriveChestSystem.GetGenerators();
-            foreach (TagCompound generatorCompound in generatorsCompound)
+            var generators = DriveChestSystem.GetGenerators();
+            foreach (var generatorCompound in generatorsCompound)
             {
                 generators[generatorCompound.GetInt("type")] = generatorCompound.GetInt("count");
             }
@@ -91,12 +86,6 @@ namespace SatelliteStorage
         {
             base.OnWorldUnload();
             DriveChestSystem.ClearItems();
-        }
-
-        public override void PreUpdateItems()
-        {
-            base.PreUpdateItems();
-            
         }
 
         public override void AddRecipes()
@@ -129,7 +118,7 @@ namespace SatelliteStorage
         public override void PostUpdateEverything()
         {
             if (Main.netMode == NetmodeID.Server) {
-                long timestamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
+                var timestamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
                 if (timestamp > lastGeneratorsServerTimestamp + SatelliteStorage.GeneratorsInterval)
                 {
                     lastGeneratorsServerTimestamp = timestamp;
@@ -143,9 +132,9 @@ namespace SatelliteStorage
                 {
                     requestStates = true;
 
-                    Player player = Main.LocalPlayer;
+                    var player = Main.LocalPlayer;
 
-                    ModPacket packet = SatelliteStorage.instance.GetPacket();
+                    var packet = SatelliteStorage.instance.GetPacket();
                     packet.Write((byte)SatelliteStorage.MessageType.RequestStates);
                     packet.Write((byte)player.whoAmI);
                     packet.Send();

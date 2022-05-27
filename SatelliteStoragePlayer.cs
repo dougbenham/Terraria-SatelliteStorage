@@ -6,25 +6,18 @@ namespace SatelliteStorage
 {
     class SatelliteStoragePlayer : ModPlayer
     {
-
         private static List<bool> oldAdjList;
-
-        public override bool CanUseItem(Item item)
-        {
-            if (UI.DriveChestUI.mouseOver) return false;
-            return base.CanUseItem(item);
-        }
-
+        
         public static bool CheckAdjChanged()
         {
-            Player player = Main.LocalPlayer;
-            List<bool> adjList = new List<bool>();
+            var player = Main.LocalPlayer;
+            var adjList = new List<bool>();
 
             adjList.Add(player.adjHoney);
             adjList.Add(player.adjLava);
             adjList.Add(player.adjWater);
 
-            foreach (bool b in player.adjTile)
+            foreach (var b in player.adjTile)
             {
                 adjList.Add(b);
             }
@@ -35,7 +28,7 @@ namespace SatelliteStorage
                 return true;
             }
 
-            for (int i = 0; i < adjList.Count; i++)
+            for (var i = 0; i < adjList.Count; i++)
             {
                 if (adjList[i] != oldAdjList[i])
                 {

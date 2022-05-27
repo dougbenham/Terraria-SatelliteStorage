@@ -15,11 +15,11 @@ namespace SatelliteStorage.UIElements
 
 	public class DynamicItemCollection : UIElement
 	{
-		private List<int> _itemIdsAvailableToShow = new List<int>();
+		private readonly List<int> _itemIdsAvailableToShow = new();
 
-		private List<int> _itemIdsToLoadTexturesFor = new List<int>();
+		private readonly List<int> _itemIdsToLoadTexturesFor = new();
 
-		public Dictionary<int, DriveItem> _driveItems = new Dictionary<int, DriveItem>();
+		public Dictionary<int, DriveItem> _driveItems = new();
 		
 		private int _itemsPerLine;
 
@@ -27,13 +27,13 @@ namespace SatelliteStorage.UIElements
 
 		private const int sizePerEntryY = 44;
 
-		private List<SnapPoint> _dummySnapPoints = new List<SnapPoint>();
+		private readonly List<SnapPoint> _dummySnapPoints = new();
 
 		public int hoverItemIndex = -1;
 
 		public DynamicItemCollection()
 		{
-			Width = new StyleDimension(0f, 1f);
+			Width = new(0f, 1f);
 			HAlign = 0.5f;
 			UpdateSize();
 		}
@@ -45,21 +45,21 @@ namespace SatelliteStorage.UIElements
 			//IL_011b: Unknown result type (might be due to invalid IL or missing references)
 			Main.inventoryScale = 0.846153855f;
 			GetGridParameters(out var startX, out var startY, out var startItemIndex, out var endItemIndex);
-			int num = _itemsPerLine;
-			for (int i = startItemIndex; i < endItemIndex; i++)
+			var num = _itemsPerLine;
+			for (var i = startItemIndex; i < endItemIndex; i++)
 			{
-				int num2 = _itemIdsAvailableToShow[i];
-				DriveItem driveItem = _driveItems.ContainsKey(i) ? _driveItems[i] : new DriveItem();
-				Rectangle itemSlotHitbox = GetItemSlotHitbox(startX, startY, startItemIndex, i);
-				Item inv = ContentSamples.ItemsByType[num2];
+				var num2 = _itemIdsAvailableToShow[i];
+				var driveItem = _driveItems.ContainsKey(i) ? _driveItems[i] : new();
+				var itemSlotHitbox = GetItemSlotHitbox(startX, startY, startItemIndex, i);
+				var inv = ContentSamples.ItemsByType[num2];
 				inv.prefix = driveItem.prefix;
-				int context = driveItem.context > 0 ? driveItem.context : 29;
+				var context = driveItem.context > 0 ? driveItem.context : 29;
 				if ((int)TextureAssets.Item[num2].State == 0)
 				{
 					num--;
 				}
 				
-				bool cREATIVE_ItemSlotShouldHighlightAsSelected = false;
+				var cREATIVE_ItemSlotShouldHighlightAsSelected = false;
 				if (base.IsMouseHovering && itemSlotHitbox.Contains(Main.MouseScreen.ToPoint()) && !PlayerInput.IgnoreMouseInterface)
 				{
 					Main.LocalPlayer.mouseInterface = true;
@@ -81,7 +81,7 @@ namespace SatelliteStorage.UIElements
 			}
 			while (_itemIdsToLoadTexturesFor.Count > 0 && num > 0)
 			{
-				int num3 = _itemIdsToLoadTexturesFor[0];
+				var num3 = _itemIdsToLoadTexturesFor[0];
 				_itemIdsToLoadTexturesFor.RemoveAt(0);
 				if ((int)TextureAssets.Item[num3].State == 0)
 				{
@@ -93,25 +93,25 @@ namespace SatelliteStorage.UIElements
 
 		private Rectangle GetItemSlotHitbox(int startX, int startY, int startItemIndex, int i)
 		{
-			int num = i - startItemIndex;
-			int num2 = num % _itemsPerLine;
-			int num3 = num / _itemsPerLine;
-			return new Rectangle(startX + num2 * 44, startY + num3 * 44, 44, 44);
+			var num = i - startItemIndex;
+			var num2 = num % _itemsPerLine;
+			var num3 = num / _itemsPerLine;
+			return new(startX + num2 * 44, startY + num3 * 44, 44, 44);
 		}
 
 		private void GetGridParameters(out int startX, out int startY, out int startItemIndex, out int endItemIndex)
 		{
-			Rectangle rectangle = GetDimensions().ToRectangle();
-			Rectangle viewCullingArea = base.Parent.GetViewCullingArea();
-			int x = rectangle.Center.X;
+			var rectangle = GetDimensions().ToRectangle();
+			var viewCullingArea = base.Parent.GetViewCullingArea();
+			var x = rectangle.Center.X;
 			startX = x - (int)((float)(44 * _itemsPerLine) * 0.5f);
 			startY = rectangle.Top;
 			startItemIndex = 0;
 			endItemIndex = _itemIdsAvailableToShow.Count;
-			int num = (Math.Min(viewCullingArea.Top, rectangle.Top) - viewCullingArea.Top) / 44;
+			var num = (Math.Min(viewCullingArea.Top, rectangle.Top) - viewCullingArea.Top) / 44;
 			startY += -num * 44;
 			startItemIndex += -num * _itemsPerLine;
-			int num2 = (int)Math.Ceiling((float)viewCullingArea.Height / 44f) * _itemsPerLine;
+			var num2 = (int)Math.Ceiling((float)viewCullingArea.Height / 44f) * _itemsPerLine;
 			if (endItemIndex > num2 + startItemIndex + _itemsPerLine)
 			{
 				endItemIndex = num2 + startItemIndex + _itemsPerLine;
@@ -135,7 +135,7 @@ namespace SatelliteStorage.UIElements
 
 		private class DriveItemData
 		{
-			public List<DriveItem> items = new List<DriveItem>();
+			public readonly List<DriveItem> items = new();
 
 			public DriveItemData()
             {
@@ -151,19 +151,19 @@ namespace SatelliteStorage.UIElements
 			_itemIdsToLoadTexturesFor.AddRange(itemIdsToShow);
 			_driveItems.Clear();
 
-			Dictionary<int, DriveItemData> dictOfDriveItems = new Dictionary<int, DriveItemData>();
+			var dictOfDriveItems = new Dictionary<int, DriveItemData>();
 
-			for (int i = 0; i < driveItems.Count; i++)
+			for (var i = 0; i < driveItems.Count; i++)
             {
-				DriveItem item = driveItems[i];
-				if (!dictOfDriveItems.ContainsKey(item.type)) dictOfDriveItems.Add(item.type, new DriveItemData());
+				var item = driveItems[i];
+				if (!dictOfDriveItems.ContainsKey(item.type)) dictOfDriveItems.Add(item.type, new());
 				dictOfDriveItems[item.type].items.Add(item);
 			}
 
-			for(int i = 0; i < _itemIdsAvailableToShow.Count; i++)
+			for(var i = 0; i < _itemIdsAvailableToShow.Count; i++)
             {
-				int type = _itemIdsAvailableToShow[i];
-				DriveItemData data = dictOfDriveItems.ContainsKey(type) ? dictOfDriveItems[type] : null;
+				var type = _itemIdsAvailableToShow[i];
+				var data = dictOfDriveItems.ContainsKey(type) ? dictOfDriveItems[type] : null;
 				
 				if (data != null)
                 {
@@ -183,30 +183,30 @@ namespace SatelliteStorage.UIElements
 
 		public override List<SnapPoint> GetSnapPoints()
 		{
-			List<SnapPoint> list = new List<SnapPoint>();
+			var list = new List<SnapPoint>();
 			GetGridParameters(out var startX, out var startY, out var startItemIndex, out var endItemIndex);
 			_ = _itemsPerLine;
-			Rectangle viewCullingArea = base.Parent.GetViewCullingArea();
-			int num = endItemIndex - startItemIndex;
+			var viewCullingArea = base.Parent.GetViewCullingArea();
+			var num = endItemIndex - startItemIndex;
 			while (_dummySnapPoints.Count < num)
 			{
-				_dummySnapPoints.Add(new SnapPoint("CreativeInfinitesSlot", 0, Vector2.Zero, Vector2.Zero));
+				_dummySnapPoints.Add(new("CreativeInfinitesSlot", 0, Vector2.Zero, Vector2.Zero));
 			}
-			int num2 = 0;
-			Vector2 vector = GetDimensions().Position();
-			for (int i = startItemIndex; i < endItemIndex; i++)
+			var num2 = 0;
+			var vector = GetDimensions().Position();
+			for (var i = startItemIndex; i < endItemIndex; i++)
 			{
-				Point center = GetItemSlotHitbox(startX, startY, startItemIndex, i).Center;
+				var center = GetItemSlotHitbox(startX, startY, startItemIndex, i).Center;
 				if (viewCullingArea.Contains(center))
 				{
-					SnapPoint snapPoint = _dummySnapPoints[num2];
+					var snapPoint = _dummySnapPoints[num2];
 					snapPoint.ThisIsAHackThatChangesTheSnapPointsInfo(Vector2.Zero, center.ToVector2() - vector, num2);
 					snapPoint.Calculate(this);
 					num2++;
 					list.Add(snapPoint);
 				}
 			}
-			foreach (UIElement element in Elements)
+			foreach (var element in Elements)
 			{
 				list.AddRange(element.GetSnapPoints());
 			}
@@ -215,8 +215,8 @@ namespace SatelliteStorage.UIElements
 
 		public void UpdateSize()
 		{
-			int num = (_itemsPerLine = GetDimensions().ToRectangle().Width / 44);
-			int num2 = (int)Math.Ceiling((float)_itemIdsAvailableToShow.Count / (float)num);
+			var num = (_itemsPerLine = GetDimensions().ToRectangle().Width / 44);
+			var num2 = (int)Math.Ceiling((float)_itemIdsAvailableToShow.Count / (float)num);
 			MinHeight.Set(44 * num2, 0f);
 		}
 	}

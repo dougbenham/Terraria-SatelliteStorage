@@ -10,7 +10,7 @@ namespace SatelliteStorage.Utils
     {
         public static TagCompound SaveDriveItem(DriveItem item)
         {
-            TagCompound tag = new TagCompound();
+            var tag = new TagCompound();
             tag["type"] = item.type;
             tag["stack"] = item.stack;
             tag["prefix"] = item.prefix;
@@ -19,10 +19,10 @@ namespace SatelliteStorage.Utils
 
         public static DriveItem LoadDriveItem(TagCompound tag)
         {
-            DriveItem item = new DriveItem();
+            var item = new DriveItem();
             item.type = tag.GetInt("type");
             item.stack = tag.GetInt("stack");
-            int prefix = tag.GetInt("prefix");
+            var prefix = tag.GetInt("prefix");
             if (prefix != 0) item.prefix = prefix;
             return item;
         }
@@ -31,9 +31,9 @@ namespace SatelliteStorage.Utils
         {
             packet.Write7BitEncodedInt(items.Count);
 
-            for (int i = 0; i < items.Count; i++)
+            for (var i = 0; i < items.Count; i++)
             {
-                DriveItem item = items[i];
+                var item = items[i];
                 packet.Write7BitEncodedInt(item.type);
                 packet.Write7BitEncodedInt(item.stack);
                 packet.Write7BitEncodedInt(item.prefix);
@@ -44,13 +44,13 @@ namespace SatelliteStorage.Utils
 
         public static List<DriveItem> ReadDriveItems(BinaryReader reader)
         {
-            List<DriveItem> items = new List<DriveItem>();
+            var items = new List<DriveItem>();
 
-            int count = reader.Read7BitEncodedInt();
+            var count = reader.Read7BitEncodedInt();
 
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
-                DriveItem item = new DriveItem();
+                var item = new DriveItem();
                 item.type = reader.Read7BitEncodedInt();
                 item.stack = reader.Read7BitEncodedInt();
                 item.prefix = reader.Read7BitEncodedInt();

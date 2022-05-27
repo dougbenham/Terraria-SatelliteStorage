@@ -5,27 +5,27 @@ namespace SatelliteStorage.Utils
 {
     class RandomUtils
     {
-        private static Random random = new Random();
+        private static readonly Random random = new();
 
         public static int Roulette(List<int> chances)
         {
-            int sumOfPercents = 0;
-            foreach(int itemPercent in chances)
+            var sumOfPercents = 0;
+            foreach(var itemPercent in chances)
             {
                 sumOfPercents += itemPercent;
             }
 
-            int multiplier = 10;
+            var multiplier = 10;
 
             sumOfPercents *= multiplier;
-            int rand = random.Next(1, sumOfPercents);
+            var rand = random.Next(1, sumOfPercents);
 
-            int rangeStart = 1;
+            var rangeStart = 1;
 
-            for(int i = 0; i < chances.Count; i++)
+            for(var i = 0; i < chances.Count; i++)
             {
-                int itemPercent = chances[i];
-                int rangeFinish = rangeStart + (itemPercent * multiplier);
+                var itemPercent = chances[i];
+                var rangeFinish = rangeStart + (itemPercent * multiplier);
 
                 if (rand >= rangeStart && rand <= rangeFinish)
                 {

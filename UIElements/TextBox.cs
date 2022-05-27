@@ -13,7 +13,7 @@ namespace SatelliteStorage.UIElements
 	class TextBox : UIPanel//UITextPanel<string>
 	{
 		//private static readonly Asset<Texture2D> CloseButtonTexture = RecipeBrowser.instance.Assets.Request<Texture2D>("UIElements/closeButton", AssetRequestMode.ImmediateLoad);
-		internal bool focused = false;
+		internal bool focused;
 
 		//private int _cursor;
 		//private int _frameCount;
@@ -41,7 +41,7 @@ namespace SatelliteStorage.UIElements
 
 		public Color textColor = Color.Black;
 		public float textScale = 1;
-		public Vector2 textPosition = new Vector2(4, 2);
+		public Vector2 textPosition = new(4, 2);
 		public int visibleTextCount = 10;
 
 		//public NewUITextBox(string text, float textScale = 1, bool large = false) : base("", textScale, large)
@@ -128,7 +128,7 @@ namespace SatelliteStorage.UIElements
 
 		public override void Update(GameTime gameTime)
 		{
-			Vector2 MousePosition = new Vector2((float)Main.mouseX, (float)Main.mouseY);
+			var MousePosition = new Vector2((float)Main.mouseX, (float)Main.mouseY);
 			if (!ContainsPoint(MousePosition) && (Main.mouseLeft || Main.mouseRight)) // This solution is fine, but we need a way to cleanly "unload" a UIElement
 			{
 				// TODO, figure out how to refocus without triggering unfocus while clicking enable button.
@@ -213,7 +213,7 @@ namespace SatelliteStorage.UIElements
 
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
-			Rectangle hitbox = GetInnerDimensions().ToRectangle();
+			var hitbox = GetInnerDimensions().ToRectangle();
 
 			// Draw panel
 			base.DrawSelf(spriteBatch);
@@ -223,7 +223,7 @@ namespace SatelliteStorage.UIElements
 			{
 				Terraria.GameInput.PlayerInput.WritingText = true;
 				Main.instance.HandleIME();
-				string newString = Main.GetInputText(currentString);
+				var newString = Main.GetInputText(currentString);
 				if (!newString.Equals(currentString))
 				{
 					currentString = newString;
@@ -250,20 +250,20 @@ namespace SatelliteStorage.UIElements
 					textBlinkerState = (textBlinkerState + 1) % 2;
 					textBlinkerCount = 0;
 				}
-				Main.instance.DrawWindowsIMEPanel(new Vector2(98f, (float)(Main.screenHeight - 36)), 0f);
+				Main.instance.DrawWindowsIMEPanel(new(98f, (float)(Main.screenHeight - 36)), 0f);
 			}
-			string displayString = currentString;
-			CalculatedStyle space = base.GetDimensions();
-			Color color = textColor;
+			var displayString = currentString;
+			var space = base.GetDimensions();
+			var color = textColor;
 			if (currentString.Length == 0)
 			{
 			}
-			Vector2 drawPos = space.Position() + textPosition;
+			var drawPos = space.Position() + textPosition;
 			if (currentString.Length == 0 && !focused)
 			{
 				color *= 0.5f;
 				//Utils.DrawBorderString(spriteBatch, hintText, new Vector2(space.X, space.Y), Color.Gray, 1f);
-				spriteBatch.DrawString(FontAssets.MouseText.Value, hintText, drawPos, color, 0, new Vector2(0, 0), textScale, SpriteEffects.None, 0);
+				spriteBatch.DrawString(FontAssets.MouseText.Value, hintText, drawPos, color, 0, new(0, 0), textScale, SpriteEffects.None, 0);
 
 			}
 			else
@@ -271,16 +271,15 @@ namespace SatelliteStorage.UIElements
 				//Utils.DrawBorderString(spriteBatch, displayString, drawPos, Color.White, 1f);
 
 
-				string displayValue = displayString;
+				var displayValue = displayString;
 
 				
 				if (displayValue.Length > visibleTextCount+1)
                 {
-					int substFrom = displayString.Length - visibleTextCount - 1;
+					var substFrom = displayString.Length - visibleTextCount - 1;
 					if (substFrom <= 0) substFrom = 0;
-					int substCount = visibleTextCount;
+					var substCount = visibleTextCount;
 					if (substCount <= 0) substCount = 0;
-					SatelliteStorage.Debug(substFrom + " - " + substCount + " : "+ displayString.Length);
 
 					displayValue = displayValue.Substring(substFrom, substCount);
 				}
@@ -290,7 +289,7 @@ namespace SatelliteStorage.UIElements
 					displayValue = displayValue + "|";
 				}
 				
-				spriteBatch.DrawString(FontAssets.MouseText.Value, displayValue, drawPos, color, 0, new Vector2(0,0), textScale, SpriteEffects.None, 0);
+				spriteBatch.DrawString(FontAssets.MouseText.Value, displayValue, drawPos, color, 0, new(0,0), textScale, SpriteEffects.None, 0);
 			}
 
 			//			CalculatedStyle innerDimensions2 = base.GetInnerDimensions();

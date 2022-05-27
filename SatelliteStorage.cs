@@ -12,10 +12,10 @@ namespace SatelliteStorage
 {
     public class Generator {
 
-        public int chance = 0;
+        public int chance;
 
-        private List<int> dropsChances = new List<int>();
-        public List<int[]> drops = new List<int[]>();
+        private readonly List<int> dropsChances = new();
+        public List<int[]> drops = new();
 
         public Generator(int chance)
         {
@@ -31,7 +31,7 @@ namespace SatelliteStorage
 
         public int GetRandomDropIndex()
         {
-            int index = Utils.RandomUtils.Roulette(dropsChances);
+            var index = Utils.RandomUtils.Roulette(dropsChances);
             return index;
         }
 
@@ -45,10 +45,10 @@ namespace SatelliteStorage
 	{
         public static SatelliteStorage instance;
         public DriveChestSystem driveChestSystem;
-        private Dictionary<int, UI.BaseUIState> uidict = new Dictionary<int, UI.BaseUIState>();
+        private readonly Dictionary<int, UI.BaseUIState> uidict = new();
 
-        public static bool TakeDriveChestItemSended = false;
-        public static bool AddDriveChestItemSended = false;
+        public static bool TakeDriveChestItemSended;
+        public static bool AddDriveChestItemSended;
 
         public const int GeneratorsInterval = 20000;
         internal enum MessageType : byte
@@ -90,131 +90,104 @@ namespace SatelliteStorage
             VeryLowChance
         }
 
-        public Dictionary<int, Generator> generators = new Dictionary<int, Generator>();
+        public Dictionary<int, Generator> generators = new();
 
         public override void Load()
         {
-            instance = this;
-            driveChestSystem = new DriveChestSystem();
+	        instance = this;
+	        driveChestSystem = new();
 
-            generators.Add((int)GeneratorTypes.BaseGenerator, 
-                new Generator(25)
-                .AddDrop(ItemID.TinBar, 1, 100, (int)ChancesTypes.VeryHighChance)
-                .AddDrop(ItemID.CopperBar, 1, 100, (int)ChancesTypes.VeryHighChance)
-                .AddDrop(ItemID.IronBar, 1, 50, (int)ChancesTypes.HighChance)
-                .AddDrop(ItemID.LeadBar, 1, 50, (int)ChancesTypes.HighChance)
-                .AddDrop(ItemID.GoldBar, 1, 25, (int)ChancesTypes.AverageChance)
-                .AddDrop(ItemID.PlatinumBar, 1, 25, (int)ChancesTypes.AverageChance)
-                .AddDrop(ItemID.Diamond, 1, 5, (int)ChancesTypes.VeryLowChance)
-                .AddDrop(ItemID.Amber, 1, 5, (int)ChancesTypes.VeryLowChance)
-                .AddDrop(ItemID.Ruby, 1, 5, (int)ChancesTypes.VeryLowChance)
-                .AddDrop(ItemID.Emerald, 1, 5, (int)ChancesTypes.VeryLowChance)
-                .AddDrop(ItemID.Sapphire, 1, 5, (int)ChancesTypes.VeryLowChance)
-                .AddDrop(ItemID.Topaz, 1, 5, (int)ChancesTypes.VeryLowChance)
-                .AddDrop(ItemID.Amethyst, 1, 5, (int)ChancesTypes.VeryLowChance)
-            );
+	        generators.Add((int) GeneratorTypes.BaseGenerator,
+		        new Generator(25)
+			        .AddDrop(ItemID.TinBar, 1, 100, (int) ChancesTypes.VeryHighChance)
+			        .AddDrop(ItemID.CopperBar, 1, 100, (int) ChancesTypes.VeryHighChance)
+			        .AddDrop(ItemID.IronBar, 1, 50, (int) ChancesTypes.HighChance)
+			        .AddDrop(ItemID.LeadBar, 1, 50, (int) ChancesTypes.HighChance)
+			        .AddDrop(ItemID.GoldBar, 1, 25, (int) ChancesTypes.AverageChance)
+			        .AddDrop(ItemID.PlatinumBar, 1, 25, (int) ChancesTypes.AverageChance)
+			        .AddDrop(ItemID.Diamond, 1, 5, (int) ChancesTypes.VeryLowChance)
+			        .AddDrop(ItemID.Amber, 1, 5, (int) ChancesTypes.VeryLowChance)
+			        .AddDrop(ItemID.Ruby, 1, 5, (int) ChancesTypes.VeryLowChance)
+			        .AddDrop(ItemID.Emerald, 1, 5, (int) ChancesTypes.VeryLowChance)
+			        .AddDrop(ItemID.Sapphire, 1, 5, (int) ChancesTypes.VeryLowChance)
+			        .AddDrop(ItemID.Topaz, 1, 5, (int) ChancesTypes.VeryLowChance)
+			        .AddDrop(ItemID.Amethyst, 1, 5, (int) ChancesTypes.VeryLowChance)
+	        );
 
-            generators.Add((int)GeneratorTypes.HellstoneGenerator,
-                new Generator(25)
-                .AddDrop(ItemID.Obsidian, 1, 100, (int)ChancesTypes.VeryHighChance)
-                .AddDrop(ItemID.HellstoneBar, 1, 25, (int)ChancesTypes.AverageChance)
-            );
+	        generators.Add((int) GeneratorTypes.HellstoneGenerator,
+		        new Generator(25)
+			        .AddDrop(ItemID.Obsidian, 1, 100, (int) ChancesTypes.VeryHighChance)
+			        .AddDrop(ItemID.HellstoneBar, 1, 25, (int) ChancesTypes.AverageChance)
+	        );
 
-            generators.Add((int)GeneratorTypes.MeteoriteGenerator,
-                new Generator(10)
-                .AddDrop(ItemID.MeteoriteBar, 1, 100, (int)ChancesTypes.AverageChance)
-            );
+	        generators.Add((int) GeneratorTypes.MeteoriteGenerator,
+		        new Generator(10)
+			        .AddDrop(ItemID.MeteoriteBar, 1, 100, (int) ChancesTypes.AverageChance)
+	        );
 
-            generators.Add((int)GeneratorTypes.ShroomiteGenerator,
-                new Generator(25)
-                .AddDrop(ItemID.GlowingMushroom, 1, 100, (int)ChancesTypes.VeryHighChance)
-                .AddDrop(ItemID.ChlorophyteBar, 1, 15, (int)ChancesTypes.VeryLowChance)
-            );
+	        generators.Add((int) GeneratorTypes.ShroomiteGenerator,
+		        new Generator(25)
+			        .AddDrop(ItemID.GlowingMushroom, 1, 100, (int) ChancesTypes.VeryHighChance)
+			        .AddDrop(ItemID.ChlorophyteBar, 1, 15, (int) ChancesTypes.VeryLowChance)
+	        );
 
-            generators.Add((int)GeneratorTypes.SpectreGenerator,
-                new Generator(25)
-                .AddDrop(ItemID.Bone, 1, 100, (int)ChancesTypes.VeryHighChance)
-                .AddDrop(ItemID.Ectoplasm, 1, 50, (int)ChancesTypes.HighChance)
-                .AddDrop(ItemID.ChlorophyteBar, 1, 15, (int)ChancesTypes.VeryLowChance)
-            );
+	        generators.Add((int) GeneratorTypes.SpectreGenerator,
+		        new Generator(25)
+			        .AddDrop(ItemID.Bone, 1, 100, (int) ChancesTypes.VeryHighChance)
+			        .AddDrop(ItemID.Ectoplasm, 1, 50, (int) ChancesTypes.HighChance)
+			        .AddDrop(ItemID.ChlorophyteBar, 1, 15, (int) ChancesTypes.VeryLowChance)
+	        );
 
-            generators.Add((int)GeneratorTypes.LuminiteGenerator,
-                new Generator(15)
-                .AddDrop(ItemID.LunarBar, 1, 50, (int)ChancesTypes.HighChance)
-                .AddDrop(ItemID.FragmentSolar, 1, 50, (int)ChancesTypes.HighChance)
-                .AddDrop(ItemID.FragmentNebula, 1, 50, (int)ChancesTypes.HighChance)
-                .AddDrop(ItemID.FragmentVortex, 1, 50, (int)ChancesTypes.HighChance)
-                .AddDrop(ItemID.FragmentStardust, 1, 50, (int)ChancesTypes.HighChance)
-            );
+	        generators.Add((int) GeneratorTypes.LuminiteGenerator,
+		        new Generator(15)
+			        .AddDrop(ItemID.LunarBar, 1, 50, (int) ChancesTypes.HighChance)
+			        .AddDrop(ItemID.FragmentSolar, 1, 50, (int) ChancesTypes.HighChance)
+			        .AddDrop(ItemID.FragmentNebula, 1, 50, (int) ChancesTypes.HighChance)
+			        .AddDrop(ItemID.FragmentVortex, 1, 50, (int) ChancesTypes.HighChance)
+			        .AddDrop(ItemID.FragmentStardust, 1, 50, (int) ChancesTypes.HighChance)
+	        );
 
-            generators.Add((int)GeneratorTypes.ChlorophyteGenerator,
-                new Generator(25)
-                .AddDrop(ItemID.JungleSpores, 1, 100, (int)ChancesTypes.VeryHighChance)
-                .AddDrop(ItemID.Stinger, 1, 100, (int)ChancesTypes.VeryHighChance)
-                .AddDrop(ItemID.Vine, 1, 100, (int)ChancesTypes.VeryHighChance)
-                .AddDrop(ItemID.ChlorophyteBar, 1, 50, (int)ChancesTypes.HighChance)
-            );
+	        generators.Add((int) GeneratorTypes.ChlorophyteGenerator,
+		        new Generator(25)
+			        .AddDrop(ItemID.JungleSpores, 1, 100, (int) ChancesTypes.VeryHighChance)
+			        .AddDrop(ItemID.Stinger, 1, 100, (int) ChancesTypes.VeryHighChance)
+			        .AddDrop(ItemID.Vine, 1, 100, (int) ChancesTypes.VeryHighChance)
+			        .AddDrop(ItemID.ChlorophyteBar, 1, 50, (int) ChancesTypes.HighChance)
+	        );
 
-            generators.Add((int)GeneratorTypes.HallowedGenerator,
-                new Generator(25)
-                .AddDrop(ItemID.SilverCoin, 1, 100, (int)ChancesTypes.VeryHighChance)
-                .AddDrop(ItemID.HallowedBar, 1, 25, (int)ChancesTypes.LowChance)
-                .AddDrop(ItemID.SuperHealingPotion, 1, 5, (int)ChancesTypes.VeryLowChance)
-                .AddDrop(ItemID.SuperManaPotion, 1, 5, (int)ChancesTypes.VeryLowChance)
-            );
+	        generators.Add((int) GeneratorTypes.HallowedGenerator,
+		        new Generator(25)
+			        .AddDrop(ItemID.SilverCoin, 1, 100, (int) ChancesTypes.VeryHighChance)
+			        .AddDrop(ItemID.HallowedBar, 1, 25, (int) ChancesTypes.LowChance)
+			        .AddDrop(ItemID.SuperHealingPotion, 1, 5, (int) ChancesTypes.VeryLowChance)
+			        .AddDrop(ItemID.SuperManaPotion, 1, 5, (int) ChancesTypes.VeryLowChance)
+	        );
 
-            generators.Add((int)GeneratorTypes.SoulGenerator,
-                new Generator(25)
-                .AddDrop(ItemID.SoulofFlight, 1, 100, (int)ChancesTypes.VeryHighChance)
-                .AddDrop(ItemID.SoulofLight, 1, 100, (int)ChancesTypes.VeryHighChance)
-                .AddDrop(ItemID.SoulofNight, 1, 100, (int)ChancesTypes.VeryHighChance)
-            );
+	        generators.Add((int) GeneratorTypes.SoulGenerator,
+		        new Generator(25)
+			        .AddDrop(ItemID.SoulofFlight, 1, 100, (int) ChancesTypes.VeryHighChance)
+			        .AddDrop(ItemID.SoulofLight, 1, 100, (int) ChancesTypes.VeryHighChance)
+			        .AddDrop(ItemID.SoulofNight, 1, 100, (int) ChancesTypes.VeryHighChance)
+	        );
 
-            generators.Add((int)GeneratorTypes.PowerGenerator,
-                new Generator(25)
-                .AddDrop(ItemID.SoulofMight, 1, 100, (int)ChancesTypes.VeryHighChance)
-                .AddDrop(ItemID.SoulofSight, 1, 100, (int)ChancesTypes.VeryHighChance)
-                .AddDrop(ItemID.SoulofFright, 1, 100, (int)ChancesTypes.VeryHighChance)
-            );
+	        generators.Add((int) GeneratorTypes.PowerGenerator,
+		        new Generator(25)
+			        .AddDrop(ItemID.SoulofMight, 1, 100, (int) ChancesTypes.VeryHighChance)
+			        .AddDrop(ItemID.SoulofSight, 1, 100, (int) ChancesTypes.VeryHighChance)
+			        .AddDrop(ItemID.SoulofFright, 1, 100, (int) ChancesTypes.VeryHighChance)
+	        );
 
-            
-            /*
-            void logRare(string str, int type)
-            {
-                Item itm = new Item();
-                itm.SetDefaults(type);
-                Debug(str + ": " + itm.rare);
-            }
+	        base.Load();
 
-            
-            logRare("hellstone", ItemID.HellstoneBar);
-            logRare("meteorite", ItemID.MeteoriteBar);
-            logRare("shroomite", ItemID.ShroomiteBar);
-            logRare("spectre", ItemID.SpectreBar);
-            logRare("hallowed", ItemID.HallowedBar);
-            logRare("chlorophyte", ItemID.ChlorophyteBar);
-            logRare("luminite", ItemID.LunarBar);
-            logRare("soul", ItemID.SoulofFlight);
-            logRare("power", ItemID.SoulofMight);
-            */
-
-            base.Load();
-
-            if (!Main.dedServ)
-            {
-                uidict.Add((int)UI.UITypes.DriveChest, new UI.DriveChestUI());
-
-
-                foreach(UI.BaseUIState ui in uidict.Values)
-                {
-                    ui.Activate();
-                }
-            }
-        }
-
-        public override void Unload()
-        {
-            base.Unload();
+	        if (!Main.dedServ)
+	        {
+		        uidict.Add((int) UI.UITypes.DriveChest, new UI.DriveChestUI());
+                
+		        foreach (var ui in uidict.Values)
+		        {
+			        ui.Activate();
+		        }
+	        }
         }
 
         public static void SetUIState(int type, bool state)
@@ -227,15 +200,10 @@ namespace SatelliteStorage
             if (!instance.uidict.ContainsKey(type)) return false;
             return instance.uidict[type].GetState();
         }
-
-        public static void Debug(string msg)
-        {
-            instance.Logger.Debug(msg);
-        }
-
+        
         public void OnUpdateUI(GameTime gameTime)
         {
-            foreach (UI.BaseUIState ui in uidict.Values)
+            foreach (var ui in uidict.Values)
             {
                 ui.OnUpdateUI(gameTime);
             }
@@ -243,7 +211,7 @@ namespace SatelliteStorage
 
         public void OnModifyInterfaceLayers(List<GameInterfaceLayer> layers)
         {
-            foreach (UI.BaseUIState ui in uidict.Values)
+            foreach (var ui in uidict.Values)
             {
                 ui.OnModifyInterfaceLayers(layers);
             }
@@ -254,7 +222,7 @@ namespace SatelliteStorage
             if (Main.netMode != NetmodeID.Server) return;
             var spPacket = instance.GetPacket();
             spPacket.Write((byte)MessageType.SetSputnikState);
-            spPacket.Write((byte)(DriveChestSystem.isSputnikPlaced ? 1 : 0));
+            spPacket.Write((byte)(DriveChestSystem.IsSputnikPlaced ? 1 : 0));
             spPacket.Send(-1);
             spPacket.Close();
         }
@@ -263,7 +231,7 @@ namespace SatelliteStorage
         {
             var rsPacket = GetPacket();
             rsPacket.Write((byte)MessageType.SetSputnikState);
-            rsPacket.Write((byte)(DriveChestSystem.isSputnikPlaced ? 1 : 0));
+            rsPacket.Write((byte)(DriveChestSystem.IsSputnikPlaced ? 1 : 0));
             rsPacket.Send(playernumber);
             rsPacket.Close();
         }
@@ -272,7 +240,7 @@ namespace SatelliteStorage
         {
             if (Main.netMode == NetmodeID.Server)
             {
-                MessageType msgType = (MessageType)reader.ReadByte();
+                var msgType = (MessageType)reader.ReadByte();
                 byte playernumber;
 
                 switch (msgType)
@@ -291,13 +259,13 @@ namespace SatelliteStorage
                         break;
                     case MessageType.SetSputnikState:
                         playernumber = reader.ReadByte();
-                        DriveChestSystem.isSputnikPlaced = reader.ReadByte() == 1 ? true : false;
+                        DriveChestSystem.IsSputnikPlaced = reader.ReadByte() == 1 ? true : false;
                         SyncIsSputnikPlacedToClients();
                         break;
                     case MessageType.ChangeGeneratorState:
                         playernumber = reader.ReadByte();
-                        byte generatorType = reader.ReadByte();
-                        byte changeTo = reader.ReadByte();
+                        var generatorType = reader.ReadByte();
+                        var changeTo = reader.ReadByte();
 
                         if (changeTo == 1)
                         {
@@ -322,21 +290,21 @@ namespace SatelliteStorage
 
                         int clickType = reader.ReadByte();
 
-                        Item tmouseItem = Main.player[playernumber].inventory[58];
+                        var tmouseItem = Main.player[playernumber].inventory[58];
 
-                        bool itemTaked = false;
+                        var itemTaked = false;
 
-                        int takeItemType = reader.Read7BitEncodedInt();
-                        int takeItemPrefix = reader.Read7BitEncodedInt();
+                        var takeItemType = reader.Read7BitEncodedInt();
+                        var takeItemPrefix = reader.Read7BitEncodedInt();
 
                         Item takeItem;
 
-                        int type = 0;
-                        int stack = 0;
-                        int prefix = 0;
+                        var type = 0;
+                        var stack = 0;
+                        var prefix = 0;
 
-                        bool isTMouseItemAir = tmouseItem.IsAir;
-                        bool isTMouseItemSame = tmouseItem.type == takeItemType;
+                        var isTMouseItemAir = tmouseItem.IsAir;
+                        var isTMouseItemSame = tmouseItem.type == takeItemType;
                         if (!isTMouseItemAir && !isTMouseItemSame) return;
 
                         if (clickType == 1)
@@ -397,11 +365,11 @@ namespace SatelliteStorage
                     case MessageType.AddDriveChestItem:
                         playernumber = reader.ReadByte();
 
-                        Item amouseItem = Main.player[playernumber].inventory[58];
+                        var amouseItem = Main.player[playernumber].inventory[58];
 
-                        bool added = false;
+                        var added = false;
 
-                        DriveItem addItem = new DriveItem();
+                        var addItem = new DriveItem();
                         addItem.type = amouseItem.type;
                         addItem.stack = amouseItem.stack;
                         addItem.prefix = amouseItem.prefix;
@@ -421,13 +389,13 @@ namespace SatelliteStorage
                         break;
                     case MessageType.TryCraftRecipe:
                         playernumber = reader.ReadByte();
-                        int recipeID = reader.Read7BitEncodedInt();
-                        Recipe recipe = Main.recipe[recipeID];
-                        Item[] plInvItems = Main.player[playernumber].inventory;
-                        Item plMouseItem = plInvItems[58];
+                        var recipeID = reader.Read7BitEncodedInt();
+                        var recipe = Main.recipe[recipeID];
+                        var plInvItems = Main.player[playernumber].inventory;
+                        var plMouseItem = plInvItems[58];
 
-                        bool isMouseItemAir = plMouseItem.IsAir;
-                        bool isMouseItemSame = plMouseItem.type == recipe.createItem.type;
+                        var isMouseItemAir = plMouseItem.IsAir;
+                        var isMouseItemSame = plMouseItem.type == recipe.createItem.type;
                         if (!isMouseItemAir && !isMouseItemSame) return;
 
                         if (isMouseItemSame)
@@ -435,14 +403,14 @@ namespace SatelliteStorage
                             if (plMouseItem.stack + recipe.createItem.stack > plMouseItem.maxStack) return;
                         }
 
-                        List<RecipeItemsUses> uses = DriveChestSystem.GetItemsUsesForCraft(plInvItems, recipe);
+                        var uses = DriveChestSystem.GetItemUsesForCraft(plInvItems, recipe);
                         if (uses == null) return;
 
-                        Dictionary<int, int> changedInvSlots = new Dictionary<int, int>();
+                        var changedInvSlots = new Dictionary<int, int>();
 
                         uses.ForEach(u =>
                         {
-                            Item item = new Item();
+                            var item = new Item();
                             item.type = u.type;
                             item.SetDefaults(item.type);
                             item.stack = 1;
@@ -478,7 +446,7 @@ namespace SatelliteStorage
                         tryCraftItemPacket.Write7BitEncodedInt(plMouseItem.stack);
                         tryCraftItemPacket.Write7BitEncodedInt(plMouseItem.prefix);
                         tryCraftItemPacket.Write7BitEncodedInt(changedInvSlots.Keys.Count);
-                        foreach (int key in changedInvSlots.Keys)
+                        foreach (var key in changedInvSlots.Keys)
                         {
                             tryCraftItemPacket.Write7BitEncodedInt(key);
                             tryCraftItemPacket.Write7BitEncodedInt(changedInvSlots[key]);
@@ -491,13 +459,13 @@ namespace SatelliteStorage
                         playernumber = reader.ReadByte();
                         
                         int depositType = reader.ReadByte();
-                        byte invSlot = reader.ReadByte();
+                        var invSlot = reader.ReadByte();
 
-                        Item invItem = Main.player[playernumber].inventory[invSlot];
+                        var invItem = Main.player[playernumber].inventory[invSlot];
 
                         if (invItem.IsAir) return;
 
-                        DriveItem depositItem = new DriveItem();
+                        var depositItem = new DriveItem();
                         depositItem.type = invItem.type;
                         depositItem.stack = invItem.stack;
                         depositItem.prefix = invItem.prefix;
@@ -524,8 +492,8 @@ namespace SatelliteStorage
 
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
-                Player player = Main.LocalPlayer;
-                MessageType msgType = (MessageType)reader.ReadByte();
+                var player = Main.LocalPlayer;
+                var msgType = (MessageType)reader.ReadByte();
                 byte playernumber;
 
                 switch (msgType)
@@ -533,7 +501,7 @@ namespace SatelliteStorage
                     case MessageType.ResponseDriveChestItems:
                         playernumber = reader.ReadByte();
 
-                        List<DriveItem> items = Utils.DriveItemsSerializer.ReadDriveItems(reader);
+                        var items = Utils.DriveItemsSerializer.ReadDriveItems(reader);
                         DriveChestSystem.InitItems(items);
                         SoundEngine.PlaySound(SoundID.MenuOpen);
                         Main.playerInventory = true;
@@ -542,14 +510,14 @@ namespace SatelliteStorage
                         break;
                     case MessageType.TakeDriveChestItem:
                         playernumber = reader.ReadByte();
-                        bool itemTaked = reader.ReadBoolean();
-                        Item takeItem = new Item();
+                        var itemTaked = reader.ReadBoolean();
+                        var takeItem = new Item();
                         takeItem.type = reader.Read7BitEncodedInt();
                         takeItem.SetDefaults(takeItem.type);
                         takeItem.stack = reader.Read7BitEncodedInt();
                         takeItem.prefix = reader.Read7BitEncodedInt();
 
-                        byte clickType = reader.ReadByte();
+                        var clickType = reader.ReadByte();
 
                         if (itemTaked)
                         {
@@ -569,8 +537,8 @@ namespace SatelliteStorage
                         break;
                     case MessageType.AddDriveChestItem:
                         playernumber = reader.ReadByte();
-                        bool added = reader.ReadBoolean();
-                        Item mouseItem = player.inventory[58];
+                        var added = reader.ReadBoolean();
+                        var mouseItem = player.inventory[58];
 
                         if (added)
                         {
@@ -586,30 +554,30 @@ namespace SatelliteStorage
                         playernumber = reader.ReadByte();
                         int invSlot = reader.ReadByte();
 
-                        Item item = player.inventory[invSlot];
+                        var item = player.inventory[invSlot];
                         item.TurnToAir();
 
                         break;
                     case MessageType.SetSputnikState:
                         int state = reader.ReadByte();
 
-                        DriveChestSystem.isSputnikPlaced = state == 1 ? true : false;
+                        DriveChestSystem.IsSputnikPlaced = state == 1 ? true : false;
 
                         break;                    
                     case MessageType.SyncGeneratorState:
-                        byte generatorType = reader.ReadByte();
-                        int generatorCount = reader.Read7BitEncodedInt();
-                        DriveChestSystem.instance.generators[generatorType] = generatorCount;
+                        var generatorType = reader.ReadByte();
+                        var generatorCount = reader.Read7BitEncodedInt();
+                        DriveChestSystem.Instance.generators[generatorType] = generatorCount;
 
                         break;
                     case MessageType.TryCraftRecipe:
                         playernumber = reader.ReadByte();
                         
-                        int mItemType = reader.Read7BitEncodedInt();
-                        int mItemStack = reader.Read7BitEncodedInt();
-                        int mItemPrefix = reader.Read7BitEncodedInt();
+                        var mItemType = reader.Read7BitEncodedInt();
+                        var mItemStack = reader.Read7BitEncodedInt();
+                        var mItemPrefix = reader.Read7BitEncodedInt();
 
-                        Item mItem = player.inventory[58];
+                        var mItem = player.inventory[58];
 
                         mItem.type = mItemType;
                         mItem.SetDefaults(mItem.type);
@@ -618,23 +586,23 @@ namespace SatelliteStorage
 
                         Main.mouseItem = mItem;
 
-                        int subInvItemsCount = reader.Read7BitEncodedInt();
+                        var subInvItemsCount = reader.Read7BitEncodedInt();
 
-                        for (int i = 0; i < subInvItemsCount; i++)
+                        for (var i = 0; i < subInvItemsCount; i++)
                         {
-                            int slot = reader.Read7BitEncodedInt();
-                            int count = reader.Read7BitEncodedInt();
+                            var slot = reader.Read7BitEncodedInt();
+                            var count = reader.Read7BitEncodedInt();
                             player.inventory[slot].stack = count;
                             if (player.inventory[slot].stack <= 0) player.inventory[slot].TurnToAir();
                         }
 
                         SoundEngine.PlaySound(7);
-                        DriveChestSystem.checkRecipesRefresh = false;
+                        DriveChestSystem.CheckRecipesRefresh = false;
 
                         break;
                     case MessageType.SyncDriveChestItem:
 
-                        DriveItem syncItem = new DriveItem();
+                        var syncItem = new DriveItem();
 
                         syncItem.type = reader.Read7BitEncodedInt();
                         syncItem.stack = reader.Read7BitEncodedInt();
@@ -645,7 +613,7 @@ namespace SatelliteStorage
 
                         break;
                     default:
-                        Debug("ExampleMod: Unknown Message type: " + msgType);
+                        Logger.Debug("ExampleMod: Unknown Message type: " + msgType);
                         break;
                 }
             }

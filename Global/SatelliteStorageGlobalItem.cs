@@ -9,7 +9,7 @@ namespace SatelliteStorage.Global
         {
             if (SatelliteStorage.GetUIState((int)UI.UITypes.DriveChest))
             {
-                DriveSystem.DriveChestSystem.checkRecipesRefresh = false;
+                DriveSystem.DriveChestSystem.CheckRecipesRefresh = false;
             }
 
             return base.OnPickup(item, player);
@@ -19,7 +19,7 @@ namespace SatelliteStorage.Global
         {
             if (SatelliteStorage.GetUIState((int)UI.UITypes.DriveChest))
             {
-                DriveSystem.DriveChestSystem.checkRecipesRefresh = false;
+                DriveSystem.DriveChestSystem.CheckRecipesRefresh = false;
             }
 
             base.OnConsumeItem(item, player);

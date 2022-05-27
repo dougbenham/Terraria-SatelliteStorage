@@ -55,7 +55,7 @@ namespace SatelliteStorage.Items
 			if (player.whoAmI == Main.myPlayer)
 			{
 				if (cooldownTime + 500 > new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds()) return true;
-				if (!DriveSystem.DriveChestSystem.isSputnikPlaced)
+				if (!DriveSystem.DriveChestSystem.IsSputnikPlaced)
 				{
 					Main.NewText(Language.GetTextValue("Mods.SatelliteStorage.Common.CantUseWithoutSputnik"), new Color(173, 57, 71));
 					cooldownTime = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();

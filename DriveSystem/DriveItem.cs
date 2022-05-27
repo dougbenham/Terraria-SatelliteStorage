@@ -25,8 +25,8 @@ namespace SatelliteStorage.DriveSystem
             }
         }
 
-        public int type = 0;
-        public int prefix = 0;
+        public int type;
+        public int prefix;
         public int context = 0;
         public int recipe = -1;
 
@@ -56,7 +56,7 @@ namespace SatelliteStorage.DriveSystem
 
         public static DriveItem FromItem(Item item)
         {
-            DriveItem driveItem = new DriveItem();
+            var driveItem = new DriveItem();
             driveItem.stack = item.stack;
             driveItem.type = item.type;
             driveItem.prefix = item.prefix;
@@ -65,7 +65,7 @@ namespace SatelliteStorage.DriveSystem
 
         public Item ToItem()
         {
-            Item item = new Item();
+            var item = new Item();
             item.type = type;
             item.SetDefaults(item.type);
             item.stack = stack;
