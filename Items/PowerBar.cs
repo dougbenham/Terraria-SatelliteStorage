@@ -1,5 +1,5 @@
-﻿using Terraria.ID;
-using Terraria.GameContent.Creative;
+﻿using Terraria.GameContent.Creative;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace SatelliteStorage.Items
@@ -23,9 +23,9 @@ namespace SatelliteStorage.Items
 		public override void AddRecipes()
 		{
 			CreateRecipe()
-			.AddIngredient(ItemID.SoulofMight, 1)
-			.AddIngredient(ItemID.SoulofSight, 1)
-			.AddIngredient(ItemID.SoulofFright, 1)
+			.AddIngredient(ItemID.SoulofMight)
+			.AddIngredient(ItemID.SoulofSight)
+			.AddIngredient(ItemID.SoulofFright)
 			.AddTile(TileID.Anvils)
 			.Register();
 		}

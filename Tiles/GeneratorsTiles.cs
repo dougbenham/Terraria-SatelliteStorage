@@ -1,4 +1,5 @@
-﻿using Terraria.ModLoader;
+﻿using SatelliteStorage.Items;
+using Terraria.ModLoader;
 
 namespace SatelliteStorage.Tiles
 {
@@ -8,7 +9,7 @@ namespace SatelliteStorage.Tiles
         {
             base.SetGeneratorDefaults();
 
-            itemDrop = ModContent.ItemType<Items.HellstoneGeneratorItem>();
+            itemDrop = ModContent.ItemType<HellstoneGeneratorItem>();
             generatorType = (byte)SatelliteStorage.GeneratorTypes.HellstoneGenerator;
         }
     }
@@ -19,7 +20,7 @@ namespace SatelliteStorage.Tiles
         {
             base.SetGeneratorDefaults();
 
-            itemDrop = ModContent.ItemType<Items.MeteoriteGeneratorItem>();
+            itemDrop = ModContent.ItemType<MeteoriteGeneratorItem>();
             generatorType = (byte)SatelliteStorage.GeneratorTypes.MeteoriteGenerator;
         }
     }
@@ -30,7 +31,7 @@ namespace SatelliteStorage.Tiles
         {
             base.SetGeneratorDefaults();
 
-            itemDrop = ModContent.ItemType<Items.ShroomiteGeneratorItem>();
+            itemDrop = ModContent.ItemType<ShroomiteGeneratorItem>();
             generatorType = (byte)SatelliteStorage.GeneratorTypes.ShroomiteGenerator;
         }
     }    
@@ -41,7 +42,7 @@ namespace SatelliteStorage.Tiles
         {
             base.SetGeneratorDefaults();
 
-            itemDrop = ModContent.ItemType<Items.SpectreGeneratorItem>();
+            itemDrop = ModContent.ItemType<SpectreGeneratorItem>();
             generatorType = (byte)SatelliteStorage.GeneratorTypes.SpectreGenerator;
         }
     }
@@ -52,7 +53,7 @@ namespace SatelliteStorage.Tiles
         {
             base.SetGeneratorDefaults();
 
-            itemDrop = ModContent.ItemType<Items.LuminiteGeneratorItem>();
+            itemDrop = ModContent.ItemType<LuminiteGeneratorItem>();
             generatorType = (byte)SatelliteStorage.GeneratorTypes.LuminiteGenerator;
         }
     }
@@ -63,7 +64,7 @@ namespace SatelliteStorage.Tiles
         {
             base.SetGeneratorDefaults();
 
-            itemDrop = ModContent.ItemType<Items.ChlorophyteGeneratorItem>();
+            itemDrop = ModContent.ItemType<ChlorophyteGeneratorItem>();
             generatorType = (byte)SatelliteStorage.GeneratorTypes.ChlorophyteGenerator;
         }
     }
@@ -74,7 +75,7 @@ namespace SatelliteStorage.Tiles
         {
             base.SetGeneratorDefaults();
 
-            itemDrop = ModContent.ItemType<Items.HallowedGeneratorItem>();
+            itemDrop = ModContent.ItemType<HallowedGeneratorItem>();
             generatorType = (byte)SatelliteStorage.GeneratorTypes.HallowedGenerator;
         }
     }
@@ -85,7 +86,7 @@ namespace SatelliteStorage.Tiles
         {
             base.SetGeneratorDefaults();
 
-            itemDrop = ModContent.ItemType<Items.SoulGeneratorItem>();
+            itemDrop = ModContent.ItemType<SoulGeneratorItem>();
             generatorType = (byte)SatelliteStorage.GeneratorTypes.SoulGenerator;
         }
     }
@@ -96,7 +97,7 @@ namespace SatelliteStorage.Tiles
         {
             base.SetGeneratorDefaults();
 
-            itemDrop = ModContent.ItemType<Items.PowerGeneratorItem>();
+            itemDrop = ModContent.ItemType<PowerGeneratorItem>();
             generatorType = (byte)SatelliteStorage.GeneratorTypes.PowerGenerator;
         }
     }

@@ -1,4 +1,5 @@
-﻿using Terraria.GameContent.Creative;
+﻿using SatelliteStorage.Tiles;
+using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -24,15 +25,15 @@ namespace SatelliteStorage.Items
 			Item.rare = ItemRarityID.Blue;
 			Item.consumable = true;
 			Item.value = 500;
-			Item.createTile = ModContent.TileType<Tiles.DriveChestTile>();
+			Item.createTile = ModContent.TileType<DriveChestTile>();
 		}
 
 		// Please see Content/ExampleRecipes.cs for a detailed explanation of recipe creation.
 		public override void AddRecipes()
 		{
 			CreateRecipe()
-				.AddIngredient(ModContent.ItemType<Items.QuartzModule>(), 1)
-				.AddIngredient(ItemID.Chest, 1)
+				.AddIngredient(ModContent.ItemType<QuartzModule>())
+				.AddIngredient(ItemID.Chest)
 				.AddTile(TileID.Anvils)
 				.Register();
 		}

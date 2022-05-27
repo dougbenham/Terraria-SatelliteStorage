@@ -1,4 +1,5 @@
-﻿using Terraria.GameContent.Creative;
+﻿using SatelliteStorage.Tiles;
+using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -28,20 +29,20 @@ namespace SatelliteStorage.Items
 			Item.rare = ItemRarityID.Blue;
 			Item.consumable = true;
 			Item.value = 500;
-			Item.createTile = ModContent.TileType<Tiles.SputnikTile>();
+			Item.createTile = ModContent.TileType<SputnikTile>();
 		}
 
 		public override void AddRecipes()
 		{
-			CreateRecipe(1)
-			.AddIngredient(ModContent.ItemType<Items.QuartzModule>(), 2)
+			CreateRecipe()
+			.AddIngredient(ModContent.ItemType<QuartzModule>(), 2)
 			.AddIngredient(ItemID.IronBar, 35)
 			.AddIngredient(ItemID.FallenStar, 10)
 			.AddTile(TileID.Anvils)
 			.Register();
 
-			CreateRecipe(1)
-			.AddIngredient(ModContent.ItemType<Items.QuartzModule>(), 2)
+			CreateRecipe()
+			.AddIngredient(ModContent.ItemType<QuartzModule>(), 2)
 			.AddIngredient(ItemID.LeadBar, 35)
 			.AddIngredient(ItemID.FallenStar, 10)
 			.AddTile(TileID.Anvils)

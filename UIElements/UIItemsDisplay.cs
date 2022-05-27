@@ -3,16 +3,17 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using SatelliteStorage.DriveSystem;
+using SatelliteStorage.UI;
+using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
+using Terraria.GameContent.UI.Elements;
 using Terraria.GameContent.UI.States;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.UI;
-using SatelliteStorage.DriveSystem;
-using Terraria.GameContent.UI.Elements;
-using Terraria;
 
 namespace SatelliteStorage.UIElements
 {
@@ -133,7 +134,7 @@ namespace SatelliteStorage.UIElements
 				if (Main.netMode == NetmodeID.SinglePlayer)
 				{
 					if (!DriveChestSystem.AddItem(DriveItem.FromItem(Main.mouseItem))) return;
-					UI.DriveChestUI.ReloadItems();
+					DriveChestUI.ReloadItems();
 
 					mouseItem.TurnToAir();
 					Main.mouseItem.TurnToAir();
@@ -285,7 +286,7 @@ namespace SatelliteStorage.UIElements
 					Main.mouseItem = takeItem;
 				}
 
-				UI.DriveChestUI.ReloadItems();
+				DriveChestUI.ReloadItems();
 
 				if (clickType == 1)
 				{

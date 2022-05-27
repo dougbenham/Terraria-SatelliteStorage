@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using SatelliteStorage.Utils;
+using Terraria;
 
 namespace SatelliteStorage.DriveSystem
 {
@@ -21,7 +22,7 @@ namespace SatelliteStorage.DriveSystem
             }
             set {
                 _stack = value;
-                _stackText = Utils.StringUtils.GetStackCount(_stack);
+                _stackText = StringUtils.GetStackCount(_stack);
             }
         }
 

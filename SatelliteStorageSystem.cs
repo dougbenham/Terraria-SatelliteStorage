@@ -1,12 +1,13 @@
-﻿using Terraria.ModLoader;
-using Terraria;
-using Terraria.UI;
-using Microsoft.Xna.Framework;
+﻿using System;
 using System.Collections.Generic;
-using Terraria.ModLoader.IO;
-using Terraria.ID;
+using Microsoft.Xna.Framework;
 using SatelliteStorage.DriveSystem;
-using System;
+using SatelliteStorage.Utils;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
+using Terraria.UI;
 
 namespace SatelliteStorage
 {
@@ -35,7 +36,7 @@ namespace SatelliteStorage
             for (var i = 0; i < t_items.Count; i++)
             {
                 var item = t_items[i];
-                itemsCompound.Add(Utils.DriveItemsSerializer.SaveDriveItem(item));
+                itemsCompound.Add(DriveItemsSerializer.SaveDriveItem(item));
             }
 
             IList<TagCompound> generatorsCompound = new List<TagCompound>();
@@ -68,7 +69,7 @@ namespace SatelliteStorage
             for(var i = 0; i < items.Count; i++)
             {
                 var itemCompound = items[i];
-                var item = Utils.DriveItemsSerializer.LoadDriveItem(itemCompound);
+                var item = DriveItemsSerializer.LoadDriveItem(itemCompound);
                 loadedItems.Add(item);
             }
 
@@ -90,14 +91,14 @@ namespace SatelliteStorage
 
         public override void AddRecipes()
         {
-            Mod.CreateRecipe(ItemID.MagicMirror, 1)
+            Mod.CreateRecipe(ItemID.MagicMirror)
             .AddIngredient(ItemID.Glass, 250)
             .AddIngredient(ItemID.FallenStar, 50)
-            .AddIngredient(ItemID.ReflectiveDye, 1)
+            .AddIngredient(ItemID.ReflectiveDye)
             .Register();
 
-            Mod.CreateRecipe(ItemID.IceMirror, 1)
-            .AddIngredient(ItemID.MagicMirror, 1)
+            Mod.CreateRecipe(ItemID.IceMirror)
+            .AddIngredient(ItemID.MagicMirror)
             .AddIngredient(ItemID.IceBlock, 50)
             .Register();
         }

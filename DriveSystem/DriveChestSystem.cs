@@ -1,8 +1,9 @@
-﻿using Terraria;
-using Terraria.ID;
+﻿using System;
 using System.Collections.Generic;
-using System;
+using SatelliteStorage.UI;
+using Terraria;
 using Terraria.Audio;
+using Terraria.ID;
 
 namespace SatelliteStorage.DriveSystem
 {
@@ -76,7 +77,7 @@ namespace SatelliteStorage.DriveSystem
 
 			var packet = SatelliteStorage.instance.GetPacket();
 			packet.Write((byte)SatelliteStorage.MessageType.SyncGeneratorState);
-			packet.Write((byte)type);
+			packet.Write(type);
 			packet.Write7BitEncodedInt(Instance.generators[type]);
 			packet.Send(to);
 			packet.Close();
@@ -150,7 +151,7 @@ namespace SatelliteStorage.DriveSystem
             packet.Write7BitEncodedInt(item.type);
             packet.Write7BitEncodedInt(item.stack);
             packet.Write7BitEncodedInt(item.prefix);
-            packet.Send(-1);
+            packet.Send();
             packet.Close();
         }
 
@@ -263,9 +264,9 @@ namespace SatelliteStorage.DriveSystem
 			var player = Main.LocalPlayer;
 			Main.mouseRightRelease = false;
 
-			if (SatelliteStorage.GetUIState((int)UI.UITypes.DriveChest))
+			if (SatelliteStorage.GetUIState((int)UITypes.DriveChest))
 			{
-				SatelliteStorage.SetUIState((int)UI.UITypes.DriveChest, false);
+				SatelliteStorage.SetUIState((int)UITypes.DriveChest, false);
 				SoundEngine.PlaySound(SoundID.MenuClose);
 				return true;
 			}
@@ -296,8 +297,8 @@ namespace SatelliteStorage.DriveSystem
 			{
 				SoundEngine.PlaySound(SoundID.MenuOpen);
 				Main.playerInventory = true;
-				SatelliteStorage.SetUIState((int)UI.UITypes.DriveChest, true);
-				if (checkPosition) UI.DriveChestUI.SetOpenedPosition(Main.LocalPlayer.position);
+				SatelliteStorage.SetUIState((int)UITypes.DriveChest, true);
+				if (checkPosition) DriveChestUI.SetOpenedPosition(Main.LocalPlayer.position);
 			}
 
 			if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -307,7 +308,7 @@ namespace SatelliteStorage.DriveSystem
 				packet.Write((byte)player.whoAmI);
 				packet.Send();
 				packet.Close();
-				if (checkPosition) UI.DriveChestUI.SetOpenedPosition(Main.LocalPlayer.position);
+				if (checkPosition) DriveChestUI.SetOpenedPosition(Main.LocalPlayer.position);
 			}
 
 			return true;

@@ -1,6 +1,7 @@
-﻿using Terraria;
+﻿using SatelliteStorage.DriveSystem;
+using SatelliteStorage.Utils;
+using Terraria;
 using Terraria.GameContent.UI.Elements;
-using SatelliteStorage.DriveSystem;
 
 namespace SatelliteStorage.UIElements
 {
@@ -25,7 +26,7 @@ namespace SatelliteStorage.UIElements
 
             BorderColor = new(0, 0, 0, 0);
 
-            stackText = new(Utils.StringUtils.GetStackCount(item.stack), 0.77f);
+            stackText = new(StringUtils.GetStackCount(item.stack), 0.77f);
             stackText.Top.Set(12, 0);
             stackText.Left.Set(-6, 0);
 

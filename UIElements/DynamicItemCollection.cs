@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SatelliteStorage.DriveSystem;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.UI;
 using Terraria.UI.Gamepad;
-using SatelliteStorage.DriveSystem;
 
 namespace SatelliteStorage.UIElements
 {
@@ -60,7 +60,7 @@ namespace SatelliteStorage.UIElements
 				}
 				
 				var cREATIVE_ItemSlotShouldHighlightAsSelected = false;
-				if (base.IsMouseHovering && itemSlotHitbox.Contains(Main.MouseScreen.ToPoint()) && !PlayerInput.IgnoreMouseInterface)
+				if (IsMouseHovering && itemSlotHitbox.Contains(Main.MouseScreen.ToPoint()) && !PlayerInput.IgnoreMouseInterface)
 				{
 					Main.LocalPlayer.mouseInterface = true;
 					hoverItemIndex = i;
@@ -102,16 +102,16 @@ namespace SatelliteStorage.UIElements
 		private void GetGridParameters(out int startX, out int startY, out int startItemIndex, out int endItemIndex)
 		{
 			var rectangle = GetDimensions().ToRectangle();
-			var viewCullingArea = base.Parent.GetViewCullingArea();
+			var viewCullingArea = Parent.GetViewCullingArea();
 			var x = rectangle.Center.X;
-			startX = x - (int)((float)(44 * _itemsPerLine) * 0.5f);
+			startX = x - (int)(44 * _itemsPerLine * 0.5f);
 			startY = rectangle.Top;
 			startItemIndex = 0;
 			endItemIndex = _itemIdsAvailableToShow.Count;
 			var num = (Math.Min(viewCullingArea.Top, rectangle.Top) - viewCullingArea.Top) / 44;
 			startY += -num * 44;
 			startItemIndex += -num * _itemsPerLine;
-			var num2 = (int)Math.Ceiling((float)viewCullingArea.Height / 44f) * _itemsPerLine;
+			var num2 = (int)Math.Ceiling(viewCullingArea.Height / 44f) * _itemsPerLine;
 			if (endItemIndex > num2 + startItemIndex + _itemsPerLine)
 			{
 				endItemIndex = num2 + startItemIndex + _itemsPerLine;
@@ -127,7 +127,7 @@ namespace SatelliteStorage.UIElements
 		public override void Update(GameTime gameTime)
 		{
 			base.Update(gameTime);
-			if (base.IsMouseHovering)
+			if (IsMouseHovering)
 			{
 				Main.LocalPlayer.mouseInterface = true;
 			}
@@ -136,11 +136,6 @@ namespace SatelliteStorage.UIElements
 		private class DriveItemData
 		{
 			public readonly List<DriveItem> items = new();
-
-			public DriveItemData()
-            {
-
-            }
 		}
 
 		public void SetContentsToShow(List<int> itemIdsToShow, List<DriveItem> driveItems)
@@ -186,7 +181,7 @@ namespace SatelliteStorage.UIElements
 			var list = new List<SnapPoint>();
 			GetGridParameters(out var startX, out var startY, out var startItemIndex, out var endItemIndex);
 			_ = _itemsPerLine;
-			var viewCullingArea = base.Parent.GetViewCullingArea();
+			var viewCullingArea = Parent.GetViewCullingArea();
 			var num = endItemIndex - startItemIndex;
 			while (_dummySnapPoints.Count < num)
 			{
@@ -216,7 +211,7 @@ namespace SatelliteStorage.UIElements
 		public void UpdateSize()
 		{
 			var num = (_itemsPerLine = GetDimensions().ToRectangle().Width / 44);
-			var num2 = (int)Math.Ceiling((float)_itemIdsAvailableToShow.Count / (float)num);
+			var num2 = (int)Math.Ceiling(_itemIdsAvailableToShow.Count / (float)num);
 			MinHeight.Set(44 * num2, 0f);
 		}
 	}

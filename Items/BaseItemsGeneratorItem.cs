@@ -1,10 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using SatelliteStorage.Tiles;
 using Terraria;
-using Terraria.ID;
 using Terraria.GameContent.Creative;
-using Terraria.ModLoader;
-using System.Collections.Generic;
+using Terraria.GameContent.UI;
+using Terraria.ID;
 using Terraria.Localization;
+using Terraria.ModLoader;
 
 namespace SatelliteStorage.Items
 {
@@ -50,7 +52,7 @@ namespace SatelliteStorage.Items
 
 				line = new(Mod, "dropText_" + Item.Name + "_" + itm.Name, "● " + itm.Name + " (" + Language.GetTextValue("Mods.SatelliteStorage.ChanceNames._" + data[3]) + ")")
 				{
-					OverrideColor = Terraria.GameContent.UI.ItemRarity.GetColor(itm.rare)
+					OverrideColor = ItemRarity.GetColor(itm.rare)
 				};
 				tooltips.Add(line);
 			}
@@ -73,15 +75,15 @@ namespace SatelliteStorage.Items
 		{
 			Item.maxStack = 1;
 			Item.value = 500;
-			Item.createTile = ModContent.TileType<Tiles.BaseItemsGeneratorTile>();
+			Item.createTile = ModContent.TileType<BaseItemsGeneratorTile>();
 			generatorType = (byte)SatelliteStorage.GeneratorTypes.BaseGenerator;
 		}
 
 		public virtual void AddGeneratorRecipes()
         {
 			CreateRecipe()
-			.AddIngredient(ModContent.ItemType<Items.QuartzModule>(), 1)
-			.AddIngredient(ModContent.ItemType<Items.QuartzShard>(), 25)
+			.AddIngredient(ModContent.ItemType<QuartzModule>())
+			.AddIngredient(ModContent.ItemType<QuartzShard>(), 25)
 			.AddTile(TileID.Anvils)
 			.Register();
 		}

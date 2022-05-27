@@ -1,12 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using SatelliteStorage.DriveSystem;
+using SatelliteStorage.Items;
 using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria.ObjectData;
 using Terraria.DataStructures;
 using Terraria.Enums;
+using Terraria.ID;
 using Terraria.Localization;
-using Microsoft.Xna.Framework.Graphics;
+using Terraria.ModLoader;
+using Terraria.ObjectData;
 
 namespace SatelliteStorage.Tiles
 {
@@ -53,7 +55,7 @@ namespace SatelliteStorage.Tiles
 
 		public virtual void SetGeneratorDefaults()
         {
-			itemDrop = ModContent.ItemType<Items.DriveChestItem>();
+			itemDrop = ModContent.ItemType<DriveChestItem>();
 			generatorType = (byte)SatelliteStorage.GeneratorTypes.BaseGenerator;
 		}
 
@@ -71,7 +73,7 @@ namespace SatelliteStorage.Tiles
 		{
 			if (Main.netMode == NetmodeID.SinglePlayer || Main.netMode == NetmodeID.Server)
 			{
-				DriveSystem.DriveChestSystem.SubGenerator(generatorType);
+				DriveChestSystem.SubGenerator(generatorType);
 			}
 
 			Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, itemDrop);
@@ -116,7 +118,7 @@ namespace SatelliteStorage.Tiles
 		{
 			if (Main.netMode == NetmodeID.SinglePlayer)
 			{
-				DriveSystem.DriveChestSystem.AddGenerator(generatorType);
+				DriveChestSystem.AddGenerator(generatorType);
 			}
 
 			if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -126,7 +128,7 @@ namespace SatelliteStorage.Tiles
 				packet.Write((byte)SatelliteStorage.MessageType.AddDriveChestItem);
 				packet.Write((byte)player.whoAmI);
 				
-				packet.Write((byte)generatorType);
+				packet.Write(generatorType);
 				packet.Write((byte)1);
 
 				packet.Send();

@@ -1,6 +1,6 @@
-﻿using Terraria.ID;
+﻿using SatelliteStorage.Tiles;
+using Terraria.ID;
 using Terraria.ModLoader;
-
 
 namespace SatelliteStorage.Items
 {
@@ -11,7 +11,7 @@ namespace SatelliteStorage.Items
         {
             base.SetGeneratorDefaults();
             Item.value = 500;
-            Item.createTile = ModContent.TileType<Tiles.HellstoneGeneratorTile>();
+            Item.createTile = ModContent.TileType<HellstoneGeneratorTile>();
             Item.rare = 2;
             generatorType = (byte)SatelliteStorage.GeneratorTypes.HellstoneGenerator;
         }
@@ -19,7 +19,7 @@ namespace SatelliteStorage.Items
         public override void AddGeneratorRecipes()
         {
             CreateRecipe()
-            .AddIngredient(ModContent.ItemType<Items.QuartzModule>(), 1)
+            .AddIngredient(ModContent.ItemType<QuartzModule>())
             .AddIngredient(ItemID.HellstoneBar, 25)
             .AddTile(TileID.Anvils)
             .Register();
@@ -32,7 +32,7 @@ namespace SatelliteStorage.Items
         {
             base.SetGeneratorDefaults();
             Item.value = 500;
-            Item.createTile = ModContent.TileType<Tiles.MeteoriteGeneratorTile>();
+            Item.createTile = ModContent.TileType<MeteoriteGeneratorTile>();
             Item.rare = 1;
             generatorType = (byte)SatelliteStorage.GeneratorTypes.MeteoriteGenerator;
         }
@@ -40,7 +40,7 @@ namespace SatelliteStorage.Items
         public override void AddGeneratorRecipes()
         {
             CreateRecipe()
-            .AddIngredient(ModContent.ItemType<Items.QuartzModule>(), 1)
+            .AddIngredient(ModContent.ItemType<QuartzModule>())
             .AddIngredient(ItemID.MeteoriteBar, 25)
             .AddTile(TileID.Anvils)
             .Register();
@@ -53,7 +53,7 @@ namespace SatelliteStorage.Items
         {
             base.SetGeneratorDefaults();
             Item.value = 500;
-            Item.createTile = ModContent.TileType<Tiles.ShroomiteGeneratorTile>();
+            Item.createTile = ModContent.TileType<ShroomiteGeneratorTile>();
             Item.rare = 7;
             generatorType = (byte)SatelliteStorage.GeneratorTypes.ShroomiteGenerator;
         }
@@ -61,7 +61,7 @@ namespace SatelliteStorage.Items
         public override void AddGeneratorRecipes()
         {
             CreateRecipe()
-            .AddIngredient(ModContent.ItemType<Items.QuartzModule>(), 1)
+            .AddIngredient(ModContent.ItemType<QuartzModule>())
             .AddIngredient(ItemID.ShroomiteBar, 25)
             .AddTile(TileID.Anvils)
             .Register();
@@ -74,7 +74,7 @@ namespace SatelliteStorage.Items
         {
             base.SetGeneratorDefaults();
             Item.value = 500;
-            Item.createTile = ModContent.TileType<Tiles.SpectreGeneratorTile>();
+            Item.createTile = ModContent.TileType<SpectreGeneratorTile>();
             Item.rare = 7;
             generatorType = (byte)SatelliteStorage.GeneratorTypes.SpectreGenerator;
         }
@@ -82,7 +82,7 @@ namespace SatelliteStorage.Items
         public override void AddGeneratorRecipes()
         {
             CreateRecipe()
-            .AddIngredient(ModContent.ItemType<Items.QuartzModule>(), 1)
+            .AddIngredient(ModContent.ItemType<QuartzModule>())
             .AddIngredient(ItemID.SpectreBar, 25)
             .AddTile(TileID.Anvils)
             .Register();
@@ -95,7 +95,7 @@ namespace SatelliteStorage.Items
         {
             base.SetGeneratorDefaults();
             Item.value = 500;
-            Item.createTile = ModContent.TileType<Tiles.LuminiteGeneratorTile>();
+            Item.createTile = ModContent.TileType<LuminiteGeneratorTile>();
             Item.rare = 10;
             generatorType = (byte)SatelliteStorage.GeneratorTypes.LuminiteGenerator;
         }
@@ -103,7 +103,7 @@ namespace SatelliteStorage.Items
         public override void AddGeneratorRecipes()
         {
             CreateRecipe()
-            .AddIngredient(ModContent.ItemType<Items.QuartzModule>(), 1)
+            .AddIngredient(ModContent.ItemType<QuartzModule>())
             .AddIngredient(ItemID.LunarBar, 25)
             .AddTile(TileID.Anvils)
             .Register();
@@ -116,7 +116,7 @@ namespace SatelliteStorage.Items
         {
             base.SetGeneratorDefaults();
             Item.value = 500;
-            Item.createTile = ModContent.TileType<Tiles.ChlorophyteGeneratorTile>();
+            Item.createTile = ModContent.TileType<ChlorophyteGeneratorTile>();
             Item.rare = 7;
             generatorType = (byte)SatelliteStorage.GeneratorTypes.ChlorophyteGenerator;
         }
@@ -124,7 +124,7 @@ namespace SatelliteStorage.Items
         public override void AddGeneratorRecipes()
         {
             CreateRecipe()
-            .AddIngredient(ModContent.ItemType<Items.QuartzModule>(), 1)
+            .AddIngredient(ModContent.ItemType<QuartzModule>())
             .AddIngredient(ItemID.ChlorophyteBar, 25)
             .AddTile(TileID.Anvils)
             .Register();
@@ -137,7 +137,7 @@ namespace SatelliteStorage.Items
         {
             base.SetGeneratorDefaults();
             Item.value = 500;
-            Item.createTile = ModContent.TileType<Tiles.HallowedGeneratorTile>();
+            Item.createTile = ModContent.TileType<HallowedGeneratorTile>();
             Item.rare = 4;
             generatorType = (byte)SatelliteStorage.GeneratorTypes.HallowedGenerator;
         }
@@ -145,7 +145,7 @@ namespace SatelliteStorage.Items
         public override void AddGeneratorRecipes()
         {
             CreateRecipe()
-            .AddIngredient(ModContent.ItemType<Items.QuartzModule>(), 1)
+            .AddIngredient(ModContent.ItemType<QuartzModule>())
             .AddIngredient(ItemID.HallowedBar, 25)
             .AddTile(TileID.Anvils)
             .Register();
@@ -158,7 +158,7 @@ namespace SatelliteStorage.Items
         {
             base.SetGeneratorDefaults();
             Item.value = 500;
-            Item.createTile = ModContent.TileType<Tiles.SoulGeneratorTile>();
+            Item.createTile = ModContent.TileType<SoulGeneratorTile>();
             Item.rare = 3;
             generatorType = (byte)SatelliteStorage.GeneratorTypes.SoulGenerator;
         }
@@ -166,8 +166,8 @@ namespace SatelliteStorage.Items
         public override void AddGeneratorRecipes()
         {
             CreateRecipe()
-            .AddIngredient(ModContent.ItemType<Items.QuartzModule>(), 1)
-            .AddIngredient(ModContent.ItemType<Items.SoulBar>(), 25)
+            .AddIngredient(ModContent.ItemType<QuartzModule>())
+            .AddIngredient(ModContent.ItemType<SoulBar>(), 25)
             .AddTile(TileID.Anvils)
             .Register();
         }
@@ -179,7 +179,7 @@ namespace SatelliteStorage.Items
         {
             base.SetGeneratorDefaults();
             Item.value = 500;
-            Item.createTile = ModContent.TileType<Tiles.PowerGeneratorTile>();
+            Item.createTile = ModContent.TileType<PowerGeneratorTile>();
             Item.rare = 5;
             generatorType = (byte)SatelliteStorage.GeneratorTypes.PowerGenerator;
         }
@@ -187,8 +187,8 @@ namespace SatelliteStorage.Items
         public override void AddGeneratorRecipes()
         {
             CreateRecipe()
-            .AddIngredient(ModContent.ItemType<Items.QuartzModule>(), 1)
-            .AddIngredient(ModContent.ItemType<Items.PowerBar>(), 25)
+            .AddIngredient(ModContent.ItemType<QuartzModule>())
+            .AddIngredient(ModContent.ItemType<PowerBar>(), 25)
             .AddTile(TileID.Anvils)
             .Register();
         }

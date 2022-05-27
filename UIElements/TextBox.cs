@@ -1,11 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ReLogic.Graphics;
-using System;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
+using Terraria.GameInput;
 using Terraria.UI;
 
 namespace SatelliteStorage.UIElements
@@ -128,7 +129,7 @@ namespace SatelliteStorage.UIElements
 
 		public override void Update(GameTime gameTime)
 		{
-			var MousePosition = new Vector2((float)Main.mouseX, (float)Main.mouseY);
+			var MousePosition = new Vector2(Main.mouseX, Main.mouseY);
 			if (!ContainsPoint(MousePosition) && (Main.mouseLeft || Main.mouseRight)) // This solution is fine, but we need a way to cleanly "unload" a UIElement
 			{
 				// TODO, figure out how to refocus without triggering unfocus while clicking enable button.
@@ -164,9 +165,9 @@ namespace SatelliteStorage.UIElements
 
 		public void SetText(string text)
 		{
-			if (text.ToString().Length > this._maxLength)
+			if (text.Length > _maxLength)
 			{
-				text = text.ToString().Substring(0, this._maxLength);
+				text = text.Substring(0, _maxLength);
 			}
 			if (currentString != text)
 			{
@@ -177,7 +178,7 @@ namespace SatelliteStorage.UIElements
 
 		public void SetTextMaxLength(int maxLength)
 		{
-			this._maxLength = maxLength;
+			_maxLength = maxLength;
 		}
 
 		//public void Backspace()
@@ -221,7 +222,7 @@ namespace SatelliteStorage.UIElements
 
 			if (focused)
 			{
-				Terraria.GameInput.PlayerInput.WritingText = true;
+				PlayerInput.WritingText = true;
 				Main.instance.HandleIME();
 				var newString = Main.GetInputText(currentString);
 				if (!newString.Equals(currentString))
@@ -250,10 +251,10 @@ namespace SatelliteStorage.UIElements
 					textBlinkerState = (textBlinkerState + 1) % 2;
 					textBlinkerCount = 0;
 				}
-				Main.instance.DrawWindowsIMEPanel(new(98f, (float)(Main.screenHeight - 36)), 0f);
+				Main.instance.DrawWindowsIMEPanel(new(98f, Main.screenHeight - 36));
 			}
 			var displayString = currentString;
-			var space = base.GetDimensions();
+			var space = GetDimensions();
 			var color = textColor;
 			if (currentString.Length == 0)
 			{
@@ -284,7 +285,7 @@ namespace SatelliteStorage.UIElements
 					displayValue = displayValue.Substring(substFrom, substCount);
 				}
 
-				if (this.textBlinkerState == 1 && focused)
+				if (textBlinkerState == 1 && focused)
 				{
 					displayValue = displayValue + "|";
 				}

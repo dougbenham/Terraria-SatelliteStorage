@@ -1,12 +1,14 @@
-using Terraria.ModLoader;
-using Terraria;
-using Terraria.UI;
-using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.IO;
-using Terraria.ID;
+using Microsoft.Xna.Framework;
 using SatelliteStorage.DriveSystem;
+using SatelliteStorage.UI;
+using SatelliteStorage.Utils;
+using Terraria;
 using Terraria.Audio;
+using Terraria.ID;
+using Terraria.ModLoader;
+using Terraria.UI;
 
 namespace SatelliteStorage
 {
@@ -31,7 +33,7 @@ namespace SatelliteStorage
 
         public int GetRandomDropIndex()
         {
-            var index = Utils.RandomUtils.Roulette(dropsChances);
+            var index = RandomUtils.Roulette(dropsChances);
             return index;
         }
 
@@ -45,7 +47,7 @@ namespace SatelliteStorage
 	{
         public static SatelliteStorage instance;
         public DriveChestSystem driveChestSystem;
-        private readonly Dictionary<int, UI.BaseUIState> uidict = new();
+        private readonly Dictionary<int, BaseUIState> uidict = new();
 
         public static bool TakeDriveChestItemSended;
         public static bool AddDriveChestItemSended;
@@ -81,7 +83,7 @@ namespace SatelliteStorage
             PowerGenerator
         }
 
-        internal enum ChancesTypes : int
+        internal enum ChancesTypes
         {
             VeryHighChance,
             HighChance,
@@ -181,7 +183,7 @@ namespace SatelliteStorage
 
 	        if (!Main.dedServ)
 	        {
-		        uidict.Add((int) UI.UITypes.DriveChest, new UI.DriveChestUI());
+		        uidict.Add((int) UITypes.DriveChest, new DriveChestUI());
                 
 		        foreach (var ui in uidict.Values)
 		        {
@@ -223,7 +225,7 @@ namespace SatelliteStorage
             var spPacket = instance.GetPacket();
             spPacket.Write((byte)MessageType.SetSputnikState);
             spPacket.Write((byte)(DriveChestSystem.IsSputnikPlaced ? 1 : 0));
-            spPacket.Send(-1);
+            spPacket.Send();
             spPacket.Close();
         }
 
@@ -251,8 +253,8 @@ namespace SatelliteStorage
 
                         var packet = GetPacket();
                         packet.Write((byte)MessageType.ResponseDriveChestItems);
-                        packet.Write((byte)playernumber);
-                        Utils.DriveItemsSerializer.WriteDriveItemsToPacket(DriveChestSystem.GetItems(), packet);
+                        packet.Write(playernumber);
+                        DriveItemsSerializer.WriteDriveItemsToPacket(DriveChestSystem.GetItems(), packet);
                         packet.Send(playernumber);
                         packet.Close();
                         
@@ -352,7 +354,7 @@ namespace SatelliteStorage
 
                         var takeItemPacket = GetPacket(); 
                         takeItemPacket.Write((byte)MessageType.TakeDriveChestItem);
-                        takeItemPacket.Write((byte)playernumber);
+                        takeItemPacket.Write(playernumber);
                         takeItemPacket.Write(itemTaked);
                         takeItemPacket.Write7BitEncodedInt(type);
                         takeItemPacket.Write7BitEncodedInt(stack);
@@ -382,7 +384,7 @@ namespace SatelliteStorage
 
                         var addItemPacket = GetPacket();
                         addItemPacket.Write((byte)MessageType.AddDriveChestItem);
-                        addItemPacket.Write((byte)playernumber);
+                        addItemPacket.Write(playernumber);
                         addItemPacket.Write(added);
                         addItemPacket.Send(playernumber);
                         addItemPacket.Close();
@@ -441,7 +443,7 @@ namespace SatelliteStorage
 
                         var tryCraftItemPacket = GetPacket();
                         tryCraftItemPacket.Write((byte)MessageType.TryCraftRecipe);
-                        tryCraftItemPacket.Write((byte)playernumber);
+                        tryCraftItemPacket.Write(playernumber);
                         tryCraftItemPacket.Write7BitEncodedInt(plMouseItem.type);
                         tryCraftItemPacket.Write7BitEncodedInt(plMouseItem.stack);
                         tryCraftItemPacket.Write7BitEncodedInt(plMouseItem.prefix);
@@ -477,15 +479,12 @@ namespace SatelliteStorage
                             
                             var depositItemPacket = GetPacket();
                             depositItemPacket.Write((byte)MessageType.DepositDriveChestItem);
-                            depositItemPacket.Write((byte)playernumber);
-                            depositItemPacket.Write((byte)invSlot);
+                            depositItemPacket.Write(playernumber);
+                            depositItemPacket.Write(invSlot);
                             depositItemPacket.Send(playernumber);
                             depositItemPacket.Close();
                         }
 
-                        break;
-                    default:
-                        //Logger.WarnFormat("ExampleMod: Unknown Message type: {0}", msgType);
                         break;
                 }
             }
@@ -501,11 +500,11 @@ namespace SatelliteStorage
                     case MessageType.ResponseDriveChestItems:
                         playernumber = reader.ReadByte();
 
-                        var items = Utils.DriveItemsSerializer.ReadDriveItems(reader);
+                        var items = DriveItemsSerializer.ReadDriveItems(reader);
                         DriveChestSystem.InitItems(items);
                         SoundEngine.PlaySound(SoundID.MenuOpen);
                         Main.playerInventory = true;
-                        SetUIState((int)UI.UITypes.DriveChest, true);
+                        SetUIState((int)UITypes.DriveChest, true);
 
                         break;
                     case MessageType.TakeDriveChestItem:
@@ -609,7 +608,7 @@ namespace SatelliteStorage
                         syncItem.prefix = reader.Read7BitEncodedInt();
 
                         DriveChestSystem.SyncItem(syncItem);
-                        UI.DriveChestUI.ReloadItems();
+                        DriveChestUI.ReloadItems();
 
                         break;
                     default:

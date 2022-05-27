@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using SatelliteStorage.Items;
 using Terraria;
 using Terraria.ID;
 using Terraria.IO;
@@ -26,7 +27,7 @@ namespace SatelliteStorage.Tiles
 			AddMapEntry(new(152, 171, 198), name);
 
 			DustType = 84;
-			ItemDrop = ModContent.ItemType<Items.QuartzShard>();
+			ItemDrop = ModContent.ItemType<QuartzShard>();
 			SoundType = SoundID.Tink;
 			SoundStyle = 1;
 			// mineResist = 4f;

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.GameContent.Creative;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace SatelliteStorage.Items
@@ -54,7 +54,7 @@ namespace SatelliteStorage.Items
 		public override void AddRecipes()
 		{
 			CreateRecipe()
-				.AddIngredient(ModContent.ItemType<Items.QuartzShard>(), 8)
+				.AddIngredient(ModContent.ItemType<QuartzShard>(), 8)
 				.AddTile(TileID.Anvils)
 				.Register();
 		}

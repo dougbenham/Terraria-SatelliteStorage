@@ -1,6 +1,6 @@
-﻿using Terraria.ModLoader;
+﻿using System.Collections.Generic;
 using Terraria;
-using System.Collections.Generic;
+using Terraria.ModLoader;
 
 namespace SatelliteStorage
 {

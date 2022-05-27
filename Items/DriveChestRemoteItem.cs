@@ -1,10 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
+using SatelliteStorage.DriveSystem;
+using SatelliteStorage.UI;
 using Terraria;
-using Terraria.ID;
 using Terraria.GameContent.Creative;
-using Terraria.ModLoader;
+using Terraria.ID;
 using Terraria.Localization;
-using System;
+using Terraria.ModLoader;
 
 namespace SatelliteStorage.Items
 {
@@ -36,16 +38,16 @@ namespace SatelliteStorage.Items
 		public override void AddRecipes()
 		{
 			CreateRecipe()
-				.AddIngredient(ModContent.ItemType<Items.DriveChestItem>(), 1)
+				.AddIngredient(ModContent.ItemType<DriveChestItem>())
 				.AddIngredient(ItemID.FallenStar, 10)
-				.AddIngredient(ItemID.MagicMirror, 1)
+				.AddIngredient(ItemID.MagicMirror)
 				.AddTile(TileID.Anvils)
 				.Register();
 
 			CreateRecipe()
-				.AddIngredient(ModContent.ItemType<Items.DriveChestItem>(), 1)
+				.AddIngredient(ModContent.ItemType<DriveChestItem>())
 				.AddIngredient(ItemID.FallenStar, 10)
-				.AddIngredient(ItemID.IceMirror, 1)
+				.AddIngredient(ItemID.IceMirror)
 				.AddTile(TileID.Anvils)
 				.Register();
 		}
@@ -55,13 +57,13 @@ namespace SatelliteStorage.Items
 			if (player.whoAmI == Main.myPlayer)
 			{
 				if (cooldownTime + 500 > new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds()) return true;
-				if (!DriveSystem.DriveChestSystem.IsSputnikPlaced)
+				if (!DriveChestSystem.IsSputnikPlaced)
 				{
 					Main.NewText(Language.GetTextValue("Mods.SatelliteStorage.Common.CantUseWithoutSputnik"), new Color(173, 57, 71));
 					cooldownTime = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
 					return true;
 				}
-				if (!SatelliteStorage.GetUIState((int)UI.UITypes.DriveChest)) return DriveSystem.DriveChestSystem.RequestOpenDriveChest();
+				if (!SatelliteStorage.GetUIState((int)UITypes.DriveChest)) return DriveChestSystem.RequestOpenDriveChest();
 			}
 			cooldownTime = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
 			return true;

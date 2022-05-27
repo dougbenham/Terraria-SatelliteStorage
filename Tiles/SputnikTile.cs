@@ -1,10 +1,12 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria.ObjectData;
+﻿using SatelliteStorage.DriveSystem;
+using SatelliteStorage.Items;
+using Terraria;
 using Terraria.DataStructures;
 using Terraria.Enums;
+using Terraria.ID;
 using Terraria.Localization;
+using Terraria.ModLoader;
+using Terraria.ObjectData;
 
 namespace SatelliteStorage.Tiles
 {
@@ -57,7 +59,7 @@ namespace SatelliteStorage.Tiles
         public override bool CanPlace(int i, int j)
         {
 			if (!Main.LocalPlayer.ZoneNormalSpace) return false;
-			if (DriveSystem.DriveChestSystem.IsSputnikPlaced) return false;
+			if (DriveChestSystem.IsSputnikPlaced) return false;
             return base.CanPlace(i, j);
         }
 
@@ -73,9 +75,9 @@ namespace SatelliteStorage.Tiles
 
 		public override void KillMultiTile(int i, int j, int frameX, int frameY)
 		{
-			Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ModContent.ItemType<Items.SputnikItem>());
+			Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ModContent.ItemType<SputnikItem>());
 
-			DriveSystem.DriveChestSystem.IsSputnikPlaced = false;
+			DriveChestSystem.IsSputnikPlaced = false;
 			SatelliteStorage.SyncIsSputnikPlacedToClients();
 		}
 
@@ -87,7 +89,7 @@ namespace SatelliteStorage.Tiles
 				var packet = SatelliteStorage.instance.GetPacket();
 				packet.Write((byte)SatelliteStorage.MessageType.SetSputnikState);
 				packet.Write((byte)player.whoAmI);
-				packet.Write((byte)(DriveSystem.DriveChestSystem.IsSputnikPlaced ? 1 : 0));
+				packet.Write((byte)(DriveChestSystem.IsSputnikPlaced ? 1 : 0));
 				packet.Send();
 				packet.Close();
 			}
@@ -135,7 +137,7 @@ namespace SatelliteStorage.Tiles
 
 		public override void PlaceInWorld(int i, int j, Item item)
 		{
-			DriveSystem.DriveChestSystem.IsSputnikPlaced = true;
+			DriveChestSystem.IsSputnikPlaced = true;
 			SendSyncSputnikState();
 			base.PlaceInWorld(i, j, item);
 		}

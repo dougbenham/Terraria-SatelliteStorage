@@ -1,6 +1,6 @@
-﻿using Terraria.ID;
+﻿using Terraria.GameContent.Creative;
+using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.Creative;
 
 namespace SatelliteStorage.Items
 {
@@ -22,15 +22,15 @@ namespace SatelliteStorage.Items
 
 		public override void AddRecipes()
 		{
-			CreateRecipe(1)
+			CreateRecipe()
 			.AddIngredient(ItemID.CrimtaneBar, 5)
-			.AddIngredient(ModContent.ItemType<Items.QuartzShard>(), 10)
+			.AddIngredient(ModContent.ItemType<QuartzShard>(), 10)
 			.AddTile(TileID.Anvils)
 			.Register();
 
-			CreateRecipe(1)
+			CreateRecipe()
 			.AddIngredient(ItemID.DemoniteBar, 5)
-			.AddIngredient(ModContent.ItemType<Items.QuartzShard>(), 10)
+			.AddIngredient(ModContent.ItemType<QuartzShard>(), 10)
 			.AddTile(TileID.Anvils)
 			.Register();
 		}

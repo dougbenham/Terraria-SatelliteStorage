@@ -1,11 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
+using SatelliteStorage.DriveSystem;
+using SatelliteStorage.Items;
 using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria.ObjectData;
 using Terraria.DataStructures;
 using Terraria.Enums;
+using Terraria.ID;
 using Terraria.Localization;
+using Terraria.ModLoader;
+using Terraria.ObjectData;
 
 namespace SatelliteStorage.Tiles
 {
@@ -68,17 +70,17 @@ namespace SatelliteStorage.Tiles
 
 		public override void KillMultiTile(int i, int j, int frameX, int frameY)
 		{
-			Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ModContent.ItemType<Items.DriveChestItem>());
+			Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ModContent.ItemType<DriveChestItem>());
 		}
 
 		public override bool RightClick(int i, int j)
 		{
-			if (!DriveSystem.DriveChestSystem.IsSputnikPlaced)
+			if (!DriveChestSystem.IsSputnikPlaced)
 			{
 				Main.NewText(Language.GetTextValue("Mods.SatelliteStorage.Common.CantUseWithoutSputnik"), new Color(173, 57, 71));
 				return true;
 			}
-			return DriveSystem.DriveChestSystem.RequestOpenDriveChest(true);
+			return DriveChestSystem.RequestOpenDriveChest(true);
 		}
 
 		public override void MouseOver(int i, int j)

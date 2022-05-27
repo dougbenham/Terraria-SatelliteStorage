@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SatelliteStorage.DriveSystem;
+using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
-using Terraria.UI;
-using SatelliteStorage.DriveSystem;
 using Terraria.GameContent.UI.Elements;
-using Terraria;
+using Terraria.UI;
 
 namespace SatelliteStorage.UIElements
 {

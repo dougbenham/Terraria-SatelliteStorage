@@ -1,8 +1,9 @@
-﻿using Terraria;
+﻿using System;
+using SatelliteStorage.Items;
+using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.DataStructures;
-using System;
 
 namespace SatelliteStorage.Global
 {
@@ -16,7 +17,7 @@ namespace SatelliteStorage.Global
                 {
                     if (new Random().Next(0, 100) > 70)
                     {
-                        Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ModContent.ItemType<Items.QuartzShard>());
+                        Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ModContent.ItemType<QuartzShard>());
                         return false;
                     }
                 }

@@ -1,4 +1,6 @@
-﻿using Terraria;
+﻿using SatelliteStorage.DriveSystem;
+using SatelliteStorage.UI;
+using Terraria;
 using Terraria.ModLoader;
 
 namespace SatelliteStorage.Global
@@ -7,9 +9,9 @@ namespace SatelliteStorage.Global
     {
         public override bool OnPickup(Item item, Player player)
         {
-            if (SatelliteStorage.GetUIState((int)UI.UITypes.DriveChest))
+            if (SatelliteStorage.GetUIState((int)UITypes.DriveChest))
             {
-                DriveSystem.DriveChestSystem.CheckRecipesRefresh = false;
+                DriveChestSystem.CheckRecipesRefresh = false;
             }
 
             return base.OnPickup(item, player);
@@ -17,9 +19,9 @@ namespace SatelliteStorage.Global
 
         public override void OnConsumeItem(Item item, Player player)
         {
-            if (SatelliteStorage.GetUIState((int)UI.UITypes.DriveChest))
+            if (SatelliteStorage.GetUIState((int)UITypes.DriveChest))
             {
-                DriveSystem.DriveChestSystem.CheckRecipesRefresh = false;
+                DriveChestSystem.CheckRecipesRefresh = false;
             }
 
             base.OnConsumeItem(item, player);

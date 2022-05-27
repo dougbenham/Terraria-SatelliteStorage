@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SatelliteStorage.DriveSystem;
+using SatelliteStorage.UIElements;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -30,9 +31,9 @@ namespace SatelliteStorage.UI
 		private UserInterface driveChestInterface;
 		private GameTime _lastUpdateUiGameTime;
 		private double lastCraftsResearchTime;
-		private UIElements.UIItemsDisplay display;
-		private UIElements.UICraftDisplay craftDisplay;
-		private UIElements.UICraftRecipe craftRecipe;
+		private UIItemsDisplay display;
+		private UICraftDisplay craftDisplay;
+		private UICraftRecipe craftRecipe;
 		private UIPanel craftResultPanel;
 		private float windowWidth;
 		private float windowHeight;
@@ -245,7 +246,7 @@ namespace SatelliteStorage.UI
 			craftRecipe = new(this);
 			Append(craftRecipe);
 
-			craftResultPanel = new UIElements.UICraftResultBG();
+			craftResultPanel = new UICraftResultBG();
 			Append(craftResultPanel);
 
 			CalculateSize();
@@ -445,19 +446,19 @@ namespace SatelliteStorage.UI
 
 			DrawButtons(spriteBatch);
 
-			if (craftDisplay != null && !UIElements.UICraftDisplay.hidden)
+			if (craftDisplay != null && !UICraftDisplay.hidden)
 			{
 				Terraria.Utils.DrawBorderString(spriteBatch, Language.GetTextValue("Mods.SatelliteStorage.UITitles.DriveChestRecipes"), craftDisplay.GetDimensions().Position() + new Vector2(30, 47),
 					Color.White, 1f);
 			}
 
-			if (craftRecipe != null && !UIElements.UICraftRecipe.hidden)
+			if (craftRecipe != null && !UICraftRecipe.hidden)
 			{
 				Terraria.Utils.DrawBorderString(spriteBatch, Language.GetTextValue("Mods.SatelliteStorage.UITitles.DriveChestCraft"), craftRecipe.GetDimensions().Position() + new Vector2(30, 47),
 					Color.White, 1f);
 			}
 
-			if (_currentRecipe > -1 && !UIElements.UICraftRecipe.hidden)
+			if (_currentRecipe > -1 && !UICraftRecipe.hidden)
 			{
 				var recipe = Main.recipe[_currentRecipe];
 				craftResultItem = recipe.createItem;
@@ -482,11 +483,11 @@ namespace SatelliteStorage.UI
 
 				UILinkPointNavigator.Shortcuts.CREATIVE_ItemSlotShouldHighlightAsSelected = cReativeItemSlotShouldHighlightAsSelected;
 				ItemSlot.Draw(spriteBatch, ref craftResultItem, 26, itemSlotHitbox.TopLeft());
-				UIElements.UICraftResultBG.hidden = false;
+				UICraftResultBG.hidden = false;
 			}
 			else
 			{
-				UIElements.UICraftResultBG.hidden = true;
+				UICraftResultBG.hidden = true;
 			}
 		}
 

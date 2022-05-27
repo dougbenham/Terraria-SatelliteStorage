@@ -1,6 +1,6 @@
-﻿using Terraria.UI;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
+using Terraria.UI;
 
 namespace SatelliteStorage.UI
 {
