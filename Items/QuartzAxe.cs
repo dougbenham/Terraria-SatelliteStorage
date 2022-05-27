@@ -39,8 +39,7 @@ namespace SatelliteStorage.Items
 				Dust.NewDust(new(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, DustID.IceTorch);
 			}
 		}
-
-		// Please see Content/ExampleRecipes.cs for a detailed explanation of recipe creation.
+		
 		public override void AddRecipes()
 		{
 			CreateRecipe()

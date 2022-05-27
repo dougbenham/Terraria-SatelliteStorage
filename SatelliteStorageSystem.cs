@@ -19,12 +19,12 @@ namespace SatelliteStorage
 
         public override void UpdateUI(GameTime gameTime)
         {
-            SatelliteStorage.instance.OnUpdateUI(gameTime);
+            SatelliteStorage.Instance.OnUpdateUI(gameTime);
         }
 
         public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
         {
-            SatelliteStorage.instance.OnModifyInterfaceLayers(layers);
+            SatelliteStorage.Instance.OnModifyInterfaceLayers(layers);
         }
 
         public override void SaveWorldData(TagCompound tag)
@@ -135,7 +135,7 @@ namespace SatelliteStorage
 
                     var player = Main.LocalPlayer;
 
-                    var packet = SatelliteStorage.instance.GetPacket();
+                    var packet = SatelliteStorage.Instance.GetPacket();
                     packet.Write((byte)SatelliteStorage.MessageType.RequestStates);
                     packet.Write((byte)player.whoAmI);
                     packet.Send();

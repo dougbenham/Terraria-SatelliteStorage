@@ -124,7 +124,7 @@ namespace SatelliteStorage.Tiles
 			if (Main.netMode == NetmodeID.MultiplayerClient)
             {
 				var player = Main.LocalPlayer;
-				var packet = SatelliteStorage.instance.GetPacket();
+				var packet = SatelliteStorage.Instance.GetPacket();
 				packet.Write((byte)SatelliteStorage.MessageType.AddDriveChestItem);
 				packet.Write((byte)player.whoAmI);
 				
@@ -137,26 +137,7 @@ namespace SatelliteStorage.Tiles
 
 			base.PlaceInWorld(i, j, item);
 		}
-
-		/*
-		public override void AnimateIndividualTile(int type, int i, int j, ref int frameXOffset, ref int frameYOffset)
-		{
-			// Tweak the frame drawn by x position so tiles next to each other are off-sync and look much more interesting
-			int uniqueAnimationFrame = Main.tileFrame[Type] + i;
-			
-			if (i % 1 == 0)
-				uniqueAnimationFrame += 1;
-			if (i % 2 == 0)
-				uniqueAnimationFrame += 1;
-			if (i % 3 == 0)
-				uniqueAnimationFrame += 1;
-			
-			uniqueAnimationFrame %= 3;
-
-			frameYOffset = uniqueAnimationFrame * 54;
-		}
-		*/
-
+		
 		public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 		{
 			var tile = Main.tile[i, j];
@@ -166,20 +147,7 @@ namespace SatelliteStorage.Tiles
 			var height = tile.TileFrameY % AnimationFrameHeight == 54 ? 16 : 16;
 
 			var frameYOffset = Main.tileFrame[Type] * AnimationFrameHeight;
-
-			/*
-			int uniqueAnimationFrame = Main.tileFrame[Type] + i;
-
-			if (i % 2 == 0)
-				uniqueAnimationFrame += 1;
-			if (i % 3 == 0)
-				uniqueAnimationFrame += 1;
-
-			uniqueAnimationFrame %= 4;
-
-			frameYOffset = uniqueAnimationFrame * AnimationFrameHeight;
-			*/
-
+			
 			spriteBatch.Draw(
 				texture,
 				new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero,

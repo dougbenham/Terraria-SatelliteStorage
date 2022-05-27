@@ -22,11 +22,7 @@ namespace SatelliteStorage.UIElements
 		public Dictionary<int, DriveItem> _driveItems = new();
 		
 		private int _itemsPerLine;
-
-		private const int sizePerEntryX = 44;
-
-		private const int sizePerEntryY = 44;
-
+		
 		private readonly List<SnapPoint> _dummySnapPoints = new();
 
 		public int hoverItemIndex = -1;
@@ -41,8 +37,6 @@ namespace SatelliteStorage.UIElements
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
 			hoverItemIndex = -1;
-			//IL_005e: Unknown result type (might be due to invalid IL or missing references)
-			//IL_011b: Unknown result type (might be due to invalid IL or missing references)
 			Main.inventoryScale = 0.846153855f;
 			GetGridParameters(out var startX, out var startY, out var startItemIndex, out var endItemIndex);
 			var num = _itemsPerLine;
@@ -59,21 +53,19 @@ namespace SatelliteStorage.UIElements
 					num--;
 				}
 				
-				var cREATIVE_ItemSlotShouldHighlightAsSelected = false;
+				var flag = false;
 				if (IsMouseHovering && itemSlotHitbox.Contains(Main.MouseScreen.ToPoint()) && !PlayerInput.IgnoreMouseInterface)
 				{
 					Main.LocalPlayer.mouseInterface = true;
 					hoverItemIndex = i;
 					ItemSlot.OverrideHover(ref inv, context);
-					//ItemSlot.LeftClick(ref inv, context);
-					//ItemSlot.RightClick(ref inv, context);
 					ItemSlot.MouseHover(ref inv, context);
 					
-					cREATIVE_ItemSlotShouldHighlightAsSelected = true;
+					flag = true;
 				}
-				UILinkPointNavigator.Shortcuts.CREATIVE_ItemSlotShouldHighlightAsSelected = cREATIVE_ItemSlotShouldHighlightAsSelected;
+				UILinkPointNavigator.Shortcuts.CREATIVE_ItemSlotShouldHighlightAsSelected = flag;
 				ItemSlot.Draw(spriteBatch, ref inv, context, itemSlotHitbox.TopLeft());
-				if (driveItem.stack > 1) Terraria.Utils.DrawBorderString(spriteBatch, driveItem.stackText, itemSlotHitbox.BottomLeft() + new Vector2(9, -20), Color.White, 0.7f);
+				if (driveItem.Stack > 1) Terraria.Utils.DrawBorderString(spriteBatch, driveItem.StackText, itemSlotHitbox.BottomLeft() + new Vector2(9, -20), Color.White, 0.7f);
 				if (num <= 0)
 				{
 					break;

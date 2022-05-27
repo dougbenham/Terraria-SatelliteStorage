@@ -12,7 +12,7 @@ namespace SatelliteStorage.Utils
         {
             var tag = new TagCompound();
             tag["type"] = item.type;
-            tag["stack"] = item.stack;
+            tag["stack"] = item.Stack;
             tag["prefix"] = item.prefix;
             return tag;
         }
@@ -21,7 +21,7 @@ namespace SatelliteStorage.Utils
         {
             var item = new DriveItem();
             item.type = tag.GetInt("type");
-            item.stack = tag.GetInt("stack");
+            item.Stack = tag.GetInt("stack");
             var prefix = tag.GetInt("prefix");
             if (prefix != 0) item.prefix = prefix;
             return item;
@@ -35,7 +35,7 @@ namespace SatelliteStorage.Utils
             {
                 var item = items[i];
                 packet.Write7BitEncodedInt(item.type);
-                packet.Write7BitEncodedInt(item.stack);
+                packet.Write7BitEncodedInt(item.Stack);
                 packet.Write7BitEncodedInt(item.prefix);
             }
 
@@ -52,7 +52,7 @@ namespace SatelliteStorage.Utils
             {
                 var item = new DriveItem();
                 item.type = reader.Read7BitEncodedInt();
-                item.stack = reader.Read7BitEncodedInt();
+                item.Stack = reader.Read7BitEncodedInt();
                 item.prefix = reader.Read7BitEncodedInt();
                 items.Add(item);
             }

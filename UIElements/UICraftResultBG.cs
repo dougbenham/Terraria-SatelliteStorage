@@ -5,11 +5,11 @@ namespace SatelliteStorage.UIElements
 {
     class UICraftResultBG : UIPanel
     {
-        public static bool hidden = true;
+        public static bool Hidden = true;
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if (hidden) return;
+            if (Hidden) return;
             base.Draw(spriteBatch);
         }
     }

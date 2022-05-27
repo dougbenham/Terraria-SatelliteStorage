@@ -15,7 +15,7 @@ namespace SatelliteStorage.Items
 		{
 			Item.width = 30;
 			Item.height = 24;
-			Item.rare = 3;
+			Item.rare = ItemRarityID.Orange;
 			Item.maxStack = 999;
 			Item.value = 500;
 		}

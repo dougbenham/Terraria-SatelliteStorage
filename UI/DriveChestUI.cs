@@ -37,8 +37,6 @@ namespace SatelliteStorage.UI
 		private UIPanel craftResultPanel;
 		private float windowWidth;
 		private float windowHeight;
-		private Vector2 openPosition;
-		private bool checkPosition;
 		private Vector2 buttonsPos;
 		private Vector2 craftResultSlotPos;
 		private Item craftResultItem = new(5, 5);
@@ -53,7 +51,7 @@ namespace SatelliteStorage.UI
 			{
 				if (!_buttonHovered[id])
 				{
-					SoundEngine.PlaySound(12);
+					SoundEngine.PlaySound(SoundID.MenuTick);
 				}
 
 				_buttonHovered[id] = true;
@@ -82,13 +80,6 @@ namespace SatelliteStorage.UI
 				return;
 
 			Instance.display.RebuildPage();
-		}
-
-
-		public static void SetOpenedPosition(Vector2 pos)
-		{
-			Instance.checkPosition = true;
-			Instance.openPosition = pos;
 		}
 
 		public override void OnInitialize()
@@ -187,7 +178,7 @@ namespace SatelliteStorage.UI
 							if (SatelliteStorage.TakeDriveChestItemSended) return;
 							SatelliteStorage.TakeDriveChestItemSended = true;
 
-							ModPacket packet = SatelliteStorage.instance.GetPacket();
+							ModPacket packet = SatelliteStorage.Instance.GetPacket();
 							packet.Write((byte)SatelliteStorage.MessageType.TakeDriveChestItem);
 							packet.Write((byte)player.whoAmI);
 							packet.Write7BitEncodedInt(driveItemPanel.item.type);
@@ -251,14 +242,14 @@ namespace SatelliteStorage.UI
 
 			CalculateSize();
 
-			craftDisplay.onRecipeChoosen += (int recipe) =>
+			craftDisplay.OnRecipeChoosen = recipe =>
 			{
 				_currentRecipe = recipe;
 				craftRecipe.SetRecipe(recipe);
-				SoundEngine.PlaySound(12);
+				SoundEngine.PlaySound(SoundID.MenuTick);
 			};
 
-			OnMouseDown += (UIMouseEvent evt, UIElement listeningElement) =>
+			OnMouseDown += (_, _) =>
 			{
 				if (craftOnMouseRecipe > -1)
 				{
@@ -275,7 +266,7 @@ namespace SatelliteStorage.UI
 				}
 			};
 
-			OnMouseUp += (UIMouseEvent evt, UIElement listeningElement) => { _isMouseDownOnCraftItem = false; };
+			OnMouseUp += (_, _) => { _isMouseDownOnCraftItem = false; };
 		}
 
 		private bool TryCraftItem()
@@ -320,8 +311,6 @@ namespace SatelliteStorage.UI
 					{
 						DriveChestSystem.SubItem(u.type, u.stack);
 					}
-
-					//SatelliteStorage.Debug(item.Name + "(" + u.stack + ") from " + u.from + (u.from == 0 ? (" at slot " + u.slot) : ""));
 				});
 
 				if (isMouseItemAir)
@@ -333,7 +322,7 @@ namespace SatelliteStorage.UI
 					Main.mouseItem.stack += recipe.createItem.stack;
 				}
 
-				SoundEngine.PlaySound(7);
+				SoundEngine.PlaySound(SoundID.Grab);
 				DriveChestSystem.CheckRecipesRefresh = false;
 			}
 
@@ -343,7 +332,7 @@ namespace SatelliteStorage.UI
 				if (uses == null)
 					return false;
 
-				var packet = SatelliteStorage.instance.GetPacket();
+				var packet = SatelliteStorage.Instance.GetPacket();
 				packet.Write((byte) SatelliteStorage.MessageType.TryCraftRecipe);
 				packet.Write((byte) player.whoAmI);
 				packet.Write7BitEncodedInt(craftOnMouseRecipe);
@@ -362,17 +351,16 @@ namespace SatelliteStorage.UI
 			{
 				var item = player.inventory[i];
 
-				if (item != null && !item.favorited && !item.IsAir && i != 58)
+				if (item != null && !item.favorited && !item.IsAir)
 				{
 					var driveItem = new DriveItem();
-
 					driveItem.type = item.type;
-					driveItem.stack = item.stack;
+					driveItem.Stack = item.stack;
 					driveItem.prefix = item.prefix;
 
 					if (Main.netMode == NetmodeID.SinglePlayer)
 					{
-						if ((newItems ? true : DriveChestSystem.HasItem(driveItem)) && DriveChestSystem.AddItem(driveItem))
+						if ((newItems || DriveChestSystem.HasItem(driveItem)) && DriveChestSystem.AddItem(driveItem))
 						{
 							item.TurnToAir();
 							itemAdded = true;
@@ -381,7 +369,7 @@ namespace SatelliteStorage.UI
 
 					if (Main.netMode == NetmodeID.MultiplayerClient)
 					{
-						var packet = SatelliteStorage.instance.GetPacket();
+						var packet = SatelliteStorage.Instance.GetPacket();
 						packet.Write((byte) SatelliteStorage.MessageType.DepositDriveChestItem);
 						packet.Write((byte) player.whoAmI);
 						packet.Write((byte) (newItems ? 1 : 0));
@@ -394,7 +382,7 @@ namespace SatelliteStorage.UI
 						packet.Send();
 						packet.Close();
 
-						if ((newItems ? true : DriveChestSystem.HasItem(driveItem)))
+						if ((newItems || DriveChestSystem.HasItem(driveItem)))
 						{
 							itemAdded = true;
 						}
@@ -405,7 +393,7 @@ namespace SatelliteStorage.UI
 
 			if (itemAdded)
 			{
-				SoundEngine.PlaySound(7);
+				SoundEngine.PlaySound(SoundID.Grab);
 				if (Main.netMode == NetmodeID.SinglePlayer)
 					ReloadItems();
 			}
@@ -446,48 +434,46 @@ namespace SatelliteStorage.UI
 
 			DrawButtons(spriteBatch);
 
-			if (craftDisplay != null && !UICraftDisplay.hidden)
+			if (craftDisplay != null && !UICraftDisplay.Hidden)
 			{
 				Terraria.Utils.DrawBorderString(spriteBatch, Language.GetTextValue("Mods.SatelliteStorage.UITitles.DriveChestRecipes"), craftDisplay.GetDimensions().Position() + new Vector2(30, 47),
 					Color.White, 1f);
 			}
 
-			if (craftRecipe != null && !UICraftRecipe.hidden)
+			if (craftRecipe != null && !UICraftRecipe.Hidden)
 			{
 				Terraria.Utils.DrawBorderString(spriteBatch, Language.GetTextValue("Mods.SatelliteStorage.UITitles.DriveChestCraft"), craftRecipe.GetDimensions().Position() + new Vector2(30, 47),
 					Color.White, 1f);
 			}
 
-			if (_currentRecipe > -1 && !UICraftRecipe.hidden)
+			if (_currentRecipe > -1 && !UICraftRecipe.Hidden)
 			{
 				var recipe = Main.recipe[_currentRecipe];
 				craftResultItem = recipe.createItem;
 				var itemSlotHitbox = GetSlotHitbox((int) craftResultSlotPos.X, (int) craftResultSlotPos.Y);
-				var cReativeItemSlotShouldHighlightAsSelected = false;
+				var flag = false;
 				if (IsMouseHovering && itemSlotHitbox.Contains(Main.MouseScreen.ToPoint()) && !PlayerInput.IgnoreMouseInterface)
 				{
 					Main.LocalPlayer.mouseInterface = true;
 
 					ItemSlot.OverrideHover(ref craftResultItem, 26);
-					//ItemSlot.LeftClick(ref inv, context);
-					//ItemSlot.RightClick(ref inv, context);
 					ItemSlot.MouseHover(ref craftResultItem, 26);
 
 					craftOnMouseRecipe = _currentRecipe;
-					cReativeItemSlotShouldHighlightAsSelected = true;
+					flag = true;
 				}
 				else
 				{
 					_isMouseDownOnCraftItem = false;
 				}
 
-				UILinkPointNavigator.Shortcuts.CREATIVE_ItemSlotShouldHighlightAsSelected = cReativeItemSlotShouldHighlightAsSelected;
+				UILinkPointNavigator.Shortcuts.CREATIVE_ItemSlotShouldHighlightAsSelected = flag;
 				ItemSlot.Draw(spriteBatch, ref craftResultItem, 26, itemSlotHitbox.TopLeft());
-				UICraftResultBG.hidden = false;
+				UICraftResultBG.Hidden = false;
 			}
 			else
 			{
-				UICraftResultBG.hidden = true;
+				UICraftResultBG.Hidden = true;
 			}
 		}
 
@@ -577,13 +563,7 @@ namespace SatelliteStorage.UI
 					Instance.craftDisplay.RebuildPage();
 					Instance.craftRecipe.RebuildPage();
 				}
-
-				if (checkPosition)
-				{
-					if (Main.LocalPlayer.position.Distance(openPosition) > 100)
-						SatelliteStorage.SetUIState((int) UITypes.DriveChest, false);
-				}
-
+				
 				if (!Main.playerInventory)
 					SatelliteStorage.SetUIState((int) UITypes.DriveChest, false);
 
@@ -738,7 +718,6 @@ namespace SatelliteStorage.UI
 			}
 			else
 			{
-				checkPosition = false;
 				_isMouseDownOnCraftItem = false;
 				driveChestInterface?.SetState(null);
 
@@ -747,13 +726,12 @@ namespace SatelliteStorage.UI
 					_buttonScale[i] = 0.75f;
 					_buttonHovered[i] = false;
 				}
-
 			}
 		}
 
 		public override bool GetState()
 		{
-			return driveChestInterface?.CurrentState != null ? true : false;
+			return driveChestInterface?.CurrentState != null;
 		}
 
 		private void DrawButtons(SpriteBatch spritebatch)
@@ -786,8 +764,7 @@ namespace SatelliteStorage.UI
 			}
 
 			var vector = FontAssets.MouseText.Value.MeasureString(text);
-			var color = new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor) * num2;
-			color = Color.White * 0.97f * (1f - (255f - (float) (int) Main.mouseTextColor) / 255f * 0.5f);
+			var color = Color.White * 0.97f * (1f - (255f - Main.mouseTextColor) / 255f * 0.5f);
 			color.A = byte.MaxValue;
 			x += (int) (vector.X * (num2 / 2f));
 			var flag = Terraria.Utils.FloatIntersect(Main.mouseX, Main.mouseY, 0f, 0f, (float) x - vector.X / 2f, y - 12, vector.X, 24f);

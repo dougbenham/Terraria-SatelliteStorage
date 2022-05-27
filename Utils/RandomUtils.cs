@@ -5,7 +5,7 @@ namespace SatelliteStorage.Utils
 {
     class RandomUtils
     {
-        private static readonly Random random = new();
+        private static readonly Random _random = new();
 
         public static int Roulette(List<int> chances)
         {
@@ -18,7 +18,7 @@ namespace SatelliteStorage.Utils
             var multiplier = 10;
 
             sumOfPercents *= multiplier;
-            var rand = random.Next(1, sumOfPercents);
+            var rand = _random.Next(1, sumOfPercents);
 
             var rangeStart = 1;
 

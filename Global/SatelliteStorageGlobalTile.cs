@@ -11,16 +11,12 @@ namespace SatelliteStorage.Global
     {
         public override bool Drop(int i, int j, int type)
         {
-            if (Main.netMode == NetmodeID.Server || Main.netMode == NetmodeID.SinglePlayer)
+            if (Main.netMode is NetmodeID.Server or NetmodeID.SinglePlayer &&
+                type is TileID.Platinum or TileID.Gold &&
+                new Random().Next(0, 100) > 70)
             {
-                if (type == TileID.Platinum || type == TileID.Gold)
-                {
-                    if (new Random().Next(0, 100) > 70)
-                    {
-                        Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ModContent.ItemType<QuartzShard>());
-                        return false;
-                    }
-                }
+	            Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ModContent.ItemType<QuartzShard>());
+	            return false;
             }
 
             return base.Drop(i, j, type);

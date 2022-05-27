@@ -7,15 +7,7 @@ using Terraria.ID;
 
 namespace SatelliteStorage.DriveSystem
 {
-	public class RecipeItemUse
-    {
-		public int type;
-		public int stack;
-		public int from;
-		public int slot;
-    }
-
-    public class DriveChestSystem
+	public class DriveChestSystem
     {
         public static DriveChestSystem Instance;
         public static readonly Dictionary<int, Recipe> AvailableRecipes = new();
@@ -75,7 +67,7 @@ namespace SatelliteStorage.DriveSystem
         {
 			if (Main.netMode != NetmodeID.Server) return;
 
-			var packet = SatelliteStorage.instance.GetPacket();
+			var packet = SatelliteStorage.Instance.GetPacket();
 			packet.Write((byte)SatelliteStorage.MessageType.SyncGeneratorState);
 			packet.Write(type);
 			packet.Write7BitEncodedInt(Instance.generators[type]);
@@ -96,7 +88,7 @@ namespace SatelliteStorage.DriveSystem
             var searchItem = Instance.items.Find(v => v.type == item.type && v.prefix == item.prefix);
             if (searchItem != null)
             {
-                searchItem.stack += item.stack;
+                searchItem.Stack += item.Stack;
 				if (needSync) Instance.SendItemSync(searchItem);
                 return true;
             }
@@ -127,8 +119,8 @@ namespace SatelliteStorage.DriveSystem
             var searchItem = Instance.items.Find(v => v.type == item.type && v.prefix == item.prefix);
             if (searchItem != null)
             {
-                searchItem.stack = item.stack;
-                if (searchItem.stack <= 0) Instance.items.Remove(searchItem);
+                searchItem.Stack = item.Stack;
+                if (searchItem.Stack <= 0) Instance.items.Remove(searchItem);
             }
             else
             {
@@ -146,10 +138,10 @@ namespace SatelliteStorage.DriveSystem
                 return;
             }
 
-            var packet = SatelliteStorage.instance.GetPacket();
+            var packet = SatelliteStorage.Instance.GetPacket();
             packet.Write((byte)SatelliteStorage.MessageType.SyncDriveChestItem);
             packet.Write7BitEncodedInt(item.type);
-            packet.Write7BitEncodedInt(item.stack);
+            packet.Write7BitEncodedInt(item.Stack);
             packet.Write7BitEncodedInt(item.prefix);
             packet.Send();
             packet.Close();
@@ -159,19 +151,12 @@ namespace SatelliteStorage.DriveSystem
         {
             var searchItem = Instance.items.Find(v => v.type == type && v.prefix == prefix);
             if (searchItem == null) return null;
-            var item = new Item();
-            item.type = searchItem.type;
-            item.SetDefaults(item.type);
-            item.prefix = searchItem.prefix;
-
-            var stack = searchItem.stack;
-			if (count > 0) stack = count;
-			if (stack > item.maxStack) stack = item.maxStack;
+            var item = searchItem.ToItem();
+			if (count > 0) item.stack = count;
+			if (item.stack > item.maxStack) item.stack = item.maxStack;
 			
-
-            item.stack = stack;
-            searchItem.stack -= stack;
-            if (searchItem.stack <= 0) Instance.items.Remove(searchItem);
+			searchItem.Stack -= item.stack;
+            if (searchItem.Stack <= 0) Instance.items.Remove(searchItem);
 
             Instance.SendItemSync(searchItem);
 
@@ -183,8 +168,8 @@ namespace SatelliteStorage.DriveSystem
 			var searchItem = Instance.items.Find(v => v.type == type);
 			if (searchItem == null) return;
 
-			searchItem.stack -= count;
-			if (searchItem.stack <= 0) Instance.items.Remove(searchItem);
+			searchItem.Stack -= count;
+			if (searchItem.Stack <= 0) Instance.items.Remove(searchItem);
 
 			Instance.SendItemSync(searchItem);
 		}
@@ -241,9 +226,9 @@ namespace SatelliteStorage.DriveSystem
 						var needItems = recipeItems[driveItem.type] - hasItems[driveItem.type];
 						var usesItem = new RecipeItemUse();
 						usesItem.type = driveItem.type;
-						usesItem.stack = driveItem.stack;
+						usesItem.stack = driveItem.Stack;
 						usesItem.from = 1;
-						hasItems[driveItem.type] += driveItem.stack;
+						hasItems[driveItem.type] += driveItem.Stack;
 						if (hasItems[driveItem.type] > recipeItems[driveItem.type]) hasItems[driveItem.type] = recipeItems[driveItem.type];
 						if (usesItem.stack > needItems) usesItem.stack = needItems;
 						uses.Add(usesItem);
@@ -259,7 +244,7 @@ namespace SatelliteStorage.DriveSystem
 			return uses;
 		}
 
-		public static bool RequestOpenDriveChest(bool checkPosition = false)
+		public static bool RequestOpenDriveChest()
         {
 			var player = Main.LocalPlayer;
 			Main.mouseRightRelease = false;
@@ -298,17 +283,15 @@ namespace SatelliteStorage.DriveSystem
 				SoundEngine.PlaySound(SoundID.MenuOpen);
 				Main.playerInventory = true;
 				SatelliteStorage.SetUIState((int)UITypes.DriveChest, true);
-				if (checkPosition) DriveChestUI.SetOpenedPosition(Main.LocalPlayer.position);
 			}
 
 			if (Main.netMode == NetmodeID.MultiplayerClient)
 			{
-				var packet = SatelliteStorage.instance.GetPacket();
+				var packet = SatelliteStorage.Instance.GetPacket();
 				packet.Write((byte)SatelliteStorage.MessageType.RequestDriveChestItems);
 				packet.Write((byte)player.whoAmI);
 				packet.Send();
 				packet.Close();
-				if (checkPosition) DriveChestUI.SetOpenedPosition(Main.LocalPlayer.position);
 			}
 
 			return true;
@@ -324,7 +307,7 @@ namespace SatelliteStorage.DriveSystem
             {
 				for (var i = 0; i < Instance.generators[key]; i++)
 				{
-					var generator = SatelliteStorage.instance.generators[key];
+					var generator = SatelliteStorage.Instance.generators[key];
 
 					if (random.Next(0, 100) <= generator.chance)
 					{
@@ -342,7 +325,7 @@ namespace SatelliteStorage.DriveSystem
 			{
 				var addItem = new DriveItem();
 				addItem.type = key;
-				addItem.stack = Instance.generatedItemsQueue[key];
+				addItem.Stack = Instance.generatedItemsQueue[key];
 				AddItem(addItem);
 			}
 
@@ -384,11 +367,11 @@ namespace SatelliteStorage.DriveSystem
 
 				if (dictionary.ContainsKey(driveItem.type))
 				{
-					dictionary[driveItem.type] += driveItem.stack;
+					dictionary[driveItem.type] += driveItem.Stack;
 				}
 				else
 				{
-					dictionary[driveItem.type] = driveItem.stack;
+					dictionary[driveItem.type] = driveItem.Stack;
 				}
 			}
 
@@ -433,7 +416,7 @@ namespace SatelliteStorage.DriveSystem
 			}
 			*/
 
-			for (var n = 0; n < maxRecipes && Main.recipe[n].createItem.type != 0; n++)
+			for (var n = 0; n < maxRecipes && Main.recipe[n].createItem.type != ItemID.None; n++)
 			{
 				var flag = true;
 				if (flag)
@@ -452,7 +435,7 @@ namespace SatelliteStorage.DriveSystem
 					for (var num4 = 0; num4 < Main.recipe[n].requiredItem.Count; num4++)
 					{
 						var item = Main.recipe[n].requiredItem[num4];
-						if (item.type == 0)
+						if (item.type == ItemID.None)
 						{
 							break;
 						}

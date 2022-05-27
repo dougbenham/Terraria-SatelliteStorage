@@ -12,7 +12,8 @@ namespace SatelliteStorage.Items
 {
     class DriveChestRemoteItem : ModItem
 	{
-		private long cooldownTime;
+		private DateTime _lastUse;
+
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
@@ -33,8 +34,7 @@ namespace SatelliteStorage.Items
 			Item.consumable = false;
 			Item.value = 500;
 		}
-
-		// Please see Content/ExampleRecipes.cs for a detailed explanation of recipe creation.
+		
 		public override void AddRecipes()
 		{
 			CreateRecipe()
@@ -56,18 +56,18 @@ namespace SatelliteStorage.Items
 		{
 			if (player.whoAmI == Main.myPlayer)
 			{
-				if (cooldownTime + 500 > new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds()) return true;
+				if ((DateTime.Now - _lastUse).TotalMilliseconds < 500) 
+					return true;
+				_lastUse = DateTime.Now;
+
 				if (!DriveChestSystem.IsSputnikPlaced)
 				{
 					Main.NewText(Language.GetTextValue("Mods.SatelliteStorage.Common.CantUseWithoutSputnik"), new Color(173, 57, 71));
-					cooldownTime = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
 					return true;
 				}
 				if (!SatelliteStorage.GetUIState((int)UITypes.DriveChest)) return DriveChestSystem.RequestOpenDriveChest();
 			}
-			cooldownTime = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
 			return true;
 		}
-
-    }
+	}
 }

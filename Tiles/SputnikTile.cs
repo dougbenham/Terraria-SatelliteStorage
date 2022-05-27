@@ -14,45 +14,28 @@ namespace SatelliteStorage.Tiles
     {
 		public override void SetStaticDefaults()
 		{
-			// Properties
-			//Main.tileSpelunker[Type] = true;
-			//Main.tileContainer[Type] = true;
 			Main.tileLighted[Type] = true;
-			//Main.tileShine2[Type] = true;
-			//Main.tileShine[Type] = 1200;
 			Main.tileFrameImportant[Type] = true;
 			Main.tileNoAttach[Type] = true;
 			Main.tileOreFinderPriority[Type] = 500;
-			//TileID.Sets.HasOutlines[Type] = true;
-			//TileID.Sets.BasicChest[Type] = true;
 			TileID.Sets.DisableSmartCursor[Type] = true;
 
 			DustType = DustID.Firefly;
-
-			// Names
+			
 			ContainerName.SetDefault(Language.GetTextValue("Mods.SatelliteStorage.UITitles.DriveChest"));
 
 			var name = CreateMapEntryName();
 			name.SetDefault(Language.GetTextValue("Mods.SatelliteStorage.UITitles.DriveChest"));
 			AddMapEntry(new(108, 65, 138), name, MapName);
 			
-			//name = CreateMapEntryName(Name + "_Locked"); // With multiple map entries, you need unique translation keys.
-			//name.SetDefault("Locked Example Chest");
-			//AddMapEntry(new Color(0, 141, 63), name, MapName);
-
 			// Placement
 			TileObjectData.newTile.CopyFrom(TileObjectData.Style6x3);
 			TileObjectData.newTile.Origin = new(2, 1);
 			TileObjectData.newTile.CoordinateHeights = new int[3] { 16, 16, 16 };
 			TileObjectData.newTile.CoordinateWidth = 16;
-
-			//TileObjectData.newTile.CoordinatePadding = 2;
-			//TileObjectData.newTile.AnchorInvalidTiles = new int[] { TileID.MagicalIceBlock };
 			TileObjectData.newTile.StyleHorizontal = true;
 			TileObjectData.newTile.LavaDeath = false;
-
 			TileObjectData.newTile.AnchorBottom = new(AnchorType.EmptyTile, TileObjectData.newTile.Width, 0);
-
 			TileObjectData.addTile(Type);
 		}
 
@@ -78,39 +61,15 @@ namespace SatelliteStorage.Tiles
 			Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ModContent.ItemType<SputnikItem>());
 
 			DriveChestSystem.IsSputnikPlaced = false;
-			SatelliteStorage.SyncIsSputnikPlacedToClients();
-		}
-
-		private void SendSyncSputnikState()
-        {
-			if (Main.netMode == NetmodeID.MultiplayerClient)
-			{
-				var player = Main.LocalPlayer;
-				var packet = SatelliteStorage.instance.GetPacket();
-				packet.Write((byte)SatelliteStorage.MessageType.SetSputnikState);
-				packet.Write((byte)player.whoAmI);
-				packet.Write((byte)(DriveChestSystem.IsSputnikPlaced ? 1 : 0));
-				packet.Send();
-				packet.Close();
-			}
-		}
-
-		public override bool RightClick(int i, int j)
-		{
-
-			return true;
+			if (Main.netMode == NetmodeID.Server)
+				SatelliteStorage.Instance.SendSputnikState();
 		}
 
 		public override void MouseOver(int i, int j)
 		{
-
 			var player = Main.LocalPlayer;
-
-
 			player.cursorItemIconText = Language.GetTextValue("Mods.SatelliteStorage.UITitles.DriveChest");
-
 			player.noThrow = 2;
-			//player.cursorItemIconEnabled = true;
 		}
 
 		public override void MouseOverFar(int i, int j)
@@ -138,7 +97,7 @@ namespace SatelliteStorage.Tiles
 		public override void PlaceInWorld(int i, int j, Item item)
 		{
 			DriveChestSystem.IsSputnikPlaced = true;
-			SendSyncSputnikState();
+			SatelliteStorage.Instance.SendSputnikState();
 			base.PlaceInWorld(i, j, item);
 		}
 	}

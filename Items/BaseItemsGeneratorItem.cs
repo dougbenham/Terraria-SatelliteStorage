@@ -43,7 +43,7 @@ namespace SatelliteStorage.Items
 			};
 			tooltips.Add(line);
 
-			var gen = SatelliteStorage.instance.generators[generatorType];
+			var gen = SatelliteStorage.Instance.generators[generatorType];
 
 			foreach (var data in gen.drops)
 			{
@@ -56,14 +56,6 @@ namespace SatelliteStorage.Items
 				};
 				tooltips.Add(line);
 			}
-			/*
-			foreach (TooltipLine line2 in tooltips)
-			{
-				if (line2.mod == "Terraria" && line2.Name == "ItemName")
-				{
-					line2.overrideColor = new Color(Main.DiscoR, Main.DiscoG, Main.DiscoB);
-				}
-			}*/
 		}
 
 		public override void AddRecipes()

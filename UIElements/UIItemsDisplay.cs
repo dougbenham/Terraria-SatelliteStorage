@@ -19,12 +19,6 @@ namespace SatelliteStorage.UIElements
 {
 	public class UIItemsDisplay : UIElement
 	{
-		public enum InfiniteItemsDisplayPage
-		{
-			InfiniteItemsPickup,
-			InfiniteItemsResearch
-		}
-
 		private readonly List<int> _itemIdsAvailableTotal;
 
 		private readonly List<int> _itemIdsAvailableToShow;
@@ -53,39 +47,9 @@ namespace SatelliteStorage.UIElements
 
 		private bool _showSacrificesInsteadOfInfinites;
 
-		public const string SnapPointName_SacrificeSlot = "CreativeSacrificeSlot";
-
-		public const string SnapPointName_SacrificeConfirmButton = "CreativeSacrificeConfirm";
-
-		public const string SnapPointName_InfinitesFilter = "CreativeInfinitesFilter";
-
-		public const string SnapPointName_InfinitesSearch = "CreativeInfinitesSearch";
-
-		public const string SnapPointName_InfinitesItemSlot = "CreativeInfinitesSlot";
-
-		private List<UIImage> _sacrificeCogsSmall = new();
-
-		private List<UIImage> _sacrificeCogsMedium = new();
-
-		private List<UIImage> _sacrificeCogsBig = new();
-
-		private UIImageFramed _sacrificePistons;
-
-		private UIParticleLayer _pistonParticleSystem;
-
-		private Asset<Texture2D> _pistonParticleAsset;
-
 		private int _sacrificeAnimationTimeLeft;
-
-		private bool _researchComplete;
-
+		
 		private bool _hovered;
-
-		private int _lastItemIdSacrificed;
-
-		private int _lastItemAmountWeHad;
-
-		private int _lastItemAmountWeNeededTotal;
 
 		private bool _didClickSomething;
 
@@ -124,7 +88,7 @@ namespace SatelliteStorage.UIElements
 			});
 
 
-			OnMouseDown += (UIMouseEvent evt, UIElement listeningElement) =>
+			OnMouseDown += (_, _) =>
 			{
 				var player = Main.LocalPlayer;
 				var mouseItem = player.inventory[58];
@@ -138,14 +102,14 @@ namespace SatelliteStorage.UIElements
 
 					mouseItem.TurnToAir();
 					Main.mouseItem.TurnToAir();
-					SoundEngine.PlaySound(7);
+					SoundEngine.PlaySound(SoundID.Grab);
 				}
 
 				if (Main.netMode == NetmodeID.MultiplayerClient)
 				{
 					if (SatelliteStorage.AddDriveChestItemSended) return;
 					SatelliteStorage.AddDriveChestItemSended = true;
-					var packet = SatelliteStorage.instance.GetPacket();
+					var packet = SatelliteStorage.Instance.GetPacket();
 					packet.Write((byte)SatelliteStorage.MessageType.AddDriveChestItem);
 					packet.Write((byte)player.whoAmI);
 					/*
@@ -164,7 +128,6 @@ namespace SatelliteStorage.UIElements
 		public void RebuildPage()
         {
 			UpdateContents();
-			//BuildPage();
 		}
 
 
@@ -189,7 +152,6 @@ namespace SatelliteStorage.UIElements
 			_containerSacrifice = uIElement2;
 
 			BuildInfinitesMenuContents(uIElement);
-			//BuildSacrificeMenuContents(uIElement2);
 			
 			UpdateContents();
 			base.OnUpdate += UICreativeInfiniteItemsDisplay_OnUpdate;
@@ -290,11 +252,11 @@ namespace SatelliteStorage.UIElements
 
 				if (clickType == 1)
 				{
-					SoundEngine.PlaySound(12);
+					SoundEngine.PlaySound(SoundID.MenuTick);
 				}
 				else
 				{
-					SoundEngine.PlaySound(7);
+					SoundEngine.PlaySound(SoundID.Grab);
 				}
 			}
 
@@ -303,7 +265,7 @@ namespace SatelliteStorage.UIElements
 				if (SatelliteStorage.TakeDriveChestItemSended) return;
 				SatelliteStorage.TakeDriveChestItemSended = true;
 
-				var packet = SatelliteStorage.instance.GetPacket();
+				var packet = SatelliteStorage.Instance.GetPacket();
 				packet.Write((byte)SatelliteStorage.MessageType.TakeDriveChestItem);
 				packet.Write((byte)player.whoAmI);
 				packet.Write((byte)clickType);
@@ -312,8 +274,6 @@ namespace SatelliteStorage.UIElements
 				packet.Send();
 				packet.Close();
 			}
-
-			return;
 		}
 
 		private void BuildInfinitesMenuContents(UIElement totalContainer)
@@ -325,13 +285,13 @@ namespace SatelliteStorage.UIElements
 			uIPanel.OnMouseOut += Hover_OnMouseOut;
 			var item = (_itemGrid = new());
 
-			item.OnMouseDown += (UIMouseEvent evt, UIElement listeningElement) =>
+			item.OnMouseDown += (evt, listeningElement) =>
 			{
 				TakeItem(evt, listeningElement, 0);
 				return;
 			};
 
-			item.OnRightMouseDown += (UIMouseEvent evt, UIElement listeningElement) =>
+			item.OnRightMouseDown += (evt, listeningElement) =>
 			{
 				TakeItem(evt, listeningElement, 1);
 				return;
@@ -382,11 +342,6 @@ namespace SatelliteStorage.UIElements
 			}
 		}
 
-		public void SetPageTypeToShow(InfiniteItemsDisplayPage page)
-		{
-			_showSacrificesInsteadOfInfinites = page == InfiniteItemsDisplayPage.InfiniteItemsResearch;
-		}
-
 		private void UICreativeInfiniteItemsDisplay_OnUpdate(UIElement affectedElement)
 		{
 			RemoveAllChildren();
@@ -423,7 +378,7 @@ namespace SatelliteStorage.UIElements
 			UpdateItemsTypes();
 			_itemIdsAvailableToShow.Clear();
 
-			_itemIdsAvailableToShow.AddRange(_itemIdsAvailableTotal.Where((int x) =>
+			_itemIdsAvailableToShow.AddRange(_itemIdsAvailableTotal.Where(x =>
 			{
 				if (!ContentSamples.ItemsByType.ContainsKey(x)) return false;
 				return _filterer.FitsFilter(ContentSamples.ItemsByType[x]);
@@ -472,7 +427,7 @@ namespace SatelliteStorage.UIElements
 			uISearchBar.OnStartTakingInput += OnStartTakingInput;
 			uISearchBar.OnEndTakingInput += OnEndTakingInput;
 			uISearchBar.OnNeedingVirtualKeyboard += OpenVirtualKeyboardWhenNeeded;
-			uISearchBar.OnCancledTakingInput += OnCancledInput;
+			uISearchBar.OnCancledTakingInput += OnCanceledInput;
 			var uIImageButton2 = new UIImageButton(Main.Assets.Request<Texture2D>("Images/UI/SearchCancel", (AssetRequestMode)1))
 			{
 				HAlign = 1f,
@@ -489,20 +444,20 @@ namespace SatelliteStorage.UIElements
 			if (_searchBar.HasContents)
 			{
 				_searchBar.SetContents(null, forced: true);
-				SoundEngine.PlaySound(11);
+				SoundEngine.PlaySound(SoundID.MenuClose);
 			}
 			else
 			{
-				SoundEngine.PlaySound(12);
+				SoundEngine.PlaySound(SoundID.MenuTick);
 			}
 		}
 
 		private void searchCancelButton_OnMouseOver(UIMouseEvent evt, UIElement listeningElement)
 		{
-			SoundEngine.PlaySound(12);
+			SoundEngine.PlaySound(SoundID.MenuTick);
 		}
 
-		private void OnCancledInput()
+		private void OnCanceledInput()
 		{
 			Main.LocalPlayer.ToggleInv();
 		}
@@ -568,17 +523,7 @@ namespace SatelliteStorage.UIElements
 			uIVirtualKeyboard.SetMaxInputLength(maxInputLength);
 			IngameFancyUI.OpenUIState(uIVirtualKeyboard);
 		}
-
-		private static UserInterface GetCurrentInterface()
-		{
-			var activeInstance = UserInterface.ActiveInstance;
-			if (Main.gameMenu)
-			{
-				return Main.MenuUI;
-			}
-			return Main.InGameUI;
-		}
-
+		
 		private void OnFinishedSettingName(string name)
 		{
 			var contents = name.Trim();
@@ -592,12 +537,7 @@ namespace SatelliteStorage.UIElements
 			_searchBar.ToggleTakingText();
 			Main.CreativeMenu.GamepadMoveToSearchButtonHack = true;
 		}
-
-		public int GetItemsPerLine()
-		{
-			return _itemGrid.GetItemsPerLine();
-		}
-
+		
         public override void Recalculate()
         {
             base.Recalculate();

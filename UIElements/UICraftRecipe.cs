@@ -10,8 +10,8 @@ using Terraria.UI;
 
 namespace SatelliteStorage.UIElements
 {
-    class UICraftRecipe : UIElement
-    {
+	class UICraftRecipe : UIElement
+	{
 		private int _lastCheckedVersionForEdits = -1;
 		private UIElement _containerInfinites;
 		private UIElement _containerSacrifice;
@@ -19,17 +19,15 @@ namespace SatelliteStorage.UIElements
 		private UISearchBar _searchBar;
 		private readonly List<int> _itemIdsAvailableTotal;
 		private readonly List<int> _itemIdsAvailableToShow;
-
 		private DynamicItemCollection _itemGrid;
 		private CreativeUnlocksTracker _lastTrackerCheckedForEdits;
 		private bool _showSacrificesInsteadOfInfinites;
 		private EntrySorter<int, ICreativeItemSortStep> _sorter;
 		private bool _didClickSomething;
 		private bool _didClickSearchBar;
-
 		private int currentRecipe = -1;
 
-		public static bool hidden = true;
+		public static bool Hidden = true;
 
 		public UICraftRecipe(UIState uiStateThatHoldsThis)
 		{
@@ -39,13 +37,10 @@ namespace SatelliteStorage.UIElements
 			BuildPage();
 		}
 
-
 		public void RebuildPage()
 		{
 			UpdateContents();
-			//BuildPage();
 		}
-
 
 		private void BuildPage()
 		{
@@ -68,7 +63,6 @@ namespace SatelliteStorage.UIElements
 			_containerSacrifice = uIElement2;
 
 			BuildInfinitesMenuContents(uIElement);
-			//BuildSacrificeMenuContents(uIElement2);
 
 			UpdateContents();
 			base.OnUpdate += UICreativeInfiniteItemsDisplay_OnUpdate;
@@ -99,13 +93,13 @@ namespace SatelliteStorage.UIElements
 			uIPanel.OnMouseOut += Hover_OnMouseOut;
 			var item = (_itemGrid = new());
 
-			item.OnMouseDown += (UIMouseEvent evt, UIElement listeningElement) =>
+			item.OnMouseDown += (_, _) =>
 			{
 				//TakeItem(evt, listeningElement, 0);
 				return;
 			};
 
-			item.OnRightMouseDown += (UIMouseEvent evt, UIElement listeningElement) =>
+			item.OnRightMouseDown += (_, _) =>
 			{
 				//TakeItem(evt, listeningElement, 1);
 				return;
@@ -160,19 +154,17 @@ namespace SatelliteStorage.UIElements
 
 		private void UpdateContents()
 		{
-			if (currentRecipe <= -1) return;
+			if (currentRecipe <= -1)
+				return;
 			var recipe = Main.recipe[currentRecipe];
 			var types = new List<int>();
 
-			recipe.requiredItem.ForEach(item =>
-			{
-				types.Add(item.type);
-			});
+			recipe.requiredItem.ForEach(item => { types.Add(item.type); });
 
 			_itemIdsAvailableTotal.Clear();
 			_itemIdsAvailableTotal.AddRange(types);
 
-			
+
 			_itemIdsAvailableToShow.Clear();
 
 			_itemIdsAvailableToShow.AddRange(_itemIdsAvailableTotal);
@@ -190,14 +182,15 @@ namespace SatelliteStorage.UIElements
 		}
 
 		public void SetRecipe(int recipe)
-        {
+		{
 			currentRecipe = recipe;
 			UpdateContents();
 		}
 
 		public override void Draw(SpriteBatch spriteBatch)
 		{
-			if (hidden) return;
+			if (Hidden)
+				return;
 			base.Draw(spriteBatch);
 		}
 
@@ -219,6 +212,7 @@ namespace SatelliteStorage.UIElements
 			{
 				_searchBar.ToggleTakingText();
 			}
+
 			_didClickSomething = false;
 			_didClickSearchBar = false;
 		}
@@ -226,7 +220,8 @@ namespace SatelliteStorage.UIElements
 		public override void Recalculate()
 		{
 			base.Recalculate();
-			if (_itemGrid != null) _itemGrid.Recalculate();
+			if (_itemGrid != null)
+				_itemGrid.Recalculate();
 		}
 
 		private void UICreativeInfiniteItemsDisplay_OnUpdate(UIElement affectedElement)
@@ -238,12 +233,14 @@ namespace SatelliteStorage.UIElements
 				_lastTrackerCheckedForEdits = localPlayerCreativeTracker;
 				_lastCheckedVersionForEdits = -1;
 			}
+
 			var lastEditId = localPlayerCreativeTracker.ItemSacrifices.LastEditId;
 			if (_lastCheckedVersionForEdits != lastEditId)
 			{
 				_lastCheckedVersionForEdits = lastEditId;
 				UpdateContents();
 			}
+
 			if (_showSacrificesInsteadOfInfinites)
 			{
 				Append(_containerSacrifice);

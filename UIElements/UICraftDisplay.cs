@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SatelliteStorage.DriveSystem;
 using Terraria;
@@ -11,28 +10,19 @@ using Terraria.UI;
 
 namespace SatelliteStorage.UIElements
 {
-    class UICraftDisplay : UIElement
-    {
+	class UICraftDisplay : UIElement
+	{
 		private int _lastCheckedVersionForEdits = -1;
 		private UIElement _containerInfinites;
-		private UIElement _containerSacrifice;
 		private bool _hovered;
-		private UISearchBar _searchBar;
 		private readonly List<int> _itemIdsAvailableTotal;
 		private readonly List<int> _itemIdsAvailableToShow;
-
 		private DynamicItemCollection _itemGrid;
 		private CreativeUnlocksTracker _lastTrackerCheckedForEdits;
-		private bool _showSacrificesInsteadOfInfinites;
 		private EntrySorter<int, ICreativeItemSortStep> _sorter;
-		private bool _didClickSomething;
-		private bool _didClickSearchBar;
-
-		public Action<int> onRecipeChoosen;
-
+		public Action<int> OnRecipeChoosen;
 		public int selectedRecipe = -1;
-
-		public static bool hidden = true;
+		public static bool Hidden = true;
 
 		public UICraftDisplay(UIState uiStateThatHoldsThis)
 		{
@@ -42,13 +32,10 @@ namespace SatelliteStorage.UIElements
 			BuildPage();
 		}
 
-
 		public void RebuildPage()
 		{
 			UpdateContents();
-			//BuildPage();
 		}
-
 
 		private void BuildPage()
 		{
@@ -62,16 +49,8 @@ namespace SatelliteStorage.UIElements
 			};
 			uIElement.SetPadding(0f);
 			_containerInfinites = uIElement;
-			var uIElement2 = new UIElement
-			{
-				Width = StyleDimension.Fill,
-				Height = StyleDimension.Fill
-			};
-			uIElement2.SetPadding(0f);
-			_containerSacrifice = uIElement2;
 
 			BuildInfinitesMenuContents(uIElement);
-			//BuildSacrificeMenuContents(uIElement2);
 
 			UpdateContents();
 			base.OnUpdate += UICreativeInfiniteItemsDisplay_OnUpdate;
@@ -86,13 +65,14 @@ namespace SatelliteStorage.UIElements
 			return uIPanel;
 		}
 
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-			if (hidden) return;
-            base.Draw(spriteBatch);
-        }
+		public override void Draw(SpriteBatch spriteBatch)
+		{
+			if (Hidden)
+				return;
+			base.Draw(spriteBatch);
+		}
 
-        private static void SetBasicSizesForCreativeSacrificeOrInfinitesPanel(UIElement element)
+		private static void SetBasicSizesForCreativeSacrificeOrInfinitesPanel(UIElement element)
 		{
 			element.Width = new(0f, 1f);
 			element.Height = new(-38f, 1f);
@@ -101,22 +81,22 @@ namespace SatelliteStorage.UIElements
 
 		private void SelectItem(UIMouseEvent evt, UIElement listeningElement)
 		{
-			if (_itemGrid.hoverItemIndex <= -1) return;
+			if (_itemGrid.hoverItemIndex <= -1)
+				return;
 			var driveItem = _itemGrid._driveItems[_itemGrid.hoverItemIndex];
-			if (driveItem == null) return;
-			//SatelliteStorage.Debug("driveItem: " + driveItem.type + ", stack: " + driveItem.stack);
-			var mousePos = evt.MousePosition;
-
+			if (driveItem == null)
+				return;
 
 			var player = Main.LocalPlayer;
 			var mouseItem = player.inventory[58];
 
-			if (!mouseItem.IsAir || !Main.mouseItem.IsAir) return;
-			if (selectedRecipe == driveItem.recipe) return;
+			if (!mouseItem.IsAir || !Main.mouseItem.IsAir)
+				return;
+			if (selectedRecipe == driveItem.recipe)
+				return;
 			selectedRecipe = driveItem.recipe;
 			UpdateContents();
-			onRecipeChoosen(driveItem.recipe);
-			return;
+			OnRecipeChoosen(driveItem.recipe);
 		}
 
 		private void BuildInfinitesMenuContents(UIElement totalContainer)
@@ -128,10 +108,9 @@ namespace SatelliteStorage.UIElements
 			uIPanel.OnMouseOut += Hover_OnMouseOut;
 			var item = (_itemGrid = new());
 
-			item.OnMouseDown += (UIMouseEvent evt, UIElement listeningElement) =>
+			item.OnMouseDown += (evt, listeningElement) =>
 			{
 				SelectItem(evt, listeningElement);
-				return;
 			};
 
 
@@ -197,7 +176,7 @@ namespace SatelliteStorage.UIElements
 				var item = DriveChestSystem.AvailableRecipes[key].createItem;
 				var driveItem = new DriveItem();
 				driveItem.type = item.type;
-				driveItem.stack = item.stack;
+				driveItem.Stack = item.stack;
 				driveItem.prefix = item.prefix;
 				driveItem.recipe = key;
 				driveItem.context = 26;
@@ -206,27 +185,26 @@ namespace SatelliteStorage.UIElements
 					hasRecipe = true;
 					driveItem.context = 34;
 				}
+
 				recipeItems.Add(driveItem);
 			}
 
-			if (!hasRecipe) UICraftRecipe.hidden = true;
-			else UICraftRecipe.hidden = false;
+			UICraftRecipe.Hidden = !hasRecipe;
 
 			_itemGrid.SetContentsToShow(_itemIdsAvailableToShow, recipeItems);
-			hidden = false;
+			Hidden = false;
 			if (DriveChestSystem.AvailableRecipes.Keys.Count <= 0)
 			{
-				hidden = true;
-				UICraftRecipe.hidden = true;
+				Hidden = true;
+				UICraftRecipe.Hidden = true;
 			}
 		}
-
 
 		public void UpdateItemsTypes()
 		{
 			var types = new List<int>();
 			foreach (var key in DriveChestSystem.AvailableRecipes.Keys)
-            {
+			{
 				var item = DriveChestSystem.AvailableRecipes[key].createItem;
 				types.Add(item.type);
 			}
@@ -235,32 +213,10 @@ namespace SatelliteStorage.UIElements
 			_itemIdsAvailableTotal.AddRange(types);
 		}
 
-		public override void Click(UIMouseEvent evt)
-		{
-			base.Click(evt);
-			AttemptStoppingUsingSearchbar(evt);
-		}
-
-		private void AttemptStoppingUsingSearchbar(UIMouseEvent evt)
-		{
-			_didClickSomething = true;
-		}
-
-		public override void Update(GameTime gameTime)
-		{
-			base.Update(gameTime);
-			if (_didClickSomething && !_didClickSearchBar && _searchBar != null && _searchBar.IsWritingText)
-			{
-				_searchBar.ToggleTakingText();
-			}
-			_didClickSomething = false;
-			_didClickSearchBar = false;
-		}
-
 		public override void Recalculate()
 		{
 			base.Recalculate();
-			if (_itemGrid != null) _itemGrid.Recalculate();
+			_itemGrid?.Recalculate();
 		}
 
 		private void UICreativeInfiniteItemsDisplay_OnUpdate(UIElement affectedElement)
@@ -272,20 +228,15 @@ namespace SatelliteStorage.UIElements
 				_lastTrackerCheckedForEdits = localPlayerCreativeTracker;
 				_lastCheckedVersionForEdits = -1;
 			}
+
 			var lastEditId = localPlayerCreativeTracker.ItemSacrifices.LastEditId;
 			if (_lastCheckedVersionForEdits != lastEditId)
 			{
 				_lastCheckedVersionForEdits = lastEditId;
 				UpdateContents();
 			}
-			if (_showSacrificesInsteadOfInfinites)
-			{
-				Append(_containerSacrifice);
-			}
-			else
-			{
-				Append(_containerInfinites);
-			}
+
+			Append(_containerInfinites);
 		}
 	}
 }
